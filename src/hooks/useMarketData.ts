@@ -92,7 +92,7 @@ export function useMarketData() {
     if (snapshot === lastLoggedMarketSnapshotRef.current) return
     lastLoggedMarketSnapshotRef.current = snapshot
 
-    console.groupCollapsed(`[azuro-lite] markets for game ${selectedGameId} (${rows.length})`)
+    console.groupCollapsed(`[Combat Expert] markets for game ${selectedGameId} (${rows.length})`)
     console.table(rows)
     console.groupEnd()
   }, [markets, selectedGameId])

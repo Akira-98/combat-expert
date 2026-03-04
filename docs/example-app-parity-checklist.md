@@ -1,6 +1,6 @@
 # example-app 패리티 체크리스트
 
-목표: `desktop/example-app`과 최대한 유사한 기능 및 UI/UX를 `azuro-lite`에 단계적으로 구현한다.
+목표: `desktop/example-app`과 최대한 유사한 기능 및 UI/UX를 `Combat Expert`에 단계적으로 구현한다.
 
 ## 1. 정보 구조 / 레이아웃
 
