@@ -5,9 +5,9 @@
   :root {
     --app-bg: #0b0f14;
     --app-bg-glow: #2a1b12;
-    --app-surface: #121923;
-    --app-surface-soft: #192230;
-    --app-border: #2c3949;
+    --app-surface: #0b0f14;
+    --app-surface-soft: #0f141c;
+    --app-border: #1f2937;
     --app-text-strong: #e6eef8;
     --app-text-body: #b5c2d2;
     --app-text-muted: #8090a4;
@@ -21,8 +21,13 @@
     --state-danger-soft: #2e1a20;
   }
 
+  html {
+    height: 100%;
+    background-color: var(--app-bg);
+  }
+
   body {
-    @apply m-0 min-w-[360px] antialiased;
+    @apply m-0 min-h-full min-w-[360px] antialiased;
     background:
       radial-gradient(1200px 700px at 85% -100px, color-mix(in oklab, var(--app-accent) 22%, transparent), transparent),
       radial-gradient(900px 480px at 8% 0, color-mix(in oklab, var(--app-bg-glow) 55%, transparent), transparent),
@@ -31,14 +36,19 @@
     font-family: 'Space Grotesk', 'Noto Sans KR', 'Segoe UI', sans-serif;
   }
 
+  #root {
+    min-height: 100dvh;
+    background-color: transparent;
+  }
+
   .app-theme .bg-white {
-    background-color: var(--app-surface) !important;
+    background-color: color-mix(in oklab, var(--app-surface) 92%, transparent) !important;
   }
 
   .app-theme .bg-slate-50,
   .app-theme .bg-slate-100,
   .app-theme .bg-slate-100\/95 {
-    background-color: var(--app-surface-soft) !important;
+    background-color: color-mix(in oklab, var(--app-surface-soft) 88%, transparent) !important;
   }
 
   .app-theme .border-slate-200,
@@ -87,11 +97,13 @@
   .ui-surface {
     background-color: var(--app-surface);
     border-color: var(--app-border);
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--app-border) 32%, transparent);
   }
 
   .ui-surface-soft {
     background-color: var(--app-surface-soft);
     border-color: var(--app-border);
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--app-border) 24%, transparent);
   }
 
   .ui-border {

@@ -45,7 +45,7 @@ export function BetslipSummarySection({
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-2 rounded-lg border border-slate-200 bg-white p-3">
+      <div className="grid grid-cols-2 gap-2 rounded-md border border-slate-200 bg-white p-3 md:rounded-lg">
         <div className="grid gap-1">
           <span className="text-xs text-slate-500">총 배당</span>
           <strong className="text-sm">{Number.isFinite(totalOdds) ? totalOdds.toFixed(3) : '0.000'}</strong>
@@ -56,7 +56,7 @@ export function BetslipSummarySection({
         </div>
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-3">
+      <div className="rounded-md border border-slate-200 bg-white p-3 md:rounded-lg">
         <div className="grid grid-cols-3 gap-2">
           <div className="grid gap-1">
             <span className="text-xs text-slate-500">잔액</span>
@@ -106,7 +106,7 @@ export function BetslipSummarySection({
 
       {transactionNotice && (
         <div
-          className={`rounded-lg border p-3 ${
+          className={`rounded-md border p-3 md:rounded-lg ${
             transactionNotice.type === 'success'
               ? 'border-emerald-200 bg-emerald-50'
               : 'border-rose-200 bg-rose-50'

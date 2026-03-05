@@ -15,10 +15,10 @@ export function MarketsPane({
   onRetryMarkets,
 }: MarketsPaneProps) {
   return (
-    <div className="grid min-w-0 content-start gap-3">
+    <div className="grid min-w-0 content-start gap-2 md:gap-3">
       <h2 className="ui-text-strong m-0 text-lg font-semibold">마켓</h2>
       {selectedGame && (
-        <div className="ui-surface-soft rounded-lg border px-3 py-2">
+        <div className="ui-surface-soft rounded-md border px-2.5 py-2 md:rounded-lg md:px-3">
           <p className="ui-text-strong m-0 text-sm font-semibold">{selectedGame.title}</p>
           <p className="ui-text-body mt-1 text-xs">
             {selectedGame.leagueName} · {formatGameStartTime(selectedGame.startsAt)}
@@ -32,13 +32,13 @@ export function MarketsPane({
       )}
 
       {marketSections.length > 0 ? (
-        <div className="grid gap-3">
+        <div className="grid gap-2 md:gap-3">
           {marketSections.map((section) => (
             <article
               key={section.id}
-              className="ui-surface rounded-xl border bg-linear-to-b from-[#16202b] to-[#131b25] p-3.5"
+              className="ui-surface rounded-md border p-3 shadow-[0_8px_18px_-14px_rgba(0,0,0,0.65)] md:rounded-xl md:p-3.5"
             >
-              <div className="mb-3 flex items-center justify-between gap-2">
+              <div className="mb-2.5 flex items-center justify-between gap-2 md:mb-3">
                 <h3 className="ui-text-strong m-0 text-sm font-semibold tracking-tight">{section.title}</h3>
                 <span className="ui-pill rounded-full border px-2 py-0.5 text-[11px] font-semibold">
                   {section.outcomes.length}

@@ -14,7 +14,7 @@ export function GamesPane({
   onRetryGames,
 }: GamesPaneProps) {
   return (
-    <div className="grid content-start gap-2 pr-1 xl:max-h-[calc(100dvh-8rem)] xl:overflow-y-auto">
+    <div className="grid content-start gap-1.5 pr-0 md:gap-2 xl:max-h-[calc(100dvh-8rem)] xl:overflow-y-auto xl:pr-1">
       <h2 className="ui-text-strong m-0 text-lg font-semibold">경기</h2>
       {isGamesLoading && <GamesSkeletonList />}
       {!isGamesLoading && gamesErrorMessage && (
@@ -37,10 +37,10 @@ export function GamesPane({
           <div
             key={game.gameId}
             aria-pressed={isActive}
-            className={`group grid gap-2 rounded-xl border px-3 py-3 text-left transition ${
+            className={`group grid gap-2 rounded-md border px-2.5 py-2.5 text-left transition md:rounded-xl md:px-3 md:py-3 ${
               isActive
-                ? 'border-orange-400/70 bg-linear-to-b from-orange-950/35 to-[#151d27] shadow-[0_14px_32px_-18px_rgba(255,107,0,0.7)] ring-1 ring-orange-400/30'
-                : 'ui-surface border hover:border-orange-400/35 hover:bg-[#18212d]'
+                ? 'border-orange-400/70 bg-[color:color-mix(in_oklab,var(--app-surface)_92%,var(--app-accent-soft))] shadow-[0_8px_18px_-14px_rgba(0,0,0,0.7)] ring-1 ring-orange-400/25'
+                : 'ui-surface border-transparent hover:border-orange-400/35 hover:bg-[color:color-mix(in_oklab,var(--app-surface)_96%,var(--app-accent-soft))]'
             }`}
             onClick={() => onSelectGame(game.gameId)}
             onKeyDown={(event) => {

@@ -12,7 +12,7 @@ export function BetslipSlippageSettings({ isOpen, slippage, onSlippageChange }: 
   if (!isOpen) return null
 
   return (
-    <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-3">
+    <div className="space-y-2 rounded-md border border-slate-200 bg-white p-3 md:rounded-lg">
       <div className="flex items-center justify-between">
         <span className="text-sm font-semibold text-slate-900">슬리피지</span>
         <span className="text-xs text-slate-500">{slippage}%</span>
@@ -46,7 +46,7 @@ export function BetslipSlippageSettings({ isOpen, slippage, onSlippageChange }: 
           <div className="mt-2 grid gap-1">
             <span className="text-xs text-slate-500">직접 입력 슬리피지 (%)</span>
             <input
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm md:rounded-lg"
               type="number"
               min={0.1}
               max={50}

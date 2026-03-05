@@ -19,7 +19,7 @@ export function BetslipAmountSection({ betAmount, onBetAmountChange }: BetslipAm
       <label className="grid gap-1">
         <span className="text-xs font-semibold text-slate-600">베팅 금액</span>
         <input
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm md:rounded-lg"
           value={betAmount}
           onChange={(e) => onBetAmountChange(e.target.value)}
           placeholder="베팅 금액"

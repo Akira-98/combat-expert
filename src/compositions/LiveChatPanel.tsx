@@ -217,8 +217,8 @@ export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
   }
 
   const rootClassName = className
-    ? `ui-surface grid ${className} grid-rows-[auto_1fr_auto] gap-3 rounded-xl border p-3`
-    : 'ui-surface grid h-[calc(100dvh-8rem)] grid-rows-[auto_1fr_auto] gap-3 rounded-xl border p-3'
+    ? `ui-surface grid ${className} grid-rows-[auto_1fr_auto] gap-2.5 rounded-none border-x-0 p-2.5 md:gap-3 md:rounded-xl md:border md:p-3`
+    : 'ui-surface grid h-[calc(100dvh-8rem)] grid-rows-[auto_1fr_auto] gap-2.5 rounded-none border-x-0 p-2.5 md:gap-3 md:rounded-xl md:border md:p-3'
 
   return (
     <div className={rootClassName}>
@@ -242,13 +242,13 @@ export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
 
       <div
         ref={scrollContainerRef}
-        className="ui-surface-soft min-h-0 space-y-2 overflow-y-auto rounded-lg border p-2"
+        className="ui-surface-soft min-h-0 space-y-1.5 overflow-y-auto rounded-md border p-1.5 md:space-y-2 md:rounded-lg md:p-2"
       >
         {messages.length === 0 ? (
           <p className="ui-text-muted m-0 px-1 py-2 text-xs">아직 메시지가 없습니다. 첫 메시지를 남겨보세요.</p>
         ) : (
           messages.map((message) => (
-            <article key={message.id} className="ui-surface rounded-lg border px-2 py-1.5">
+            <article key={message.id} className="ui-surface rounded-md border px-2 py-1 md:rounded-lg md:py-1.5">
               <div className="flex items-center justify-between gap-2">
                 <span className="ui-text-body text-xs font-semibold">{message.senderName}</span>
                 <time className="ui-text-muted text-[11px]">{formatMessageTime(message.timestamp)}</time>
@@ -272,7 +272,7 @@ export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
         </label>
         <div className="grid grid-cols-[1fr_auto] gap-2">
           <input
-            className="ui-input h-9 rounded-lg border px-3 text-sm outline-none"
+            className="ui-input h-9 rounded-md border px-3 text-sm outline-none md:rounded-lg"
             placeholder={connectionState === 'connected' ? '메시지를 입력하세요' : '연결 후 입력 가능합니다'}
             value={draft}
             maxLength={MESSAGE_MAX_LENGTH}
@@ -280,7 +280,7 @@ export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
             disabled={connectionState !== 'connected'}
           />
           <button
-            className="ui-btn-primary rounded-lg border px-3 py-2 text-xs font-semibold disabled:opacity-50"
+            className="ui-btn-primary rounded-md border px-3 py-2 text-xs font-semibold md:rounded-lg disabled:opacity-50"
             type="submit"
             disabled={!canSend}
           >

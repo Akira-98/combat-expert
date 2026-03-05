@@ -25,12 +25,12 @@ export function OutcomeButton({
   return (
     <button
       aria-disabled={isDisabled}
-      className={`grid gap-1.5 rounded-xl border px-3 py-2.5 text-left text-sm transition ${
+      className={`grid gap-1.5 rounded-md border px-2.5 py-2 text-left text-xs transition md:rounded-xl md:px-3 md:py-2.5 md:text-sm ${
         isDisabled
           ? 'ui-surface-soft ui-text-muted cursor-not-allowed opacity-70'
           : isSelected
-            ? 'border-orange-400/70 bg-linear-to-b from-orange-950/30 to-[#151d27] shadow-[0_12px_24px_-14px_rgba(255,107,0,0.65)] ring-1 ring-orange-400/35'
-            : 'ui-surface hover:border-orange-400/35 hover:bg-[#18212d]'
+            ? 'border-orange-400/70 bg-[color:color-mix(in_oklab,var(--app-surface)_92%,var(--app-accent-soft))] shadow-[0_10px_20px_-16px_rgba(0,0,0,0.8)] ring-1 ring-orange-400/25'
+            : 'ui-surface border-transparent hover:border-orange-400/35 hover:bg-[color:color-mix(in_oklab,var(--app-surface)_96%,var(--app-accent-soft))]'
       }`}
       onClick={() => {
         if (isDisabled) return
@@ -40,7 +40,7 @@ export function OutcomeButton({
     >
       <div className="flex items-start justify-between gap-2">
         <span className={`min-w-0 truncate pr-2 font-medium ${isSelected ? 'text-orange-100' : 'ui-text-strong'}`}>{outcomeLabel}</span>
-        <strong className={`shrink-0 text-sm ${isDisabled ? 'ui-text-muted' : isSelected ? 'text-orange-100' : 'ui-text-strong'}`}>
+        <strong className={`shrink-0 text-xs md:text-sm ${isDisabled ? 'ui-text-muted' : isSelected ? 'text-orange-100' : 'ui-text-strong'}`}>
           {Number.isFinite(outcome.odds) ? outcome.odds.toFixed(2) : '-'}
         </strong>
       </div>
@@ -57,12 +57,12 @@ export function OutcomeButton({
           </span>
         )}
         {isSelected && priceChange && !isDisabled && (
-          <span className="ui-state-warning rounded-full border px-2 py-0.5 text-[10px] font-semibold">
+          <span className="ui-state-warning hidden rounded-full border px-2 py-0.5 text-[10px] font-semibold md:inline-flex">
             변경 {priceChange.previousOdds.toFixed(2)}→{priceChange.currentOdds.toFixed(2)}
           </span>
         )}
         {outcome.isExpressForbidden && (
-          <span className="ui-pill rounded-full border px-2 py-0.5 text-[10px] font-medium">
+          <span className="ui-pill hidden rounded-full border px-2 py-0.5 text-[10px] font-medium md:inline-flex">
             싱글 전용
           </span>
         )}

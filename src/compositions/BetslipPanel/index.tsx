@@ -60,11 +60,11 @@ export function BetslipPanel({
 }: BetslipPanelProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const secondaryButtonClass =
-    'ui-btn-secondary rounded-lg border px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60'
+    'ui-btn-secondary rounded-md border px-3 py-2 text-sm font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
   const settingsButtonClass =
-    'ui-btn-ghost rounded-lg border px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60'
+    'ui-btn-ghost rounded-md border px-3 py-2 text-sm font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
   const clearButtonClass =
-    'ui-btn-danger-soft rounded-lg border px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60'
+    'ui-btn-danger-soft rounded-md border px-3 py-2 text-sm font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
   const disableReasonText = bet.disableReason ? (DISABLE_REASON_LABEL[bet.disableReason] ?? bet.disableReason) : undefined
 
   const selectionLabel = bet.selections.length <= 1 ? '싱글' : `콤보 (${bet.selections.length})`
@@ -75,7 +75,7 @@ export function BetslipPanel({
   const primaryButtonLabel = !wallet.isConnected && wallet.isConnectingWallet ? '지갑 연결 중...' : bet.submitLabel
 
   return (
-    <section className="ui-surface rounded-xl border">
+    <section className="ui-surface rounded-none border-x-0 md:rounded-xl md:border">
       <div className="ui-border flex items-center justify-between border-b px-4 py-3">
         <div>
           <h2 className="ui-text-strong m-0 text-base font-semibold">베팅슬립</h2>
@@ -96,7 +96,7 @@ export function BetslipPanel({
           {bet.selections.map((selection) => (
             <li
               key={selectionKey(selection.conditionId, selection.outcomeId)}
-              className="ui-surface-soft grid gap-2 rounded-lg border p-3"
+              className="ui-surface-soft grid gap-2 rounded-md border p-3 md:rounded-lg"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
@@ -107,7 +107,7 @@ export function BetslipPanel({
                   x
                 </button>
               </div>
-              <div className="ui-surface flex items-center justify-between rounded-lg px-2 py-1.5">
+              <div className="ui-surface flex items-center justify-between rounded-md px-2 py-1.5 md:rounded-lg">
                 <span className="ui-text-muted text-xs">배당</span>
                 <strong className="ui-text-strong text-sm">{formatOdds(selection.odds)}</strong>
               </div>
@@ -120,7 +120,7 @@ export function BetslipPanel({
         </div>
       )}
 
-      <div className="ui-surface-soft space-y-3 rounded-b-xl p-4">
+      <div className="ui-surface-soft space-y-3 p-4 md:rounded-b-xl">
         <BetslipAmountSection betAmount={bet.betAmount} onBetAmountChange={actions.onBetAmountChange} />
 
         <BetslipSlippageSettings
@@ -149,18 +149,18 @@ export function BetslipPanel({
         />
 
         {disableReasonText && (
-          <p className="ui-state-warning-surface ui-text-body m-0 rounded-lg border p-2 text-sm">
+          <p className="ui-state-warning-surface ui-text-body m-0 rounded-md border p-2 text-sm md:rounded-lg">
             {disableReasonText}
           </p>
         )}
         {!disableReasonText && bet.uiBlockHint && (
-          <p className="ui-surface ui-text-body m-0 rounded-lg border p-2 text-sm">
+          <p className="ui-surface ui-text-body m-0 rounded-md border p-2 text-sm md:rounded-lg">
             {bet.uiBlockHint}
           </p>
         )}
 
         <button
-          className="ui-btn-primary w-full rounded-lg border px-3 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
+          className="ui-btn-primary w-full rounded-md border px-3 py-2.5 text-sm font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isPrimaryDisabled}
           onClick={wallet.isConnected ? actions.onSubmit : actions.onConnectWallet}
           type="button"

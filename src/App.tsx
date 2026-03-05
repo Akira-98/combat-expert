@@ -5,7 +5,7 @@ import { MarketList } from './compositions/MarketList'
 import { MyBets } from './compositions/MyBets'
 import { MobileBetslipSheet } from './compositions/MobileBetslipSheet'
 import { LiveChatPanel } from './compositions/LiveChatPanel'
-import type { GameStatusFilter } from './helpers/gameTiming'
+import { GameFiltersPanel } from './compositions/GameFiltersPanel'
 import { useBodyScrollLock } from './hooks/useBodyScrollLock'
 import { useGameFilters } from './hooks/useGameFilters'
 import { useWalletConnection } from './hooks/useWalletConnection'
@@ -179,9 +179,9 @@ function App() {
   const hasActiveFilters = Boolean(gameSearchQuery || gameStatusFilter !== 'all' || leagueFilter !== 'all')
 
   return (
-    <div className="app-theme mx-auto max-w-[1440px] px-4 pb-36 pt-0 md:pt-4 lg:pb-10">
+    <div className="app-theme mx-auto w-full max-w-[1440px] px-0 pb-36 pt-0 md:px-4 md:pt-4 lg:pb-10">
       <div
-        className="sticky top-0 z-30 -mx-4 border-b border-slate-200/80 bg-slate-100/95 px-4 pb-2 backdrop-blur md:static md:mx-0 md:border-0 md:bg-transparent md:px-0 md:pb-0"
+        className="sticky top-0 z-30 border-b border-slate-200/80 bg-slate-100/95 px-3 pb-2 backdrop-blur md:static md:border-0 md:bg-transparent md:px-0 md:pb-0"
         style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
         <Header
@@ -199,72 +199,27 @@ function App() {
         />
       </div>
 
-      <section className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-center">
-          <label className="grid gap-1 text-xs font-semibold text-slate-600">
-            게임 검색
-            <input
-              className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 placeholder:text-slate-400 focus:border-blue-500"
-              placeholder="팀명, 리그명으로 검색"
-              type="search"
-              value={gameSearchQuery}
-              onChange={(event) => setGameSearchQuery(event.target.value)}
-            />
-          </label>
+      <GameFiltersPanel
+        gameSearchQuery={gameSearchQuery}
+        gameStatusFilter={gameStatusFilter}
+        leagueFilter={leagueFilter}
+        leagueOptions={leagueOptions}
+        filteredGamesCount={filteredGames.length}
+        totalGamesCount={games.length}
+        hasActiveFilters={hasActiveFilters}
+        onGameSearchQueryChange={setGameSearchQuery}
+        onGameStatusFilterChange={setGameStatusFilter}
+        onLeagueFilterChange={setLeagueFilter}
+        onResetFilters={resetFilters}
+      />
 
-          <label className="grid gap-1 text-xs font-semibold text-slate-600">
-            상태
-            <select
-              className="h-10 min-w-32 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
-              value={gameStatusFilter}
-              onChange={(event) => setGameStatusFilter(event.target.value as GameStatusFilter)}
-            >
-              <option value="all">종료 제외</option>
-              <option value="live">라이브 추정</option>
-              <option value="upcoming">시작 전</option>
-            </select>
-          </label>
-
-          <label className="grid gap-1 text-xs font-semibold text-slate-600">
-            리그
-            <select
-              className="h-10 min-w-40 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
-              value={leagueFilter}
-              onChange={(event) => setLeagueFilter(event.target.value)}
-            >
-              <option value="all">전체 리그</option>
-              {leagueOptions.map((leagueName) => (
-                <option key={leagueName} value={leagueName}>
-                  {leagueName}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-600">
-          <span className="rounded-full bg-slate-100 px-2.5 py-1">
-            표시 중 게임 {filteredGames.length} / 전체 {games.length}
-          </span>
-          {hasActiveFilters && (
-            <button
-              className="rounded-full border border-slate-300 bg-white px-2.5 py-1 font-semibold text-slate-700 hover:bg-slate-50"
-              onClick={resetFilters}
-              type="button"
-            >
-              필터 초기화
-            </button>
-          )}
-        </div>
-      </section>
-
-      <main className="mt-4 grid items-start gap-4 xl:grid-cols-[240px_minmax(0,1fr)_316px]">
+      <main className="mt-2 grid items-start gap-3 md:mt-4 md:gap-4 xl:grid-cols-[240px_minmax(0,1fr)_316px]">
         <aside className="hidden xl:sticky xl:top-4 xl:block">
           <LiveChatPanel address={wallet.address} />
         </aside>
 
         <section className="min-w-0">
-          <div className={`${mobileView === 'explore' ? 'grid gap-4' : 'hidden xl:grid xl:gap-4'}`}>
+          <div className={`${mobileView === 'explore' ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}`}>
             <MarketList
               pageMode={pageMode}
               isGamesLoading={isGamesLoading}
@@ -331,10 +286,10 @@ function App() {
         </aside>
       </main>
 
-      <nav className="ui-surface fixed inset-x-0 bottom-0 z-40 border-t border-slate-200/80 px-4 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-1.5 xl:hidden">
-        <div className="mx-auto grid w-full max-w-[560px] grid-cols-4 gap-2">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200/70 bg-[color:color-mix(in_oklab,var(--app-surface)_82%,transparent)] px-2.5 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-1.5 backdrop-blur xl:hidden">
+        <div className="mx-auto grid w-full max-w-[560px] grid-cols-4 gap-1.5">
           <button
-            className={`rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
+            className={`rounded-md border px-3 py-1.5 text-xs font-semibold transition ${
               mobileView === 'explore' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
             }`}
             onClick={() => setMobileView('explore')}
@@ -343,7 +298,7 @@ function App() {
             탐색
           </button>
           <button
-            className={`relative rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
+            className={`relative rounded-md border px-3 py-1.5 text-xs font-semibold transition ${
               isMobileBetslipOpen ? 'ui-btn-primary' : 'ui-btn-secondary'
             }`}
             onClick={() => setIsMobileBetslipOpen(true)}
@@ -353,7 +308,7 @@ function App() {
             <span className="ml-1 rounded-full bg-black/20 px-1.5 py-0.5 text-xs">{betting.selectionItems.length}</span>
           </button>
           <button
-            className={`rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
+            className={`rounded-md border px-3 py-1.5 text-xs font-semibold transition ${
               mobileView === 'chat' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
             }`}
             onClick={() => setMobileView('chat')}
@@ -362,7 +317,7 @@ function App() {
             채팅
           </button>
           <button
-            className={`rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
+            className={`rounded-md border px-3 py-1.5 text-xs font-semibold transition ${
               mobileView === 'bets' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
             }`}
             onClick={() => setMobileView('bets')}
