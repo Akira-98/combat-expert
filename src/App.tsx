@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Header } from './compositions/Header'
 import { BetslipPanel, type BetslipPanelProps } from './compositions/BetslipPanel'
 import { MarketList } from './compositions/MarketList'
@@ -95,6 +95,8 @@ function App() {
   const [mobileView, setMobileView] = useState<MobileView>('explore')
   const [desktopSidePanelTab, setDesktopSidePanelTab] = useState<DesktopSidePanelTab>('betslip')
   const [routedGameId, setRoutedGameId] = useState<string | undefined>(() => readRoutedGameId())
+  const [mobileHeaderHeight, setMobileHeaderHeight] = useState(72)
+  const mobileHeaderRef = useRef<HTMLDivElement | null>(null)
   const wallet = useWalletConnection()
   const market = useMarketData()
   const {
@@ -127,6 +129,25 @@ function App() {
   } = useGameFilters(games)
 
   useBodyScrollLock(isMobileBetslipOpen)
+
+  useEffect(() => {
+    const headerNode = mobileHeaderRef.current
+    if (!headerNode) return
+
+    const syncHeaderHeight = () => {
+      setMobileHeaderHeight(Math.ceil(headerNode.getBoundingClientRect().height))
+    }
+
+    syncHeaderHeight()
+    const observer = new ResizeObserver(syncHeaderHeight)
+    observer.observe(headerNode)
+    window.addEventListener('resize', syncHeaderHeight)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', syncHeaderHeight)
+    }
+  }, [])
 
   useEffect(() => {
     const handlePopState = () => setRoutedGameId(readRoutedGameId())
@@ -175,12 +196,19 @@ function App() {
     setRoutedGameId(undefined)
   }
 
+  const handleNavigateToExplore = () => {
+    setIsMobileBetslipOpen(false)
+    setMobileView('explore')
+    handleBackToGames()
+  }
+
   const betslipPanelProps = buildBetslipPanelProps({ wallet, betting })
   const hasActiveFilters = Boolean(gameSearchQuery || gameStatusFilter !== 'all' || leagueFilter !== 'all')
 
   return (
     <div className="app-theme mx-auto w-full max-w-[1440px] px-0 pb-36 pt-0 md:px-4 md:pt-4 lg:pb-10">
       <div
+        ref={mobileHeaderRef}
         className="sticky top-0 z-30 border-b border-slate-200/80 bg-slate-100/95 px-3 pb-0 md:static md:border-0 md:bg-transparent md:px-0 md:pb-0"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
@@ -194,6 +222,7 @@ function App() {
           isAAWallet={wallet.isAAWallet}
           canOpenAuthModal={wallet.canOpenAuthModal}
           connectErrorMessage={wallet.connectErrorMessage}
+          onTitleClick={handleNavigateToExplore}
           onOpenAuthModal={wallet.openAuthModal}
           onDisconnect={wallet.disconnectWallet}
         />
@@ -207,6 +236,7 @@ function App() {
         filteredGamesCount={filteredGames.length}
         totalGamesCount={games.length}
         hasActiveFilters={hasActiveFilters}
+        mobileStickyTop={mobileHeaderHeight}
         onGameSearchQueryChange={setGameSearchQuery}
         onGameStatusFilterChange={setGameStatusFilter}
         onLeagueFilterChange={setLeagueFilter}

@@ -11,6 +11,7 @@ type HeaderProps = {
   isAAWallet?: boolean
   canOpenAuthModal: boolean
   connectErrorMessage?: string
+  onTitleClick?: () => void
   onOpenAuthModal: () => void
   onDisconnect: () => void
 }
@@ -25,6 +26,7 @@ export function Header({
   isAAWallet,
   canOpenAuthModal,
   connectErrorMessage,
+  onTitleClick,
   onOpenAuthModal,
   onDisconnect,
 }: HeaderProps) {
@@ -49,7 +51,20 @@ export function Header({
   return (
     <header className="ui-surface flex items-center justify-between gap-2.5 rounded-none border-x-0 px-2.5 py-2 md:gap-4 md:rounded-xl md:border md:p-4">
       <div>
-        <h1 className="ui-text-strong ui-mma-logo m-0 pt-0.5 text-[22px] leading-[1.18] md:pt-0 md:text-[27px] md:leading-[1.15]">세기의 격잘알</h1>
+        <h1 className="m-0">
+          {onTitleClick ? (
+            <button
+              aria-label="탐색으로 이동"
+              className="ui-text-strong ui-mma-logo m-0 cursor-pointer border-0 bg-transparent p-0 pt-0.5 text-left text-[22px] leading-[1.18] md:pt-0 md:text-[27px] md:leading-[1.15]"
+              onClick={onTitleClick}
+              type="button"
+            >
+              세기의 격잘알
+            </button>
+          ) : (
+            <span className="ui-text-strong ui-mma-logo pt-0.5 text-[22px] leading-[1.18] md:pt-0 md:text-[27px] md:leading-[1.15]">세기의 격잘알</span>
+          )}
+        </h1>
         <p className="ui-text-muted mt-0.5 text-xs md:mt-1 md:text-sm">세계 최초 MMA 예측시장</p>
       </div>
       <div>

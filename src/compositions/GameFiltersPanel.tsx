@@ -9,6 +9,7 @@ type GameFiltersPanelProps = {
   filteredGamesCount: number
   totalGamesCount: number
   hasActiveFilters: boolean
+  mobileStickyTop?: number
   onGameSearchQueryChange: (value: string) => void
   onGameStatusFilterChange: (value: GameStatusFilter) => void
   onLeagueFilterChange: (value: string) => void
@@ -23,6 +24,7 @@ export function GameFiltersPanel({
   filteredGamesCount,
   totalGamesCount,
   hasActiveFilters,
+  mobileStickyTop = 72,
   onGameSearchQueryChange,
   onGameStatusFilterChange,
   onLeagueFilterChange,
@@ -45,7 +47,10 @@ export function GameFiltersPanel({
 
   return (
     <>
-      <section className="-mx-2.5 sticky top-[calc(env(safe-area-inset-top)+72px)] z-20 ui-bg-solid-soft px-2.5 py-1.5 md:mx-0 md:static md:mt-4 md:rounded-xl md:border md:bg-white md:p-3 md:backdrop-blur-none">
+      <section
+        className="sticky z-20 ui-bg-solid-soft px-2.5 py-1.5 md:static md:mt-4 md:rounded-xl md:border md:bg-white md:p-3 md:backdrop-blur-none"
+        style={{ top: `${mobileStickyTop}px` }}
+      >
         <div className="md:hidden">
           <div className="flex items-center gap-2">
             <button
