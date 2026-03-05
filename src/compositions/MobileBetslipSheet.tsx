@@ -6,6 +6,7 @@ type MobileBetslipSheetProps = {
   onOpen: () => void
   onClose: () => void
   panelProps: BetslipPanelProps
+  showLauncher?: boolean
 }
 
 export function MobileBetslipSheet({
@@ -14,19 +15,22 @@ export function MobileBetslipSheet({
   onOpen,
   onClose,
   panelProps,
+  showLauncher = true,
 }: MobileBetslipSheetProps) {
   return (
     <div className="xl:hidden">
-      <button
-        className={`ui-surface fixed left-1/2 z-40 flex w-[min(92vw,360px)] -translate-x-1/2 items-center justify-between rounded-full border px-4 py-3 shadow-lg shadow-slate-950/30 transition ${
-          isOpen ? 'pointer-events-none translate-y-4 opacity-0' : 'bottom-4 opacity-100'
-        }`}
-        onClick={onOpen}
-        type="button"
-      >
-        <span className="ui-text-strong text-sm font-semibold">베팅슬립</span>
-        <span className="ui-btn-primary rounded-full border px-2.5 py-1 text-xs font-semibold">{selectionCount}</span>
-      </button>
+      {showLauncher && (
+        <button
+          className={`ui-surface fixed left-1/2 z-40 flex w-[min(92vw,360px)] -translate-x-1/2 items-center justify-between rounded-full border px-4 py-3 shadow-lg shadow-slate-950/30 transition ${
+            isOpen ? 'pointer-events-none translate-y-4 opacity-0' : 'bottom-4 opacity-100'
+          }`}
+          onClick={onOpen}
+          type="button"
+        >
+          <span className="ui-text-strong text-sm font-semibold">베팅슬립</span>
+          <span className="ui-btn-primary rounded-full border px-2.5 py-1 text-xs font-semibold">{selectionCount}</span>
+        </button>
+      )}
 
       {isOpen && (
         <div className="fixed inset-0 z-50">

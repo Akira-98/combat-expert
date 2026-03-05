@@ -10,6 +10,7 @@ const MESSAGE_MAX_LENGTH = 220
 
 type LiveChatPanelProps = {
   address?: Address
+  className?: string
 }
 
 type ChatMessage = {
@@ -96,7 +97,7 @@ function isChatMessage(value: ChatMessage | null): value is ChatMessage {
   return Boolean(value)
 }
 
-export function LiveChatPanel({ address }: LiveChatPanelProps) {
+export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
   const { ablyChannel } = useAppConfig()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [draft, setDraft] = useState('')
@@ -215,8 +216,12 @@ export function LiveChatPanel({ address }: LiveChatPanelProps) {
     }
   }
 
+  const rootClassName = className
+    ? `ui-surface grid ${className} grid-rows-[auto_1fr_auto] gap-3 rounded-xl border p-3`
+    : 'ui-surface grid h-[calc(100dvh-8rem)] grid-rows-[auto_1fr_auto] gap-3 rounded-xl border p-3'
+
   return (
-    <div className="ui-surface grid h-[calc(100dvh-8rem)] grid-rows-[auto_1fr_auto] gap-3 rounded-xl border p-3">
+    <div className={rootClassName}>
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="ui-text-muted m-0 text-xs font-semibold uppercase tracking-[0.08em]">Live Chat</p>
