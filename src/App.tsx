@@ -181,8 +181,8 @@ function App() {
   return (
     <div className="app-theme mx-auto w-full max-w-[1440px] px-0 pb-36 pt-0 md:px-4 md:pt-4 lg:pb-10">
       <div
-        className="sticky top-0 z-30 border-b border-slate-200/80 bg-slate-100/95 px-3 pb-2 backdrop-blur md:static md:border-0 md:bg-transparent md:px-0 md:pb-0"
-        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+        className="sticky top-0 z-30 border-b border-slate-200/80 bg-slate-100/95 px-3 pb-1.5 backdrop-blur md:static md:border-0 md:bg-transparent md:px-0 md:pb-0"
+        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
         <Header
           isAuthenticated={wallet.isAuthenticated}
@@ -213,7 +213,7 @@ function App() {
         onResetFilters={resetFilters}
       />
 
-      <main className="mt-2 grid items-start gap-3 md:mt-4 md:gap-4 xl:grid-cols-[240px_minmax(0,1fr)_316px]">
+      <main className="mt-1 grid items-start gap-2 md:mt-4 md:gap-4 xl:grid-cols-[240px_minmax(0,1fr)_316px]">
         <aside className="hidden xl:sticky xl:top-4 xl:block">
           <LiveChatPanel address={wallet.address} />
         </aside>
@@ -286,43 +286,69 @@ function App() {
         </aside>
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200/70 bg-[color:color-mix(in_oklab,var(--app-surface)_82%,transparent)] px-2.5 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-1.5 backdrop-blur xl:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 bg-[color:color-mix(in_oklab,var(--app-surface)_88%,transparent)] px-2.5 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-1 backdrop-blur xl:hidden">
         <div className="mx-auto grid w-full max-w-[560px] grid-cols-4 gap-1.5">
           <button
-            className={`rounded-md border px-3 py-1.5 text-xs font-semibold transition ${
-              mobileView === 'explore' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
+            className={`relative px-2 py-2 text-xs font-semibold transition ${
+              mobileView === 'explore' ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
             }`}
             onClick={() => setMobileView('explore')}
             type="button"
           >
+            <span
+              aria-hidden
+              className={`absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-orange-400 transition ${
+                mobileView === 'explore' ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
             탐색
           </button>
           <button
-            className={`relative rounded-md border px-3 py-1.5 text-xs font-semibold transition ${
-              isMobileBetslipOpen ? 'ui-btn-primary' : 'ui-btn-secondary'
+            className={`relative px-2 py-2 text-xs font-semibold transition ${
+              isMobileBetslipOpen ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
             }`}
             onClick={() => setIsMobileBetslipOpen(true)}
             type="button"
           >
+            <span
+              aria-hidden
+              className={`absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-orange-400 transition ${
+                isMobileBetslipOpen ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
             베팅슬립
-            <span className="ml-1 rounded-full bg-black/20 px-1.5 py-0.5 text-xs">{betting.selectionItems.length}</span>
+            <span className="ml-1 rounded-full bg-orange-500/20 px-1.5 py-0.5 text-[10px] text-orange-200">
+              {betting.selectionItems.length}
+            </span>
           </button>
           <button
-            className={`rounded-md border px-3 py-1.5 text-xs font-semibold transition ${
-              mobileView === 'chat' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
+            className={`relative px-2 py-2 text-xs font-semibold transition ${
+              mobileView === 'chat' ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
             }`}
             onClick={() => setMobileView('chat')}
             type="button"
           >
+            <span
+              aria-hidden
+              className={`absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-orange-400 transition ${
+                mobileView === 'chat' ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
             채팅
           </button>
           <button
-            className={`rounded-md border px-3 py-1.5 text-xs font-semibold transition ${
-              mobileView === 'bets' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
+            className={`relative px-2 py-2 text-xs font-semibold transition ${
+              mobileView === 'bets' ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
             }`}
             onClick={() => setMobileView('bets')}
             type="button"
           >
+            <span
+              aria-hidden
+              className={`absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-orange-400 transition ${
+                mobileView === 'bets' ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
             내 베팅
           </button>
         </div>

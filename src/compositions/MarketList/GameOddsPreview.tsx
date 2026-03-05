@@ -122,10 +122,10 @@ export function GameOddsPreview({
           aria-disabled={item.isDisabled}
           className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] transition ${
             item.isDisabled
-              ? 'cursor-not-allowed border-slate-200/40 bg-slate-100/40 text-slate-400'
+              ? 'cursor-not-allowed border-slate-200/40 bg-[color:color-mix(in_oklab,var(--app-surface-soft)_86%,transparent)] text-slate-400'
               : item.isSelected
-                ? 'border-emerald-300/70 bg-emerald-50/60 text-emerald-800'
-                : 'border-slate-200/40 bg-slate-50/35 text-slate-700 hover:border-slate-300/70 hover:bg-white/50'
+                ? 'border-emerald-300/70 bg-[color:color-mix(in_oklab,var(--state-success-soft)_70%,var(--app-surface))] text-emerald-200'
+                : 'border-slate-200/40 bg-[color:color-mix(in_oklab,var(--app-surface-soft)_84%,transparent)] text-slate-300 hover:border-slate-300/70 hover:bg-[color:color-mix(in_oklab,var(--app-surface-soft)_95%,transparent)]'
           }`}
           onClick={(event) => {
             event.stopPropagation()
@@ -134,8 +134,8 @@ export function GameOddsPreview({
           }}
           type="button"
         >
-          <span className="text-slate-500">{item.label}</span>
-          <strong className={item.isDisabled ? 'text-slate-400' : item.isSelected ? 'text-emerald-900' : 'text-slate-900'}>
+          <span className="text-slate-400">{item.label}</span>
+          <strong className={item.isDisabled ? 'text-slate-400' : item.isSelected ? 'text-emerald-100' : 'text-slate-100'}>
             {item.odds}
           </strong>
         </button>
