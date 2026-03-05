@@ -27,7 +27,7 @@
   }
 
   body {
-    @apply m-0 min-h-full min-w-[360px] antialiased;
+    @apply m-0 min-h-full antialiased;
     background:
       radial-gradient(1200px 700px at 85% -100px, color-mix(in oklab, var(--app-accent) 22%, transparent), transparent),
       radial-gradient(900px 480px at 8% 0, color-mix(in oklab, var(--app-bg-glow) 55%, transparent), transparent),
@@ -104,6 +104,10 @@
     background-color: var(--app-surface-soft);
     border-color: var(--app-border);
     box-shadow: 0 0 0 1px color-mix(in oklab, var(--app-border) 24%, transparent);
+  }
+
+  .ui-bg-solid-soft {
+    background-color: var(--app-surface-soft);
   }
 
   .ui-border {
