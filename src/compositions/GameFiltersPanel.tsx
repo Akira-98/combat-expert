@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import type { GameStatusFilter } from '../helpers/gameTiming'
 
 type GameFiltersPanelProps = {
@@ -14,6 +14,7 @@ type GameFiltersPanelProps = {
   onGameStatusFilterChange: (value: GameStatusFilter) => void
   onLeagueFilterChange: (value: string) => void
   onResetFilters: () => void
+  onMobileSearchSubmit?: () => void
 }
 
 export function GameFiltersPanel({
@@ -29,6 +30,7 @@ export function GameFiltersPanel({
   onGameStatusFilterChange,
   onLeagueFilterChange,
   onResetFilters,
+  onMobileSearchSubmit,
 }: GameFiltersPanelProps) {
   const [isLeagueExpanded, setIsLeagueExpanded] = useState(false)
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
@@ -44,6 +46,12 @@ export function GameFiltersPanel({
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isSearchModalOpen])
+
+  const handleMobileSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    onMobileSearchSubmit?.()
+    setIsSearchModalOpen(false)
+  }
 
   return (
     <>
@@ -173,7 +181,7 @@ export function GameFiltersPanel({
             className="mx-auto mt-[calc(env(safe-area-inset-top)+16px)] w-[calc(100%-20px)] max-w-xl rounded-xl border border-slate-300 ui-surface p-3"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex items-center gap-2">
+            <form className="flex items-center gap-2" onSubmit={handleMobileSearchSubmit}>
               <svg aria-hidden="true" className="h-4 w-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="6.5" />
                 <path d="M16 16L21 21" />
@@ -186,6 +194,9 @@ export function GameFiltersPanel({
                 value={gameSearchQuery}
                 onChange={(event) => onGameSearchQueryChange(event.target.value)}
               />
+              <button className="ui-btn-primary shrink-0 rounded-lg border px-3 py-2 text-sm font-semibold" type="submit">
+                검색
+              </button>
               <button
                 className="ui-btn-secondary shrink-0 rounded-lg border px-3 py-2 text-sm font-semibold"
                 onClick={() => setIsSearchModalOpen(false)}
@@ -193,7 +204,7 @@ export function GameFiltersPanel({
               >
                 닫기
               </button>
-            </div>
+            </form>
           </div>
         </div>
       )}

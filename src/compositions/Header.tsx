@@ -32,9 +32,9 @@ export function Header({
 }: HeaderProps) {
   const [copyLabel, setCopyLabel] = useState<'idle' | 'copied' | 'failed'>('idle')
   const secondaryButtonClass =
-    'ui-btn-secondary rounded-md border px-2.5 py-1.5 text-xs font-semibold transition md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'
+    'ui-btn-secondary inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition md:h-auto md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'
   const primaryButtonClass =
-    'ui-btn-primary rounded-md border px-2.5 py-1.5 text-xs font-semibold transition md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'
+    'ui-btn-primary inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition md:h-auto md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'
   const isNetworkMatched = Boolean(chainId && chainId === expectedChainId)
 
   const handleCopyAddress = async () => {
@@ -49,8 +49,8 @@ export function Header({
   }
 
   return (
-    <header className="ui-surface flex items-center justify-between gap-2.5 rounded-none border-x-0 px-2.5 py-2 md:gap-4 md:rounded-xl md:border md:p-4">
-      <div>
+    <header className="flex min-h-[68px] items-center justify-between gap-2.5 rounded-none border-0 bg-transparent px-2.5 py-1.5 shadow-none md:min-h-0 md:gap-4 md:rounded-xl md:border md:p-4 md:[background-color:var(--app-surface)] md:[border-color:var(--app-border)] md:[box-shadow:0_0_0_1px_color-mix(in_oklab,var(--app-border)_32%,transparent)]">
+      <div className="py-0.5">
         <h1 className="m-0">
           {onTitleClick ? (
             <button
@@ -65,7 +65,7 @@ export function Header({
             <span className="ui-text-strong ui-mma-logo pt-0.5 text-[22px] leading-[1.18] md:pt-0 md:text-[27px] md:leading-[1.15]">세기의 격잘알</span>
           )}
         </h1>
-        <p className="ui-text-muted mt-0.5 text-xs md:mt-1 md:text-sm">세계 최초 MMA 예측시장</p>
+        <p className="ui-text-muted mt-0 text-xs md:mt-1 md:text-sm">세계 최초 MMA 예측시장</p>
       </div>
       <div>
         {!isConnected ? (

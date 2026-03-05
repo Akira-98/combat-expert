@@ -201,6 +201,10 @@ function App() {
     setMobileView('explore')
     handleBackToGames()
   }
+  const handleMobileSearchSubmit = () => {
+    if (filteredGames.length === 0) return
+    handleOpenGameMarkets(filteredGames[0].gameId)
+  }
 
   const betslipPanelProps = buildBetslipPanelProps({ wallet, betting })
   const hasActiveFilters = Boolean(gameSearchQuery || gameStatusFilter !== 'all' || leagueFilter !== 'all')
@@ -209,7 +213,7 @@ function App() {
     <div className="app-theme mx-auto w-full max-w-[1440px] px-0 pb-36 pt-0 md:px-4 md:pt-4 lg:pb-10">
       <div
         ref={mobileHeaderRef}
-        className="sticky top-0 z-30 border-b border-slate-200/80 bg-slate-100/95 px-3 pb-0 md:static md:border-0 md:bg-transparent md:px-0 md:pb-0"
+        className="sticky top-0 z-30 border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:static md:border-0 md:bg-transparent md:px-0 md:pb-0 md:backdrop-blur-none"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
         <Header
@@ -241,6 +245,7 @@ function App() {
         onGameStatusFilterChange={setGameStatusFilter}
         onLeagueFilterChange={setLeagueFilter}
         onResetFilters={resetFilters}
+        onMobileSearchSubmit={handleMobileSearchSubmit}
       />
 
       <main className="mt-0 grid items-start gap-2 md:mt-4 md:gap-4 xl:grid-cols-[240px_minmax(0,1fr)_316px]">
