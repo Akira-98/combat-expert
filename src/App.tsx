@@ -199,11 +199,8 @@ function App() {
   const handleNavigateToExplore = () => {
     setIsMobileBetslipOpen(false)
     setMobileView('explore')
+    resetFilters()
     handleBackToGames()
-  }
-  const handleMobileSearchSubmit = () => {
-    if (filteredGames.length === 0) return
-    handleOpenGameMarkets(filteredGames[0].gameId)
   }
 
   const betslipPanelProps = buildBetslipPanelProps({ wallet, betting })
@@ -245,7 +242,6 @@ function App() {
         onGameStatusFilterChange={setGameStatusFilter}
         onLeagueFilterChange={setLeagueFilter}
         onResetFilters={resetFilters}
-        onMobileSearchSubmit={handleMobileSearchSubmit}
       />
 
       <main className="mt-0 grid items-start gap-2 md:mt-4 md:gap-4 xl:grid-cols-[240px_minmax(0,1fr)_316px]">

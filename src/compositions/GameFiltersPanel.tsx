@@ -14,7 +14,6 @@ type GameFiltersPanelProps = {
   onGameStatusFilterChange: (value: GameStatusFilter) => void
   onLeagueFilterChange: (value: string) => void
   onResetFilters: () => void
-  onMobileSearchSubmit?: () => void
 }
 
 export function GameFiltersPanel({
@@ -30,7 +29,6 @@ export function GameFiltersPanel({
   onGameStatusFilterChange,
   onLeagueFilterChange,
   onResetFilters,
-  onMobileSearchSubmit,
 }: GameFiltersPanelProps) {
   const [isLeagueExpanded, setIsLeagueExpanded] = useState(false)
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
@@ -49,7 +47,6 @@ export function GameFiltersPanel({
 
   const handleMobileSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    onMobileSearchSubmit?.()
     setIsSearchModalOpen(false)
   }
 
