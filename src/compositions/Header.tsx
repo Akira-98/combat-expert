@@ -49,8 +49,8 @@ export function Header({
   return (
     <header className="ui-surface flex items-center justify-between gap-2.5 rounded-none border-x-0 px-2.5 py-2 md:gap-4 md:rounded-xl md:border md:p-4">
       <div>
-        <h1 className="ui-text-strong ui-mma-logo m-0 text-[24px] leading-none md:text-[27px] md:leading-[1.15]">세기의 격잘알</h1>
-        <p className="ui-text-muted mt-1 hidden text-xs md:block md:text-sm">세계 최초 MMA 예측시장</p>
+        <h1 className="ui-text-strong ui-mma-logo m-0 pt-0.5 text-[22px] leading-[1.18] md:pt-0 md:text-[27px] md:leading-[1.15]">세기의 격잘알</h1>
+        <p className="ui-text-muted mt-0.5 text-xs md:mt-1 md:text-sm">세계 최초 MMA 예측시장</p>
       </div>
       <div>
         {!isConnected ? (
