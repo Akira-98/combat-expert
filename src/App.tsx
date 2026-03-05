@@ -184,38 +184,22 @@ function App() {
         className="sticky top-0 z-30 -mx-4 border-b border-slate-200/80 bg-slate-100/95 px-4 pb-2 backdrop-blur md:static md:mx-0 md:border-0 md:bg-transparent md:px-0 md:pb-0"
         style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
-        <div className="md:hidden">
-          <div className="flex items-center justify-between gap-2">
-            <h1 className="ui-text-strong ui-mma-logo m-0 text-lg">세기의 격잘알</h1>
-            <button
-              className="ui-btn-primary rounded-lg border px-2.5 py-1.5 text-xs font-semibold"
-              disabled={!wallet.canOpenAuthModal || wallet.isConnecting}
-              onClick={wallet.openAuthModal}
-              type="button"
-            >
-              {wallet.isConnecting ? '연결 중' : wallet.isConnected ? '지갑' : '로그인'}
-            </button>
-          </div>
-        </div>
-
-        <div className="hidden md:block">
-          <Header
-            isAuthenticated={wallet.isAuthenticated}
-            isConnected={wallet.isConnected}
-            isConnecting={wallet.isConnecting}
-            address={wallet.address}
-            chainId={wallet.chainId}
-            expectedChainId={polygon.id}
-            isAAWallet={wallet.isAAWallet}
-            canOpenAuthModal={wallet.canOpenAuthModal}
-            connectErrorMessage={wallet.connectErrorMessage}
-            onOpenAuthModal={wallet.openAuthModal}
-            onDisconnect={wallet.disconnectWallet}
-          />
-        </div>
+        <Header
+          isAuthenticated={wallet.isAuthenticated}
+          isConnected={wallet.isConnected}
+          isConnecting={wallet.isConnecting}
+          address={wallet.address}
+          chainId={wallet.chainId}
+          expectedChainId={polygon.id}
+          isAAWallet={wallet.isAAWallet}
+          canOpenAuthModal={wallet.canOpenAuthModal}
+          connectErrorMessage={wallet.connectErrorMessage}
+          onOpenAuthModal={wallet.openAuthModal}
+          onDisconnect={wallet.disconnectWallet}
+        />
       </div>
 
-      <section className="mt-3 hidden rounded-xl border border-slate-200 bg-white p-3 md:block">
+      <section className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-center">
           <label className="grid gap-1 text-xs font-semibold text-slate-600">
             게임 검색
