@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { GameStatusFilter } from '../helpers/gameTiming'
 
 type GameFiltersPanelProps = {
@@ -29,55 +29,38 @@ export function GameFiltersPanel({
   onResetFilters,
 }: GameFiltersPanelProps) {
   const [isLeagueExpanded, setIsLeagueExpanded] = useState(false)
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
   const mobileLeagueOptions = isLeagueExpanded ? leagueOptions : leagueOptions.slice(0, 8)
+
+  useEffect(() => {
+    if (!isSearchModalOpen) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsSearchModalOpen(false)
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isSearchModalOpen])
 
   return (
     <>
-      <section className="relative z-20 px-2.5 pb-1.5 pt-1 md:static md:mt-4 md:rounded-xl md:border md:bg-white md:p-3 md:backdrop-blur-none">
-        <div className="-mx-2.5 sticky top-[calc(env(safe-area-inset-top)+72px)] z-20 border-b border-slate-200/70 ui-bg-solid-soft px-2.5 pb-1.5 pt-0.5 md:hidden">
-          <label className="grid gap-1 text-[11px] font-medium text-slate-600">
-            <span className="sr-only">게임 검색</span>
-            <input
-              className="h-8 appearance-none rounded-md border border-slate-300 bg-white px-2.5 text-xs text-slate-900 outline-none ring-0 placeholder:text-slate-400 focus:border-blue-500"
-              placeholder="팀명, 리그명으로 검색"
-              type="search"
-              value={gameSearchQuery}
-              onChange={(event) => onGameSearchQueryChange(event.target.value)}
-            />
-          </label>
+      <section className="-mx-2.5 sticky top-[calc(env(safe-area-inset-top)+72px)] z-20 ui-bg-solid-soft px-2.5 py-1.5 md:mx-0 md:static md:mt-4 md:rounded-xl md:border md:bg-white md:p-3 md:backdrop-blur-none">
+        <div className="md:hidden">
+          <div className="flex items-center gap-2">
+            <button
+              aria-label="검색 열기"
+              className="ui-btn-secondary inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border"
+              onClick={() => setIsSearchModalOpen(true)}
+              type="button"
+            >
+              <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="M16 16L21 21" />
+              </svg>
+            </button>
 
-          <div className="mt-1 grid gap-1.5">
-            <div className="grid grid-cols-3 gap-1">
-              <button
-                className={`h-8 rounded-md border px-2 text-xs font-semibold transition ${
-                  gameStatusFilter === 'all' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
-                }`}
-                onClick={() => onGameStatusFilterChange('all')}
-                type="button"
-              >
-                종료 제외
-              </button>
-              <button
-                className={`h-8 rounded-md border px-2 text-xs font-semibold transition ${
-                  gameStatusFilter === 'live' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
-                }`}
-                onClick={() => onGameStatusFilterChange('live')}
-                type="button"
-              >
-                라이브
-              </button>
-              <button
-                className={`h-8 rounded-md border px-2 text-xs font-semibold transition ${
-                  gameStatusFilter === 'upcoming' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
-                }`}
-                onClick={() => onGameStatusFilterChange('upcoming')}
-                type="button"
-              >
-                시작 전
-              </button>
-            </div>
-
-            <div className="scrollbar-thin flex items-center gap-1 overflow-x-auto pb-0.5">
+            <div className="scrollbar-thin flex min-w-0 items-center gap-1 overflow-x-auto pb-0.5">
               <button
                 className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition ${
                   leagueFilter === 'all' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
@@ -109,6 +92,10 @@ export function GameFiltersPanel({
                 </button>
               )}
             </div>
+
+            <span className="shrink-0 text-[11px] text-slate-500">
+              {filteredGamesCount}/{totalGamesCount}
+            </span>
           </div>
         </div>
 
@@ -154,7 +141,7 @@ export function GameFiltersPanel({
           </label>
         </div>
 
-        <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-slate-600 md:mt-2">
+        <div className="hidden md:mt-2 md:flex md:flex-wrap md:items-center md:gap-1.5 md:text-xs md:text-slate-600">
           <span className="text-[11px] text-slate-500 md:rounded-full md:bg-slate-100 md:px-2.5 md:py-1 md:text-xs">
             표시 중 게임 {filteredGamesCount} / 전체 {totalGamesCount}
           </span>
@@ -169,6 +156,42 @@ export function GameFiltersPanel({
           )}
         </div>
       </section>
+
+      {isSearchModalOpen && (
+        <div
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm md:hidden"
+          onClick={() => setIsSearchModalOpen(false)}
+          role="dialog"
+        >
+          <div
+            className="mx-auto mt-[calc(env(safe-area-inset-top)+16px)] w-[calc(100%-20px)] max-w-xl rounded-xl border border-slate-300 ui-surface p-3"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center gap-2">
+              <svg aria-hidden="true" className="h-4 w-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="M16 16L21 21" />
+              </svg>
+              <input
+                autoFocus
+                className="ui-input h-10 min-w-0 flex-1 rounded-lg border px-3 text-sm outline-none placeholder:text-slate-400"
+                placeholder="팀명, 리그명으로 검색"
+                type="search"
+                value={gameSearchQuery}
+                onChange={(event) => onGameSearchQueryChange(event.target.value)}
+              />
+              <button
+                className="ui-btn-secondary shrink-0 rounded-lg border px-3 py-2 text-sm font-semibold"
+                onClick={() => setIsSearchModalOpen(false)}
+                type="button"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
