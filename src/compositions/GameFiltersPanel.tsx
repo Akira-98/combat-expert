@@ -32,22 +32,23 @@ export function GameFiltersPanel({
   const mobileLeagueOptions = isLeagueExpanded ? leagueOptions : leagueOptions.slice(0, 8)
 
   return (
-    <section className="relative z-20 border-b border-slate-200/80 bg-slate-100/95 px-2.5 pb-1.5 pt-1 md:static md:mt-4 md:rounded-xl md:border md:bg-white md:p-3 md:backdrop-blur-none">
-      <div className="md:hidden">
-        <div className="-mx-2.5 sticky top-[calc(env(safe-area-inset-top)+72px)] z-20 border-b border-slate-200/70 bg-slate-100/95 px-2.5 pb-1 pt-0.5 backdrop-blur">
-          <label className="grid gap-1 text-[11px] font-medium text-slate-600">
-            <span className="sr-only">게임 검색</span>
-            <input
-              className="h-8 rounded-md border border-slate-300 bg-white px-2.5 text-xs text-slate-900 outline-none ring-0 placeholder:text-slate-400 focus:border-blue-500"
-              placeholder="팀명, 리그명으로 검색"
-              type="search"
-              value={gameSearchQuery}
-              onChange={(event) => onGameSearchQueryChange(event.target.value)}
-            />
-          </label>
-        </div>
+    <>
+      <div className="-mx-2.5 sticky top-[calc(env(safe-area-inset-top)+72px)] z-20 border-b border-slate-200/70 bg-slate-100/95 px-2.5 pb-1 pt-0.5 md:hidden">
+        <label className="grid gap-1 text-[11px] font-medium text-slate-600">
+          <span className="sr-only">게임 검색</span>
+          <input
+            className="h-8 appearance-none rounded-md border border-slate-300 bg-white px-2.5 text-xs text-slate-900 outline-none ring-0 placeholder:text-slate-400 focus:border-blue-500"
+            placeholder="팀명, 리그명으로 검색"
+            type="search"
+            value={gameSearchQuery}
+            onChange={(event) => onGameSearchQueryChange(event.target.value)}
+          />
+        </label>
+      </div>
 
-        <div className="mt-1 grid gap-1.5">
+      <section className="relative z-20 px-2.5 pb-1.5 pt-1 md:static md:mt-4 md:rounded-xl md:border md:bg-white md:p-3 md:backdrop-blur-none">
+        <div className="md:hidden">
+          <div className="mt-1 grid gap-1.5">
           <div className="grid grid-cols-3 gap-1">
             <button
               className={`h-8 rounded-md border px-2 text-xs font-semibold transition ${
@@ -111,9 +112,9 @@ export function GameFiltersPanel({
             )}
           </div>
         </div>
-      </div>
+        </div>
 
-      <div className="hidden gap-3 md:grid lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-center">
+        <div className="hidden gap-3 md:grid lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-center">
         <label className="grid gap-1 text-xs font-semibold text-slate-600">
           게임 검색
           <input
@@ -169,6 +170,7 @@ export function GameFiltersPanel({
           </button>
         )}
       </div>
-    </section>
+      </section>
+    </>
   )
 }

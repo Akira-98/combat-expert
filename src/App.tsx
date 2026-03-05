@@ -181,7 +181,7 @@ function App() {
   return (
     <div className="app-theme mx-auto w-full max-w-[1440px] px-0 pb-36 pt-0 md:px-4 md:pt-4 lg:pb-10">
       <div
-        className="sticky top-0 z-30 border-b border-slate-200/80 bg-slate-100/95 px-3 pb-1.5 backdrop-blur md:static md:border-0 md:bg-transparent md:px-0 md:pb-0"
+        className="sticky top-0 z-30 border-b border-slate-200/80 bg-slate-100/95 px-3 pb-1.5 md:static md:border-0 md:bg-transparent md:px-0 md:pb-0"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
         <Header
