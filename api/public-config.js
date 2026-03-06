@@ -1,4 +1,17 @@
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+const FALLBACK_POLYGON_RPC_URL = 'https://polygon-rpc.com'
+
+function normalizePolygonRpcUrl(rpcUrl) {
+  const trimmed = (rpcUrl || '').trim()
+  if (!trimmed) return ''
+
+  // The bare Ankr endpoint requires an API key and returns 401 for public traffic.
+  if (trimmed === 'https://rpc.ankr.com/polygon') {
+    return FALLBACK_POLYGON_RPC_URL
+  }
+
+  return trimmed
+}
 
 function sendJson(res, statusCode, payload) {
   res.status(statusCode)
@@ -15,7 +28,7 @@ export default function handler(req, res) {
 
   const config = {
     affiliateAddress: process.env.AFFILIATE || ZERO_ADDRESS,
-    rpcUrl: process.env.RPC_URL || '',
+    rpcUrl: normalizePolygonRpcUrl(process.env.RPC_URL),
     walletConnectProjectId: process.env.WALLETCONNECT_PROJECT_ID || '',
     privyAppId: process.env.PRIVY_APP_ID || '',
     ablyChannel: process.env.ABLY_CHANNEL || 'chat:ufc:live',

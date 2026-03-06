@@ -9,6 +9,7 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vite.dev/config/
 const isAnalyze = process.env.ANALYZE === 'true'
 const DEFAULT_ABLY_TTL_MS = 60 * 60 * 1000
+const FALLBACK_POLYGON_RPC_URL = 'https://polygon-rpc.com'
 
 type AppServerEnv = {
   AFFILIATE: string
@@ -35,12 +36,24 @@ function getNodeModulePackageName(id: string) {
   return parts[0] ?? null
 }
 
+function normalizePolygonRpcUrl(rpcUrl: string | undefined) {
+  const trimmed = (rpcUrl || '').trim()
+  if (!trimmed) return ''
+
+  // The bare Ankr endpoint requires an API key and returns 401 for public traffic.
+  if (trimmed === 'https://rpc.ankr.com/polygon') {
+    return FALLBACK_POLYGON_RPC_URL
+  }
+
+  return trimmed
+}
+
 function createRuntimeServerPlugin(env: Partial<AppServerEnv>): Plugin {
   const zeroAddress = '0x0000000000000000000000000000000000000000'
 
   const getPublicConfig = () => ({
     affiliateAddress: env.AFFILIATE || zeroAddress,
-    rpcUrl: env.RPC_URL || '',
+    rpcUrl: normalizePolygonRpcUrl(env.RPC_URL),
     walletConnectProjectId: env.WALLETCONNECT_PROJECT_ID || '',
     privyAppId: env.PRIVY_APP_ID || '',
     ablyChannel: env.ABLY_CHANNEL || 'chat:ufc:live',
