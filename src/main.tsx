@@ -43,9 +43,20 @@ function renderFatalConfigError(message: string) {
   )
 }
 
+function createPrivyPolygonChain(rpcUrl: string) {
+  return {
+    ...polygon,
+    rpcUrls: {
+      default: { http: [rpcUrl] },
+      public: { http: [rpcUrl] },
+    },
+  }
+}
+
 async function bootstrap() {
   try {
     const runtimeConfig = await loadRuntimeConfig()
+    const privyPolygonChain = createPrivyPolygonChain(runtimeConfig.rpcUrl)
     const wagmiConfig = createWagmiConfig(runtimeConfig.rpcUrl)
 
     root.render(
@@ -54,8 +65,8 @@ async function bootstrap() {
           <PrivyProvider
             appId={runtimeConfig.privyAppId}
             config={{
-              defaultChain: polygon,
-              supportedChains: [polygon],
+              defaultChain: privyPolygonChain,
+              supportedChains: [privyPolygonChain],
               embeddedWallets: {
                 ethereum: {
                   createOnLogin: 'users-without-wallets',

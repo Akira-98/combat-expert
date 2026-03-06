@@ -53,7 +53,7 @@ export function GameFiltersPanel({
   return (
     <>
       <section
-        className="sticky z-20 ui-bg-solid-soft px-2.5 py-1.5 md:static md:mt-4 md:rounded-xl md:border md:bg-white md:p-3 md:backdrop-blur-none"
+        className="sticky z-20 ui-bg-solid-soft px-2.5 py-1.5 md:static md:mt-4 md:rounded-xl md:border md:[background-color:var(--app-surface)] md:[border-color:var(--app-border)] md:p-3 md:backdrop-blur-none"
         style={{ top: `${mobileStickyTop}px` }}
       >
         <div className="md:hidden">
