@@ -152,7 +152,7 @@ export function GameFiltersPanel({
         </div>
 
         <div className="hidden md:mt-2 md:flex md:flex-wrap md:items-center md:gap-1.5 md:text-xs md:text-slate-600">
-          <span className="text-[11px] text-slate-500 md:rounded-full md:bg-slate-100 md:px-2.5 md:py-1 md:text-xs">
+          <span className="ui-text-muted text-[11px] md:text-xs">
             표시 중 게임 {filteredGamesCount} / 전체 {totalGamesCount}
           </span>
           {hasActiveFilters && (

@@ -1,15 +1,15 @@
 import { useMemo, useState } from 'react'
 import type { Address } from 'viem'
-import { type Bet, useBaseBetslip, useBet, useBets, useBetTokenBalance, useDetailedBetslip } from '@azuro-org/sdk'
+import { useBaseBetslip, useBet, useBetTokenBalance, useDetailedBetslip } from '@azuro-org/sdk'
 import type { MarketSection, OutcomeItem } from '../types/ui'
 import { buildSelectedOutcomes, mapBetslipToSelectionItems } from '../helpers/mappers'
-import {
-  getFriendlyTransactionErrorMessage,
-  type TransactionNotice,
-} from '../helpers/betslipUi'
+import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
 import { buildBettingDerivedState, clampSlippage } from './useBetting.helpers'
 import { useBetslipSelectionMeta } from './useBetslipSelectionMeta'
 import { useAppConfig } from '../config/useAppConfig'
+import { useBetHistory } from './useBetHistory'
+import { useBetRedeem } from './useBetRedeem'
+import { useTransactionNotice } from './useTransactionNotice'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const DEFAULT_SLIPPAGE = 3
@@ -22,7 +22,9 @@ type UseBettingParams = {
 
 export function useBetting({ address, isConnected, marketSections }: UseBettingParams) {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
-  const [transactionNotice, setTransactionNotice] = useState<TransactionNotice | undefined>()
+  const { transactionNotice, clearTransactionNotice, setSuccessNotice, setErrorNotice } = useTransactionNotice({
+    mapErrorMessage: getFriendlyTransactionErrorMessage,
+  })
   const { affiliateAddress: affiliateAddressFromConfig } = useAppConfig()
   const { items, addItem, clear, removeItem } = useBaseBetslip()
   const {
@@ -41,7 +43,6 @@ export function useBetting({ address, isConnected, marketSections }: UseBettingP
   })
 
   const affiliateAddress = (affiliateAddressFromConfig || ZERO_ADDRESS) as Address
-  const bettorAddress = (address || ZERO_ADDRESS) as Address
 
   const { submit, isApproveRequired, approveTx, betTx } = useBet({
     betAmount: betAmount || '1',
@@ -53,31 +54,25 @@ export function useBetting({ address, isConnected, marketSections }: UseBettingP
     onSuccess: (receipt) => {
       clear()
       resetSelectionMeta()
-      setTransactionNotice({
-        type: 'success',
+      setSuccessNotice({
         title: '베팅 완료',
         message: '트랜잭션이 성공적으로 처리되었습니다.',
         txHash: receipt?.transactionHash,
       })
     },
-    onError: (err) => {
-      setTransactionNotice({
-        type: 'error',
-        title: '베팅 실패',
-        message: getFriendlyTransactionErrorMessage(err),
-      })
-    },
+    onError: (err) => setErrorNotice({ title: '베팅 실패', error: err }),
   })
-
-  const { data: betsPages } = useBets({
-    filter: { bettor: bettorAddress },
-    query: { enabled: Boolean(address) },
+  const { bets } = useBetHistory({ address })
+  const { redeemingBetTokenId, redeemPending, redeemBet } = useBetRedeem({
+    onBeforeSubmit: clearTransactionNotice,
+    onSuccess: (txHash) =>
+      setSuccessNotice({
+        title: '수익 수령 완료',
+        message: '수익 수령 트랜잭션이 성공적으로 처리되었습니다.',
+        txHash,
+      }),
+    onError: (err) => setErrorNotice({ title: '수익 수령 실패', error: err }),
   })
-
-  const bets = useMemo<Bet[]>(() => {
-    if (!betsPages) return []
-    return betsPages.pages.flatMap((page) => page.bets)
-  }, [betsPages])
 
   const selectedOutcomes = useMemo(() => buildSelectedOutcomes(items), [items])
   const { mergedOutcomeMeta, selectedOutcomePriceChanges, rememberSelectionMeta, resetSelectionMeta, removeSelectionMeta } =
@@ -149,9 +144,11 @@ export function useBetting({ address, isConnected, marketSections }: UseBettingP
     },
     transactionSteps,
     transactionNotice,
-    clearTransactionNotice: () => setTransactionNotice(undefined),
+    redeemingBetTokenId,
+    redeemPending,
+    clearTransactionNotice,
     submitBet: async () => {
-      setTransactionNotice(undefined)
+      clearTransactionNotice()
       try {
         await submit()
       } catch {
@@ -162,6 +159,7 @@ export function useBetting({ address, isConnected, marketSections }: UseBettingP
       clear()
       resetSelectionMeta()
     },
+    redeemBet,
     removeSelection: ({ conditionId, outcomeId }: { conditionId: string; outcomeId: string }) => {
       removeItem({ conditionId, outcomeId })
       removeSelectionMeta(conditionId, outcomeId)
