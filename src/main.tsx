@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { Buffer } from 'buffer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PrivyProvider } from '@privy-io/react-auth'
 import { SmartWalletsProvider } from '@privy-io/react-auth/smart-wallets'
@@ -11,6 +12,10 @@ import App from './App.tsx'
 import { createWagmiConfig } from './wagmi'
 import { AppConfigProvider } from './config/AppConfigContext'
 import { loadRuntimeConfig } from './config/runtimeConfig'
+
+if (typeof globalThis.Buffer === 'undefined') {
+  globalThis.Buffer = Buffer
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
