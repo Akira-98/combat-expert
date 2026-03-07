@@ -144,7 +144,7 @@ export default defineConfig(({ mode }) => {
         // Keep SDK AA connector on a stable shim.
         // Pointing this alias to app hooks can re-introduce ChainProvider hook-order errors.
         '@azuro-org/sdk-social-aa-connector': fileURLToPath(
-          new URL('./src/azuroSdkSocialAaConnectorShim.ts', import.meta.url),
+          new URL('./src/azuroSdkSocialAaConnectorShim.tsx', import.meta.url),
         ),
       },
     },

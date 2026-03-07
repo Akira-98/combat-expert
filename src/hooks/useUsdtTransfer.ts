@@ -47,7 +47,7 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
   const isSupportedChain = Boolean(usdtConfig)
 
   const { data: balanceRaw, refetch: refetchBalance } = useReadContract({
-    address: DEFAULT_USDT_CONFIG.address,
+    address: tokenAddress,
     abi: erc20Abi,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,

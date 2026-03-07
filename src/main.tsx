@@ -12,6 +12,7 @@ import App from './App.tsx'
 import { createWagmiConfig } from './wagmi'
 import { AppConfigProvider } from './config/AppConfigContext'
 import { loadRuntimeConfig } from './config/runtimeConfig'
+import { AzuroSdkSocialAaConnectorProvider } from './azuroSdkSocialAaConnectorShim'
 
 if (typeof globalThis.Buffer === 'undefined') {
   globalThis.Buffer = Buffer
@@ -87,9 +88,11 @@ async function bootstrap() {
             <SmartWalletsProvider>
               <QueryClientProvider client={queryClient}>
                 <WagmiProvider config={wagmiConfig}>
-                  <AzuroSDKProvider initialChainId={polygon.id}>
-                    <App />
-                  </AzuroSDKProvider>
+                  <AzuroSdkSocialAaConnectorProvider>
+                    <AzuroSDKProvider initialChainId={polygon.id}>
+                      <App />
+                    </AzuroSDKProvider>
+                  </AzuroSdkSocialAaConnectorProvider>
                 </WagmiProvider>
               </QueryClientProvider>
             </SmartWalletsProvider>

@@ -16,7 +16,7 @@ const ERC20_TOKENS_BY_CHAIN: Record<number, Partial<Record<TokenSymbol, Erc20Tok
       symbol: 'USDT',
       chainId: polygon.id,
       name: 'Tether USD',
-      address: '0xc2132D05D31c914a87C6611C10748AaCB3fA3aC8',
+      address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
       decimals: 6,
     },
   },
