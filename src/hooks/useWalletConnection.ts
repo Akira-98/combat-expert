@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useConnectOrCreateWallet, usePrivy } from '@privy-io/react-auth'
+import { useDisconnect } from 'wagmi'
 import { useAccount } from '../azuroSocialAaConnector'
 
 const getWalletConnectErrorMessage = (error: unknown) => {
@@ -19,6 +20,7 @@ const getWalletConnectErrorMessage = (error: unknown) => {
 export function useWalletConnection() {
   const { address, isConnected, isConnecting, chainId, isAAWallet } = useAccount()
   const { ready, authenticated, logout } = usePrivy()
+  const { disconnect } = useDisconnect()
   const [connectErrorMessage, setConnectErrorMessage] = useState<string>()
   const { connectOrCreateWallet } = useConnectOrCreateWallet({
     onSuccess: () => {
@@ -51,6 +53,7 @@ export function useWalletConnection() {
     openAuthModal,
     disconnectWallet: () => {
       setConnectErrorMessage(undefined)
+      disconnect()
       void logout()
     },
   }
