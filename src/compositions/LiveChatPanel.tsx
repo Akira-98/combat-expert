@@ -280,7 +280,7 @@ export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
             disabled={connectionState !== 'connected'}
           />
           <button
-            className="ui-btn-primary rounded-md border px-3 py-2 text-xs font-semibold md:rounded-lg disabled:opacity-50"
+            className="ui-btn-primary shrink-0 whitespace-nowrap rounded-md border px-3 py-2 text-xs font-semibold md:rounded-lg disabled:opacity-50"
             type="submit"
             disabled={!canSend}
           >

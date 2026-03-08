@@ -42,7 +42,7 @@ export function MyBets({ address, bets, redeemPending, redeemingBetTokenId, onRe
                     </p>
                   </div>
                   <button
-                    className="ui-btn-primary rounded-md border px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
+                    className="ui-btn-primary shrink-0 whitespace-nowrap rounded-md border px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
                     disabled={!canRedeem || redeemPending}
                     onClick={() => onRedeemBet(bet)}
                     type="button"
