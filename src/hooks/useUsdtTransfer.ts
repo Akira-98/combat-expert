@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSendTransaction } from '@privy-io/react-auth'
+import { usePrivy } from '@privy-io/react-auth'
 import { erc20Abi, encodeFunctionData, formatUnits, isAddress, parseUnits } from 'viem'
 import { useReadContract } from 'wagmi'
 import { useTransactionNotice } from './useTransactionNotice'
@@ -53,6 +54,7 @@ const toDebugError = (error: unknown) => {
 }
 
 export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: UseUsdtTransferParams) {
+  const { ready, authenticated, user } = usePrivy()
   const [recipient, setRecipient] = useState('')
   const [amountInput, setAmountInput] = useState('')
   const [isSending, setIsSending] = useState(false)
@@ -127,6 +129,18 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
         chainId: usdtConfig.chainId,
         amountInput,
         decimals: tokenDecimals,
+      })
+      console.info('[USDT transfer] wallet:resolution', {
+        fromAddress: address,
+        privyReady: ready,
+        privyAuthenticated: authenticated,
+        privyWalletAddress: user?.wallet?.address,
+        privyWalletClientType: user?.wallet?.walletClientType,
+        privyLinkedWallets: user?.linkedAccounts
+          ?.filter((account) => account.type === 'wallet')
+          .map((account) => ('address' in account ? account.address : undefined))
+          .filter(Boolean),
+        privySmartWalletAddress: user?.smartWallet?.address,
       })
 
       const result = await sendTransaction(
