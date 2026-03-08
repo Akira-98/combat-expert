@@ -20,17 +20,25 @@ export function MyBets({ address, bets, redeemPending, redeemingBetTokenId, onRe
             const canRedeem = bet.isRedeemable && !bet.isRedeemed
             const isRedeeming = redeemPending && redeemingBetTokenId === bet.tokenId
             const actionLabel = isRedeeming ? '수령 중...' : canRedeem ? '수령하기' : bet.isRedeemed ? '수령완료' : '정산대기'
+            const primaryOutcome = bet.outcomes[0]
+            const gameTitle = primaryOutcome?.game?.title || '경기 정보 없음'
+            const summary =
+              bet.outcomes.length > 1
+                ? `${primaryOutcome?.selectionName || '-'} 외 ${bet.outcomes.length - 1}건`
+                : `${primaryOutcome?.marketName || '-'} · ${primaryOutcome?.selectionName || '-'}`
 
             return (
               <li
                 key={`${bet.tokenId}-${bet.createdAt}`}
                 className="ui-surface-soft ui-text-body rounded-md border p-2 text-sm md:rounded-lg md:p-2.5"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="ui-text-strong m-0 truncate text-sm font-semibold">#{bet.tokenId}</p>
-                    <p className="ui-text-muted m-0.5 truncate text-xs">
-                      금액 {bet.amount} | 상태 {bet.status}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 space-y-1">
+                    <p className="ui-text-strong m-0 truncate text-sm font-semibold">{gameTitle}</p>
+                    <p className="ui-text-body m-0 truncate text-xs">{summary}</p>
+                    <p className="ui-text-strong m-0 text-base font-semibold">베팅 금액 {bet.amount}</p>
+                    <p className="ui-text-muted m-0 truncate text-[11px]">
+                      #{bet.tokenId} | 상태 {bet.status}
                     </p>
                   </div>
                   <button

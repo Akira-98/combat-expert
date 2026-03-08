@@ -15,7 +15,6 @@ import { useWalletConnection } from './hooks/useWalletConnection'
 import { useMarketData } from './hooks/useMarketData'
 import { useBetting } from './hooks/useBetting'
 import { useUsdtTransfer } from './hooks/useUsdtTransfer'
-import { polygon } from 'viem/chains'
 
 function App() {
   const [isMobileBetslipOpen, setIsMobileBetslipOpen] = useState(false)
@@ -73,7 +72,7 @@ function App() {
         className="sticky top-0 z-30 border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:static md:border-0 md:bg-transparent md:px-0 md:pb-0 md:backdrop-blur-none"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
-        <AppHeaderContainer wallet={wallet} expectedChainId={polygon.id} onTitleClick={handleNavigateToExplore} />
+        <AppHeaderContainer wallet={wallet} onTitleClick={handleNavigateToExplore} />
       </div>
 
       <AppGameFiltersContainer filters={filters} games={games} mobileStickyTop={mobileHeaderHeight} />

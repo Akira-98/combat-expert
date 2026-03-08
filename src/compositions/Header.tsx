@@ -1,13 +1,11 @@
 import { useState } from 'react'
-import { getChainName, shortenAddress } from '../helpers/walletUi'
+import { shortenAddress } from '../helpers/walletUi'
 
 type HeaderProps = {
   isAuthenticated: boolean
   isConnected: boolean
   isConnecting: boolean
   address?: `0x${string}`
-  chainId?: number
-  expectedChainId: number
   isAAWallet?: boolean
   canOpenAuthModal: boolean
   connectErrorMessage?: string
@@ -21,9 +19,7 @@ export function Header({
   isConnected,
   isConnecting,
   address,
-  chainId,
-  expectedChainId,
-  isAAWallet,
+  isAAWallet: _isAAWallet,
   canOpenAuthModal,
   connectErrorMessage,
   onTitleClick,
@@ -35,7 +31,8 @@ export function Header({
     'ui-btn-secondary inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition md:h-auto md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'
   const primaryButtonClass =
     'ui-btn-primary inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition md:h-auto md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'
-  const isNetworkMatched = Boolean(chainId && chainId === expectedChainId)
+  const iconButtonClass =
+    'ui-btn-secondary inline-flex h-8 w-8 items-center justify-center rounded-md border text-xs font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
 
   const handleCopyAddress = async () => {
     if (!address) return
@@ -89,29 +86,39 @@ export function Header({
           </div>
         ) : (
           <div className="flex flex-col items-end gap-2">
-            <div className="flex flex-wrap items-center justify-end gap-2">
-              <span
-                className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${
-                  isAAWallet
-                    ? 'border-orange-300/40 bg-orange-950/40 text-orange-200'
-                    : 'ui-pill'
-                }`}
-              >
-                {isAAWallet ? 'Smart Wallet' : 'EOA Wallet'}
-              </span>
+            <div className="flex flex-wrap items-center justify-end gap-1.5 md:gap-2">
               <span className="ui-pill rounded-full border px-2.5 py-1 text-xs font-medium">
                 {shortenAddress(address)}
               </span>
-              <button className={secondaryButtonClass} onClick={handleCopyAddress} type="button">
-                {copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '복사됨' : '복사 실패'}
+              <span className="ui-pill rounded-full border px-2.5 py-1 text-xs font-medium">Polygon</span>
+              <button
+                aria-label={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
+                className={iconButtonClass}
+                onClick={handleCopyAddress}
+                title={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
+                type="button"
+              >
+                <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
+                  <path
+                    d="M8 8.75A2.75 2.75 0 0 1 10.75 6h7.5A2.75 2.75 0 0 1 21 8.75v7.5A2.75 2.75 0 0 1 18.25 19h-7.5A2.75 2.75 0 0 1 8 16.25z"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  />
+                  <path
+                    d="M16 6V5.75A2.75 2.75 0 0 0 13.25 3h-7.5A2.75 2.75 0 0 0 3 5.75v7.5A2.75 2.75 0 0 0 5.75 16H6"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  />
+                </svg>
               </button>
-              <button className={secondaryButtonClass} onClick={onDisconnect}>
-                연결 해제
+              <button aria-label="지갑 연결 해제" className={iconButtonClass} onClick={onDisconnect} title="지갑 연결 해제" type="button">
+                <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
+                  <path d="M14.5 5.75h2.75A1.75 1.75 0 0 1 19 7.5v9a1.75 1.75 0 0 1-1.75 1.75H14.5" stroke="currentColor" strokeWidth="1.8" />
+                  <path d="M10.5 8.25 14 12l-3.5 3.75" stroke="currentColor" strokeWidth="1.8" />
+                  <path d="M14 12H4.5" stroke="currentColor" strokeWidth="1.8" />
+                </svg>
               </button>
             </div>
-            <p className={`m-0 rounded-md border px-2 py-1 text-right text-xs font-medium ${isNetworkMatched ? 'ui-state-success' : 'ui-state-danger'}`}>
-              네트워크: {getChainName(chainId)} {isNetworkMatched ? '(정상)' : '(지원 네트워크로 전환 필요)'}
-            </p>
           </div>
         )}
       </div>
