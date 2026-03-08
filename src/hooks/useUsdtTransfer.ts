@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { usePrivy } from '@privy-io/react-auth'
 import { erc20Abi, encodeFunctionData, formatUnits, isAddress, parseUnits } from 'viem'
 import { polygon } from 'viem/chains'
 import { useReadContract } from 'wagmi'
@@ -34,28 +33,7 @@ const getTransferErrorMessage = (error: unknown) => {
   return '송금 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
 }
 
-const toDebugError = (error: unknown) => {
-  if (!error || typeof error !== 'object') return { raw: String(error) }
-  const e = error as {
-    name?: string
-    message?: string
-    code?: string | number
-    shortMessage?: string
-    details?: string
-    cause?: unknown
-  }
-  return {
-    name: e.name,
-    code: e.code,
-    message: e.message,
-    shortMessage: e.shortMessage,
-    details: e.details,
-    cause: e.cause,
-  }
-}
-
 export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: UseUsdtTransferParams) {
-  const { ready, authenticated, user } = usePrivy()
   const aaWalletClient = useAAWalletClient()
   const [recipient, setRecipient] = useState('')
   const [amountInput, setAmountInput] = useState('')
@@ -124,27 +102,6 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
         args: [recipientTrimmed as `0x${string}`, value],
       })
 
-      console.info('[USDT transfer] submit:start', {
-        from: address,
-        to: recipientTrimmed,
-        tokenAddress,
-        chainId: usdtConfig.chainId,
-        amountInput,
-        decimals: tokenDecimals,
-      })
-      console.info('[USDT transfer] wallet:resolution', {
-        fromAddress: address,
-        privyReady: ready,
-        privyAuthenticated: authenticated,
-        privyWalletAddress: user?.wallet?.address,
-        privyWalletClientType: user?.wallet?.walletClientType,
-        privyLinkedWallets: user?.linkedAccounts
-          ?.filter((account) => account.type === 'wallet')
-          .map((account) => ('address' in account ? account.address : undefined))
-          .filter(Boolean),
-        privySmartWalletAddress: user?.smartWallet?.address,
-      })
-
       const result = await aaWalletClient.sendTransaction({
         to: tokenAddress,
         data,
@@ -152,10 +109,6 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
         chain: polygon,
       })
       const txHash = typeof result === 'string' ? result : (result as { hash?: `0x${string}` } | undefined)?.hash
-
-      console.info('[USDT transfer] submit:success', {
-        txHash,
-      })
 
       setSuccessNotice({
         title: 'USDT 송금 요청 완료',
@@ -165,18 +118,6 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
       setAmountInput('')
       void refetchBalance()
     } catch (error) {
-      console.error('[USDT transfer] submit:error', {
-        context: {
-          from: address,
-          to: recipientTrimmed,
-          tokenAddress,
-          chainId: usdtConfig.chainId,
-          amountInput,
-          isConnected,
-          isAAWallet,
-        },
-        error: toDebugError(error),
-      })
       setErrorNotice({ title: 'USDT 송금 실패', error })
     } finally {
       setIsSending(false)

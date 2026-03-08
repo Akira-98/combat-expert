@@ -32,17 +32,6 @@ function App() {
     games,
     marketSections,
   } = market
-  const betting = useBetting({
-    address: wallet.address,
-    isConnected: wallet.isConnected,
-    marketSections,
-  })
-  const usdtTransfer = useUsdtTransfer({
-    address: wallet.address,
-    chainId: wallet.chainId,
-    isConnected: wallet.isConnected,
-    isAAWallet: wallet.isAAWallet,
-  })
   const filters = useGameFilters(games)
   const { mobileHeaderRef, mobileHeaderHeight } = useAppLayout({ isMobileBetslipOpen })
   const {
@@ -62,6 +51,19 @@ function App() {
     isGamesLoading,
     onResetFilters: filters.resetFilters,
     onCloseMobileBetslip: () => setIsMobileBetslipOpen(false),
+  })
+  const isMyBetsViewActive = mobileView === 'bets' || desktopSidePanelTab === 'myBets'
+  const betting = useBetting({
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+    marketSections,
+    isBetHistoryPollingEnabled: isMyBetsViewActive,
+  })
+  const usdtTransfer = useUsdtTransfer({
+    address: wallet.address,
+    chainId: wallet.chainId,
+    isConnected: wallet.isConnected,
+    isAAWallet: wallet.isAAWallet,
   })
 
   const betslipPanelProps = buildBetslipPanelProps({ wallet, betting })

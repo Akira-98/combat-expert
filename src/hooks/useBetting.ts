@@ -18,9 +18,10 @@ type UseBettingParams = {
   address?: Address
   isConnected: boolean
   marketSections: MarketSection[]
+  isBetHistoryPollingEnabled?: boolean
 }
 
-export function useBetting({ address, isConnected, marketSections }: UseBettingParams) {
+export function useBetting({ address, isConnected, marketSections, isBetHistoryPollingEnabled = false }: UseBettingParams) {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
   const { transactionNotice, clearTransactionNotice, setSuccessNotice, setErrorNotice } = useTransactionNotice({
     mapErrorMessage: getFriendlyTransactionErrorMessage,
@@ -62,7 +63,7 @@ export function useBetting({ address, isConnected, marketSections }: UseBettingP
     },
     onError: (err) => setErrorNotice({ title: '베팅 실패', error: err }),
   })
-  const { bets } = useBetHistory({ address })
+  const { bets } = useBetHistory({ address, isPollingEnabled: isBetHistoryPollingEnabled })
   const { redeemingBetTokenId, redeemPending, redeemBet } = useBetRedeem({
     onBeforeSubmit: clearTransactionNotice,
     onSuccess: (txHash) =>

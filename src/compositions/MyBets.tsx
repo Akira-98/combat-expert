@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react'
 import type { Bet } from '@azuro-org/sdk'
 
 type MyBetsProps = {
@@ -9,16 +10,53 @@ type MyBetsProps = {
 }
 
 export function MyBets({ address, bets, redeemPending, redeemingBetTokenId, onRedeemBet }: MyBetsProps) {
+  const storageKey = address ? `combat-expert:hidden-bets:${address.toLowerCase()}` : undefined
+  const [hiddenBetTokenIds, setHiddenBetTokenIds] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!storageKey || typeof window === 'undefined') {
+      setHiddenBetTokenIds([])
+      return
+    }
+    try {
+      const raw = window.localStorage.getItem(storageKey)
+      if (!raw) {
+        setHiddenBetTokenIds([])
+        return
+      }
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed)) {
+        setHiddenBetTokenIds(parsed.filter((tokenId): tokenId is string => typeof tokenId === 'string'))
+        return
+      }
+      setHiddenBetTokenIds([])
+    } catch {
+      setHiddenBetTokenIds([])
+    }
+  }, [storageKey])
+
+  useEffect(() => {
+    if (!storageKey || typeof window === 'undefined') return
+    window.localStorage.setItem(storageKey, JSON.stringify(hiddenBetTokenIds))
+  }, [hiddenBetTokenIds, storageKey])
+
+  const visibleBets = useMemo(
+    () => bets.filter((bet) => !hiddenBetTokenIds.includes(bet.tokenId)),
+    [bets, hiddenBetTokenIds],
+  )
+
   return (
     <section className="ui-surface rounded-none border-x-0 p-2.5 md:rounded-xl md:border md:p-4">
       <h2 className="ui-text-strong m-0 text-lg font-semibold">내 베팅</h2>
       {!address && <p className="ui-text-muted mt-2 text-sm">지갑 연결 후 조회됩니다.</p>}
       {address && bets.length === 0 && <p className="ui-text-muted mt-2 text-sm">베팅 내역이 없습니다.</p>}
-      {address && bets.length > 0 && (
+      {address && bets.length > 0 && visibleBets.length === 0 && <p className="ui-text-muted mt-2 text-sm">표시할 베팅이 없습니다.</p>}
+      {address && visibleBets.length > 0 && (
         <ul className="m-0 mt-2.5 grid list-none gap-1.5 p-0 md:mt-3 md:gap-2">
-          {bets.slice(0, 5).map((bet) => {
+          {visibleBets.slice(0, 5).map((bet) => {
             const canRedeem = bet.isRedeemable && !bet.isRedeemed
             const isRedeeming = redeemPending && redeemingBetTokenId === bet.tokenId
+            const canDelete = bet.isLose || bet.isRedeemed
             const actionLabel = isRedeeming
               ? '수령 중...'
               : canRedeem
@@ -49,14 +87,34 @@ export function MyBets({ address, bets, redeemPending, redeemingBetTokenId, onRe
                       #{bet.tokenId} | 상태 {bet.status}
                     </p>
                   </div>
-                  <button
-                    className="ui-btn-primary shrink-0 whitespace-nowrap rounded-md border px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
-                    disabled={!canRedeem || redeemPending}
-                    onClick={() => onRedeemBet(bet)}
-                    type="button"
-                  >
-                    {actionLabel}
-                  </button>
+                  <div className="grid shrink-0 gap-1.5">
+                    <button
+                      className="ui-btn-primary whitespace-nowrap rounded-md border px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled={!canRedeem || redeemPending}
+                      onClick={() => onRedeemBet(bet)}
+                      type="button"
+                    >
+                      {actionLabel}
+                    </button>
+                    {canDelete && (
+                      <button
+                        aria-label="베팅 숨기기"
+                        className="ui-btn-secondary inline-flex h-7 w-7 items-center justify-center rounded-md border transition"
+                        onClick={() => {
+                          setHiddenBetTokenIds((prev) => (prev.includes(bet.tokenId) ? prev : [...prev, bet.tokenId]))
+                        }}
+                        title="삭제"
+                        type="button"
+                      >
+                        <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                          <path d="M3 6h18" strokeLinecap="round" />
+                          <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" strokeLinecap="round" />
+                          <path d="M7 6l1 14a1 1 0 0 0 1 .93h6a1 1 0 0 0 1-.93l1-14" strokeLinecap="round" />
+                          <path d="M10 11v6M14 11v6" strokeLinecap="round" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </li>
             )
