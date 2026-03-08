@@ -32,6 +32,26 @@ const getTransferErrorMessage = (error: unknown) => {
   return '송금 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
 }
 
+const toDebugError = (error: unknown) => {
+  if (!error || typeof error !== 'object') return { raw: String(error) }
+  const e = error as {
+    name?: string
+    message?: string
+    code?: string | number
+    shortMessage?: string
+    details?: string
+    cause?: unknown
+  }
+  return {
+    name: e.name,
+    code: e.code,
+    message: e.message,
+    shortMessage: e.shortMessage,
+    details: e.details,
+    cause: e.cause,
+  }
+}
+
 export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: UseUsdtTransferParams) {
   const [recipient, setRecipient] = useState('')
   const [amountInput, setAmountInput] = useState('')
@@ -100,6 +120,15 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
         args: [recipientTrimmed as `0x${string}`, value],
       })
 
+      console.info('[USDT transfer] submit:start', {
+        from: address,
+        to: recipientTrimmed,
+        tokenAddress,
+        chainId: usdtConfig.chainId,
+        amountInput,
+        decimals: tokenDecimals,
+      })
+
       const result = await sendTransaction(
         {
           to: tokenAddress,
@@ -113,6 +142,10 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
         },
       )
 
+      console.info('[USDT transfer] submit:success', {
+        txHash: result.hash,
+      })
+
       setSuccessNotice({
         title: 'USDT 송금 요청 완료',
         message: 'USDT 송금 트랜잭션이 전송되었습니다.',
@@ -121,6 +154,18 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
       setAmountInput('')
       void refetchBalance()
     } catch (error) {
+      console.error('[USDT transfer] submit:error', {
+        context: {
+          from: address,
+          to: recipientTrimmed,
+          tokenAddress,
+          chainId: usdtConfig.chainId,
+          amountInput,
+          isConnected,
+          isAAWallet,
+        },
+        error: toDebugError(error),
+      })
       setErrorNotice({ title: 'USDT 송금 실패', error })
     } finally {
       setIsSending(false)
