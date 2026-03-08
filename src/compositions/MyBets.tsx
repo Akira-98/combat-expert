@@ -19,7 +19,15 @@ export function MyBets({ address, bets, redeemPending, redeemingBetTokenId, onRe
           {bets.slice(0, 5).map((bet) => {
             const canRedeem = bet.isRedeemable && !bet.isRedeemed
             const isRedeeming = redeemPending && redeemingBetTokenId === bet.tokenId
-            const actionLabel = isRedeeming ? '수령 중...' : canRedeem ? '수령하기' : bet.isRedeemed ? '수령완료' : '정산대기'
+            const actionLabel = isRedeeming
+              ? '수령 중...'
+              : canRedeem
+                ? '수령하기'
+                : bet.isRedeemed
+                  ? '수령완료'
+                  : bet.isLose
+                    ? '정산완료'
+                    : '정산대기'
             const primaryOutcome = bet.outcomes[0]
             const gameTitle = primaryOutcome?.game?.title || '경기 정보 없음'
             const summary =
