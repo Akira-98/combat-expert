@@ -152,7 +152,6 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
         },
         {
           sponsor: true,
-          address,
         },
       )
 
