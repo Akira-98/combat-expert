@@ -46,8 +46,8 @@ export function Header({
   }
 
   return (
-    <header className="flex min-h-[68px] flex-col items-start gap-1.5 rounded-none border-0 bg-transparent px-2.5 py-1.5 shadow-none md:min-h-0 md:flex-row md:items-center md:justify-between md:gap-4 md:rounded-xl md:border md:p-4 md:[background-color:var(--app-surface)] md:[border-color:var(--app-border)] md:[box-shadow:0_0_0_1px_color-mix(in_oklab,var(--app-border)_32%,transparent)]">
-      <div className="w-full py-0.5 md:w-auto">
+    <header className="flex min-h-[68px] items-start justify-between gap-2.5 rounded-none border-0 bg-transparent px-2.5 py-1.5 shadow-none md:min-h-0 md:items-center md:gap-4 md:rounded-xl md:border md:p-4 md:[background-color:var(--app-surface)] md:[border-color:var(--app-border)] md:[box-shadow:0_0_0_1px_color-mix(in_oklab,var(--app-border)_32%,transparent)]">
+      <div className="min-w-0 py-0.5">
         <h1 className="m-0">
           {onTitleClick ? (
             <button
@@ -64,7 +64,7 @@ export function Header({
         </h1>
         <p className="ui-text-muted mt-0 whitespace-nowrap text-[11px] leading-[1.2] md:mt-1 md:text-sm">세계 최초 MMA 예측시장</p>
       </div>
-      <div className="w-full md:w-auto">
+      <div className="shrink-0">
         {!isConnected ? (
           <div className="flex flex-col items-end gap-2">
             <div className="flex flex-wrap items-center justify-end gap-2">
