@@ -85,12 +85,11 @@ export function Header({
             {connectErrorMessage && <p className="ui-state-danger m-0 rounded-md border px-2 py-1 text-right text-xs font-medium">{connectErrorMessage}</p>}
           </div>
         ) : (
-          <div className="flex flex-col items-end gap-2">
+          <div className="flex flex-col items-end gap-1.5">
             <div className="flex flex-nowrap items-center justify-end gap-1.5 md:gap-2">
               <span className="ui-pill rounded-full border px-2.5 py-1 text-xs font-medium">
                 {shortenAddress(address)}
               </span>
-              <span className="ui-pill rounded-full border px-2.5 py-1 text-xs font-medium">Polygon</span>
               <button
                 aria-label={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
                 className={iconButtonClass}
@@ -119,6 +118,7 @@ export function Header({
                 </svg>
               </button>
             </div>
+            <span className="ui-pill rounded-full border px-2.5 py-1 text-[11px] font-medium md:text-xs">Polygon</span>
           </div>
         )}
       </div>
