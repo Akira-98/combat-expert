@@ -1,4 +1,6 @@
+import { getMarketKey, getMarketName, getSelectionName } from '@azuro-org/dictionaries'
 import type { MarketSection, OutcomeItem } from '../../types/ui'
+import type { MarketManagerCondition } from '../../types/marketManager'
 
 type MarketOutcomeLike = {
   conditionId: string
@@ -62,3 +64,51 @@ export const mapMarketsToSections = (markets: MarketLike[]): MarketSection[] =>
           return a.selectionName.localeCompare(b.selectionName, 'ko')
         }),
     }))
+
+const safeDictionaryLookup = <T>(lookup: () => T, fallback: T) => {
+  try {
+    return lookup()
+  } catch {
+    return fallback
+  }
+}
+
+export const mapMarketManagerConditionsToMarkets = (conditions: MarketManagerCondition[]): MarketLike[] => {
+  const groupedMarkets = new Map<string, MarketLike>()
+
+  conditions.forEach((condition) => {
+    const representativeOutcomeId = condition.outcomes[0]?.outcomeId
+    if (!representativeOutcomeId) return
+
+    const marketKey = safeDictionaryLookup(() => getMarketKey(representativeOutcomeId), `condition-${condition.conditionId}`)
+    const marketName = safeDictionaryLookup(
+      () => getMarketName({ outcomeId: representativeOutcomeId }) || `Market ${marketKey}`,
+      `Market ${marketKey}`,
+    )
+
+    const market = groupedMarkets.get(marketKey) ?? {
+      marketKey,
+      name: marketName,
+      conditions: [],
+    }
+
+    market.conditions.push({
+      state: condition.state,
+      outcomes: condition.outcomes.map((outcome) => ({
+        conditionId: condition.conditionId,
+        outcomeId: outcome.outcomeId,
+        gameId: condition.game.gameId,
+        isExpressForbidden: condition.isExpressForbidden,
+        selectionName: safeDictionaryLookup(
+          () => getSelectionName({ outcomeId: outcome.outcomeId, withPoint: true }),
+          outcome.title || `Outcome ${outcome.outcomeId}`,
+        ),
+        odds: typeof outcome.odds === 'number' ? outcome.odds : Number(outcome.odds),
+      })),
+    })
+
+    groupedMarkets.set(marketKey, market)
+  })
+
+  return [...groupedMarkets.values()]
+}

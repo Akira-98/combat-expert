@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { Bet } from '@azuro-org/sdk'
 
 type MyBetsProps = {
@@ -9,36 +9,28 @@ type MyBetsProps = {
   onRedeemBet: (bet: Bet) => void
 }
 
+function readHiddenBetTokenIds(storageKey: string | undefined) {
+  if (!storageKey || typeof window === 'undefined') return []
+
+  try {
+    const raw = window.localStorage.getItem(storageKey)
+    if (!raw) return []
+
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return parsed.filter((tokenId): tokenId is string => typeof tokenId === 'string')
+  } catch {
+    return []
+  }
+}
+
 export function MyBets({ address, bets, redeemPending, redeemingBetTokenId, onRedeemBet }: MyBetsProps) {
   const storageKey = address ? `combat-expert:hidden-bets:${address.toLowerCase()}` : undefined
-  const [hiddenBetTokenIds, setHiddenBetTokenIds] = useState<string[]>([])
-
-  useEffect(() => {
-    if (!storageKey || typeof window === 'undefined') {
-      setHiddenBetTokenIds([])
-      return
-    }
-    try {
-      const raw = window.localStorage.getItem(storageKey)
-      if (!raw) {
-        setHiddenBetTokenIds([])
-        return
-      }
-      const parsed = JSON.parse(raw)
-      if (Array.isArray(parsed)) {
-        setHiddenBetTokenIds(parsed.filter((tokenId): tokenId is string => typeof tokenId === 'string'))
-        return
-      }
-      setHiddenBetTokenIds([])
-    } catch {
-      setHiddenBetTokenIds([])
-    }
-  }, [storageKey])
-
-  useEffect(() => {
-    if (!storageKey || typeof window === 'undefined') return
-    window.localStorage.setItem(storageKey, JSON.stringify(hiddenBetTokenIds))
-  }, [hiddenBetTokenIds, storageKey])
+  const [hiddenBetTokenIdsByStorageKey, setHiddenBetTokenIdsByStorageKey] = useState<Record<string, string[]>>({})
+  const hiddenBetTokenIds = useMemo(
+    () => (storageKey ? (hiddenBetTokenIdsByStorageKey[storageKey] ?? readHiddenBetTokenIds(storageKey)) : []),
+    [hiddenBetTokenIdsByStorageKey, storageKey],
+  )
 
   const visibleBets = useMemo(
     () => bets.filter((bet) => !hiddenBetTokenIds.includes(bet.tokenId)),
@@ -101,7 +93,22 @@ export function MyBets({ address, bets, redeemPending, redeemingBetTokenId, onRe
                         aria-label="베팅 숨기기"
                         className="ui-btn-secondary inline-flex h-7 w-7 items-center justify-center rounded-md border transition"
                         onClick={() => {
-                          setHiddenBetTokenIds((prev) => (prev.includes(bet.tokenId) ? prev : [...prev, bet.tokenId]))
+                          if (!storageKey) return
+
+                          setHiddenBetTokenIdsByStorageKey((prev) => {
+                            const current = prev[storageKey] ?? readHiddenBetTokenIds(storageKey)
+                            if (current.includes(bet.tokenId)) return prev
+
+                            const nextTokenIds = [...current, bet.tokenId]
+                            if (typeof window !== 'undefined') {
+                              window.localStorage.setItem(storageKey, JSON.stringify(nextTokenIds))
+                            }
+
+                            return {
+                              ...prev,
+                              [storageKey]: nextTokenIds,
+                            }
+                          })
                         }}
                         title="삭제"
                         type="button"

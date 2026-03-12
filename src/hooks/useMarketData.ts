@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useActiveMarkets, useGames } from '@azuro-org/sdk'
+import { useMemo, useState } from 'react'
+import { useChain } from '@azuro-org/sdk'
+import { useQuery } from '@tanstack/react-query'
+import { COMBAT_GAMES_LIMIT, fetchPreferredCombatGames } from '../api/combatGames'
 import { mapGamesToItems, mapMarketsToSections } from '../helpers/mappers'
-
-const getErrorMessage = (error: unknown, fallback: string) => {
-  if (error instanceof Error && error.message) return error.message
-  return fallback
-}
+import { useMarketManagerConditions } from './useMarketManagerConditions'
 
 const GAMES_QUERY_POLICY = {
   staleTime: 30_000,
@@ -26,40 +24,28 @@ const ACTIVE_MARKETS_QUERY_POLICY = {
   refetchIntervalInBackground: false,
 } as const
 
-const GAMES_LIMIT = 15
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error && error.message) return error.message
+  return fallback
+}
 
 export function useMarketData() {
   const [userSelectedGameId, setUserSelectedGameId] = useState<string>()
-  const lastLoggedMarketSnapshotRef = useRef<string>('')
+  const { api, environment } = useChain()
 
-  const ufcGamesQuery = useGames({
-    filter: { limit: GAMES_LIMIT, sportSlug: 'mma', leagueSlug: 'ufc' },
-    query: GAMES_QUERY_POLICY,
-  })
-  const { data: ufcGames = [] } = ufcGamesQuery
-
-  const needsMmaFallback = ufcGames.length < GAMES_LIMIT
-  const mmaGamesQuery = useGames({
-    filter: { limit: GAMES_LIMIT, sportSlug: 'mma' },
-    query: {
-      ...GAMES_QUERY_POLICY,
-      enabled: needsMmaFallback,
+  const gamesQuery = useQuery({
+    queryKey: ['combat-expert-games', api, environment, COMBAT_GAMES_LIMIT],
+    queryFn: async () => {
+      return fetchPreferredCombatGames({
+        apiBaseUrl: api,
+        environment,
+        limit: COMBAT_GAMES_LIMIT,
+      })
     },
+    ...GAMES_QUERY_POLICY,
   })
-  const { data: mmaGames = [] } = mmaGamesQuery
-
-  const games = useMemo(() => {
-    const seen = new Set<string>()
-    const merged = [...ufcGames, ...mmaGames].filter((game) => {
-      if (seen.has(game.gameId)) return false
-      seen.add(game.gameId)
-      return true
-    })
-
-    return merged.slice(0, GAMES_LIMIT)
-  }, [ufcGames, mmaGames])
-
-  const isGamesLoading = ufcGamesQuery.isLoading || mmaGamesQuery.isLoading
+  const { data: games = [] } = gamesQuery
+  const isGamesLoading = gamesQuery.isLoading
 
   const selectedGameId = useMemo(() => {
     if (games.length === 0) return undefined
@@ -69,43 +55,21 @@ export function useMarketData() {
     return games[0].gameId
   }, [games, userSelectedGameId])
 
-  const marketsQuery = useActiveMarkets({
-    gameId: selectedGameId ?? '',
-    query: {
-      ...ACTIVE_MARKETS_QUERY_POLICY,
-      enabled: Boolean(selectedGameId),
-    },
+  const marketsQuery = useMarketManagerConditions({
+    gameIds: selectedGameId ? [selectedGameId] : [],
+    enabled: Boolean(selectedGameId),
+    ...ACTIVE_MARKETS_QUERY_POLICY,
   })
   const { data: markets = [], isLoading: isMarketsLoading } = marketsQuery
-
-  useEffect(() => {
-    if (!import.meta.env.DEV || !selectedGameId) return
-
-    const rows = markets.map((market) => ({
-      marketKey: market.marketKey,
-      name: market.name,
-      conditions: market.conditions.length,
-      outcomes: market.conditions.reduce((sum, condition) => sum + condition.outcomes.length, 0),
-    }))
-
-    const snapshot = JSON.stringify(rows)
-    if (snapshot === lastLoggedMarketSnapshotRef.current) return
-    lastLoggedMarketSnapshotRef.current = snapshot
-
-    console.groupCollapsed(`[Combat Expert] markets for game ${selectedGameId} (${rows.length})`)
-    console.table(rows)
-    console.groupEnd()
-  }, [markets, selectedGameId])
 
   const gameItems = useMemo(() => mapGamesToItems(games), [games])
   const marketSections = useMemo(() => mapMarketsToSections(markets), [markets])
 
   const gamesErrorMessage = useMemo(() => {
     if (games.length > 0) return undefined
-    if (ufcGamesQuery.isError) return getErrorMessage(ufcGamesQuery.error, '게임 목록을 불러오지 못했습니다.')
-    if (mmaGamesQuery.isError) return getErrorMessage(mmaGamesQuery.error, '게임 목록을 불러오지 못했습니다.')
+    if (gamesQuery.isError) return getErrorMessage(gamesQuery.error, '게임 목록을 불러오지 못했습니다.')
     return undefined
-  }, [games.length, mmaGamesQuery.error, mmaGamesQuery.isError, ufcGamesQuery.error, ufcGamesQuery.isError])
+  }, [games.length, gamesQuery.error, gamesQuery.isError])
 
   return {
     selectedGameId,
@@ -115,7 +79,7 @@ export function useMarketData() {
     gamesErrorMessage,
     marketsErrorMessage:
       marketsQuery.isError ? getErrorMessage(marketsQuery.error, '마켓 정보를 불러오지 못했습니다.') : undefined,
-    retryGames: () => void Promise.all([ufcGamesQuery.refetch(), mmaGamesQuery.refetch()]),
+    retryGames: () => void gamesQuery.refetch(),
     retryMarkets: () => void marketsQuery.refetch(),
     games: gameItems,
     marketSections,

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useActiveMarkets } from '@azuro-org/sdk'
 import { selectionKey } from '../../helpers/mappers'
 import { mapMarketsToSections } from '../../helpers/mappers'
 import type { OutcomeItem, SelectionKey } from '../../types/ui'
 import { normalizeOutcomeLabel, outcomePreviewPriority, truncateLabel } from './helpers'
+import { useMarketManagerConditions } from '../../hooks/useMarketManagerConditions'
 
 type GameOddsPreviewProps = {
   gameId: string
@@ -52,17 +52,15 @@ export function GameOddsPreview({
 }: GameOddsPreviewProps) {
   const { anchorRef, hasEnteredViewport } = usePrefetchOnVisible(priority)
   const shouldFetchPreview = Boolean(gameId) && hasEnteredViewport
-  const { data: markets, isLoading, isError } = useActiveMarkets({
-    gameId,
-    query: {
-      enabled: shouldFetchPreview,
-      staleTime: 60_000,
-      gcTime: 10 * 60_000,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchInterval: false,
-    },
+  const { data: markets, isLoading, isError } = useMarketManagerConditions({
+    gameIds: gameId ? [gameId] : [],
+    enabled: shouldFetchPreview,
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
   })
 
   const previewItems = useMemo(() => {

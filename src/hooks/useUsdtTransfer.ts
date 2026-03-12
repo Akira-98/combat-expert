@@ -5,6 +5,7 @@ import { useReadContract } from 'wagmi'
 import { useTransactionNotice } from './useTransactionNotice'
 import { DEFAULT_USDT_CONFIG, getErc20TokenConfig } from '../config/tokens'
 import { useAAWalletClient } from '../azuroSocialAaConnector'
+import { withPrivySendTransactionUi } from '../helpers/privyUi'
 
 type UseUsdtTransferParams = {
   address?: `0x${string}`
@@ -107,7 +108,7 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
         data,
         value: 0n,
         chain: polygon,
-      })
+      }, withPrivySendTransactionUi())
       const txHash = typeof result === 'string' ? result : (result as { hash?: `0x${string}` } | undefined)?.hash
 
       setSuccessNotice({

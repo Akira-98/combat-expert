@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { SelectionItem } from '../../types/ui'
 import type { TransactionNotice, TransactionStep } from '../../helpers/betslipUi'
 import { selectionKey } from '../../helpers/mappers'
@@ -58,7 +58,9 @@ export function BetslipPanel({
   bet,
   actions,
 }: BetslipPanelProps) {
+  const TOTAL_ODDS_WARNING_DELAY_MS = 900
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [revealedDisableReasonKey, setRevealedDisableReasonKey] = useState<string | undefined>(undefined)
   const secondaryButtonClass =
     'ui-btn-secondary rounded-md border px-3 py-2 text-sm font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
   const settingsButtonClass =
@@ -66,6 +68,28 @@ export function BetslipPanel({
   const clearButtonClass =
     'ui-btn-danger-soft rounded-md border px-3 py-2 text-sm font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
   const disableReasonText = bet.disableReason ? (DISABLE_REASON_LABEL[bet.disableReason] ?? bet.disableReason) : undefined
+  const shouldDelayDisableReason = bet.disableReason === 'TotalOddsTooLow'
+  const delayedDisableReasonKey = shouldDelayDisableReason && disableReasonText ? `${bet.disableReason}:${bet.selections.length}` : undefined
+  const scheduledDisableReasonKeyRef = useRef<string | undefined>(undefined)
+  const visibleDisableReasonText = bet.selections.length === 0
+    ? undefined
+    : shouldDelayDisableReason
+      ? revealedDisableReasonKey === delayedDisableReasonKey
+        ? disableReasonText
+        : undefined
+      : disableReasonText
+
+  useEffect(() => {
+    if (!delayedDisableReasonKey) return
+
+    scheduledDisableReasonKeyRef.current = delayedDisableReasonKey
+    const timeoutId = window.setTimeout(() => {
+      if (scheduledDisableReasonKeyRef.current !== delayedDisableReasonKey) return
+      setRevealedDisableReasonKey(delayedDisableReasonKey)
+    }, TOTAL_ODDS_WARNING_DELAY_MS)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [delayedDisableReasonKey, TOTAL_ODDS_WARNING_DELAY_MS])
 
   const selectionLabel = bet.selections.length <= 1 ? '싱글' : `콤보 (${bet.selections.length})`
   const formatOdds = (value: number) => (Number.isFinite(value) ? value.toFixed(3) : '0.000')
@@ -148,12 +172,12 @@ export function BetslipPanel({
           onRetryTransaction={actions.onSubmit}
         />
 
-        {disableReasonText && (
+        {visibleDisableReasonText && (
           <p className="ui-state-warning-surface ui-text-body m-0 rounded-md border p-2 text-sm md:rounded-lg">
-            {disableReasonText}
+            {visibleDisableReasonText}
           </p>
         )}
-        {!disableReasonText && bet.uiBlockHint && (
+        {!visibleDisableReasonText && bet.uiBlockHint && (
           <p className="ui-surface ui-text-body m-0 rounded-md border p-2 text-sm md:rounded-lg">
             {bet.uiBlockHint}
           </p>

@@ -19,13 +19,14 @@ export function Header({
   isConnected,
   isConnecting,
   address,
-  isAAWallet: _isAAWallet,
+  isAAWallet,
   canOpenAuthModal,
   connectErrorMessage,
   onTitleClick,
   onOpenAuthModal,
   onDisconnect,
 }: HeaderProps) {
+  void isAAWallet
   const [copyLabel, setCopyLabel] = useState<'idle' | 'copied' | 'failed'>('idle')
   const secondaryButtonClass =
     'ui-btn-secondary inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition md:h-auto md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'

@@ -5,6 +5,14 @@ import { buildOutcomeMeta, selectionKey } from '../helpers/mappers'
 type SelectionMeta = {
   label: string
   odds: number
+  conditionState: string
+  gameId: string
+  marketTitle: string
+}
+
+type BetslipItemLike = {
+  conditionId: string
+  outcomeId: string
 }
 
 export function useBetslipSelectionMeta(params: { marketSections: MarketSection[]; selectedOutcomes: Set<SelectionKey> }) {
@@ -42,7 +50,16 @@ export function useBetslipSelectionMeta(params: { marketSections: MarketSection[
 
     setSelectionMetaCache((prev) => {
       const next = new Map(prev)
-      next.set(key, meta ?? { label: outcome.selectionName, odds: outcome.odds })
+      next.set(
+        key,
+        meta ?? {
+          label: outcome.selectionName,
+          odds: outcome.odds,
+          conditionState: outcome.conditionState,
+          gameId: outcome.gameId,
+          marketTitle: '선택 항목',
+        },
+      )
       return next
     })
   }
@@ -60,10 +77,26 @@ export function useBetslipSelectionMeta(params: { marketSections: MarketSection[
     })
   }
 
+  const syncSelectionMeta = (items: BetslipItemLike[]) => {
+    setSelectionMetaCache((prev) => {
+      const next = new Map(prev)
+
+      items.forEach((item) => {
+        const key = selectionKey(item.conditionId, item.outcomeId)
+        const meta = outcomeMeta.get(key)
+        if (!meta) return
+        next.set(key, meta)
+      })
+
+      return next
+    })
+  }
+
   return {
     mergedOutcomeMeta,
     selectedOutcomePriceChanges,
     rememberSelectionMeta,
+    syncSelectionMeta,
     resetSelectionMeta,
     removeSelectionMeta,
   }

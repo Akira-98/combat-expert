@@ -12,7 +12,8 @@ import App from './App.tsx'
 import { createWagmiConfig } from './wagmi'
 import { AppConfigProvider } from './config/AppConfigContext'
 import { loadRuntimeConfig } from './config/runtimeConfig'
-import { AzuroSdkSocialAaConnectorProvider } from './azuroSdkSocialAaConnectorShim'
+import { AzuroSdkSocialAaConnectorProvider } from './azuroSdkSocialAaConnectorProvider'
+import { privyIntlConfig } from './helpers/privyUi'
 
 if (typeof globalThis.Buffer === 'undefined') {
   globalThis.Buffer = Buffer
@@ -82,6 +83,7 @@ async function bootstrap() {
                 showWalletLoginFirst: true,
                 walletList: ['metamask'],
               },
+              intl: privyIntlConfig,
               loginMethods: ['google', 'wallet'],
             }}
           >
