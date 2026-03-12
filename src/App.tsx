@@ -57,6 +57,7 @@ function App() {
     address: wallet.address,
     isConnected: wallet.isConnected,
     marketSections,
+    isMarketsLoading,
     isBetHistoryPollingEnabled: isMyBetsViewActive,
   })
   const usdtTransfer = useUsdtTransfer({

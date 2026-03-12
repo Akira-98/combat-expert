@@ -97,6 +97,13 @@ function isChatMessage(value: ChatMessage | null): value is ChatMessage {
   return Boolean(value)
 }
 
+function isExpectedConnectionClosure(error: unknown) {
+  if (!(error instanceof Error)) return false
+
+  const message = error.message.toLowerCase()
+  return message.includes('connection closed') || message.includes('connection unavailable')
+}
+
 export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
   const { ablyChannel } = useAppConfig()
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -168,7 +175,15 @@ export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
         setErrorMessage(message)
       })
 
-    void channel.subscribe('message', onIncomingMessage)
+    void channel.subscribe('message', onIncomingMessage).catch((error: unknown) => {
+      if (canceled && isExpectedConnectionClosure(error)) return
+
+      if (canceled) return
+
+      const message = error instanceof Error ? error.message : '채팅 구독을 시작하지 못했습니다.'
+      setErrorMessage(message)
+      setConnectionState('failed')
+    })
 
     return () => {
       canceled = true
