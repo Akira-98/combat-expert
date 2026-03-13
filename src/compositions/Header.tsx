@@ -12,6 +12,9 @@ type HeaderProps = {
   address?: `0x${string}`
   chainId?: number
   isAAWallet?: boolean
+  usdtBalance?: number
+  isUsdtBalanceLoading?: boolean
+  isUsdtSupportedChain?: boolean
   canOpenAuthModal: boolean
   connectErrorMessage?: string
   onTitleClick?: () => void
@@ -29,6 +32,9 @@ export function Header({
   address,
   chainId,
   isAAWallet,
+  usdtBalance,
+  isUsdtBalanceLoading,
+  isUsdtSupportedChain,
   canOpenAuthModal,
   connectErrorMessage,
   onTitleClick,
@@ -47,6 +53,11 @@ export function Header({
     'ui-btn-secondary inline-flex h-8 w-8 items-center justify-center rounded-md border text-xs font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
   const networkName = getChainName(chainId)
   const avatarUrl = getWalletAvatarUrl(address)
+  const usdtBalanceLabel = !isUsdtSupportedChain
+    ? '지원되지 않는 네트워크'
+    : isUsdtBalanceLoading
+      ? '불러오는 중...'
+      : `${(usdtBalance ?? 0).toFixed(4)} USDT`
 
   useBodyScrollLock(isAccountModalOpen)
 
@@ -97,7 +108,31 @@ export function Header({
           <img alt="" className="h-14 w-14 rounded-full border object-cover" src={avatarUrl} />
           <div className="min-w-0">
             <p className="ui-text-strong m-0 text-sm font-semibold">연결된 지갑</p>
-            <p className="ui-text-muted mt-1 truncate text-xs">{address}</p>
+            <div className="mt-1 flex items-center gap-1.5">
+              <p className="ui-text-muted truncate text-xs">{shortenAddress(address, 6, 4)}</p>
+              <button
+                aria-label={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
+                className={`${iconButtonClass} h-7 w-7 rounded-full border`}
+                onClick={handleCopyAddress}
+                title={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
+                type="button"
+              >
+                <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+                  <rect height="11" rx="2" stroke="currentColor" strokeWidth="1.8" width="11" x="9" y="9" />
+                  <path d="M7 15H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1" stroke="currentColor" strokeWidth="1.8" />
+                </svg>
+              </button>
+              <button aria-label="로그아웃" className={`${iconButtonClass} h-7 w-7 rounded-full border`} onClick={handleDisconnect} title="로그아웃" type="button">
+                <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+                  <path d="M14 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2" stroke="currentColor" strokeWidth="1.8" />
+                  <path d="M10 12h10" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+                  <path d="m17 8 4 4-4 4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+                </svg>
+              </button>
+            </div>
+            <div className="mt-2">
+              <span className="ui-text-strong inline-flex items-center rounded-full border px-2 py-1 text-[11px] font-medium">{networkName}</span>
+            </div>
           </div>
         </div>
         <button className={`${iconButtonClass} shrink-0 md:hidden`} onClick={() => setIsAccountModalOpen(false)} title="닫기" type="button">
@@ -108,30 +143,16 @@ export function Header({
         </button>
       </div>
 
-      <div className="mt-4 grid gap-2">
-        <div className="rounded-xl border px-3 py-2.5">
-          <p className="ui-text-muted m-0 text-[11px] font-medium">주소</p>
-          <p className="ui-text-strong mt-1 break-all text-sm font-semibold">{address}</p>
-        </div>
-        <div className="rounded-xl border px-3 py-2.5">
-          <p className="ui-text-muted m-0 text-[11px] font-medium">네트워크</p>
-          <p className="ui-text-strong mt-1 text-sm font-semibold">{networkName}</p>
+      <div className="mt-4 rounded-xl border px-3 py-2.5">
+        <div className="flex items-center justify-between gap-3">
+          <p className="ui-text-muted m-0 text-[11px] font-medium">보유 잔액</p>
+          <p className="ui-text-strong m-0 text-xs font-semibold">{usdtBalanceLabel}</p>
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <button
-          aria-label={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
-          className="ui-btn-secondary rounded-xl border px-3 py-2.5 text-sm font-semibold"
-          onClick={handleCopyAddress}
-          title={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
-          type="button"
-        >
-          {copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '복사됨' : '복사 실패'}
-        </button>
-        <button className="ui-btn-secondary rounded-xl border px-3 py-2.5 text-sm font-semibold" onClick={handleDisconnect} type="button">
-          로그아웃
-        </button>
+      <div className="mt-2 rounded-xl border px-3 py-2.5">
+        <p className="ui-text-muted m-0 text-[11px] font-medium">전체 주소</p>
+        <p className="ui-text-strong mt-1 break-all text-xs font-medium">{address}</p>
       </div>
     </>
   )

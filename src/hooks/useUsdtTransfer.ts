@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
-import { erc20Abi, encodeFunctionData, formatUnits, isAddress, parseUnits } from 'viem'
+import { erc20Abi, encodeFunctionData, isAddress, parseUnits } from 'viem'
 import { polygon } from 'viem/chains'
-import { useReadContract } from 'wagmi'
 import { useTransactionNotice } from './useTransactionNotice'
 import { DEFAULT_USDT_CONFIG, getErc20TokenConfig } from '../config/tokens'
 import { useAAWalletClient } from '../azuroSocialAaConnector'
 import { withPrivySendTransactionUi } from '../helpers/privyUi'
+import { useUsdtBalance } from './useUsdtBalance'
 
 type UseUsdtTransferParams = {
   address?: `0x${string}`
@@ -44,24 +44,12 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
   })
 
   const usdtConfig = getErc20TokenConfig(chainId, 'USDT')
-  const tokenAddress = usdtConfig?.address
   const tokenDecimals = usdtConfig?.decimals ?? DEFAULT_USDT_CONFIG.decimals
-  const isSupportedChain = Boolean(usdtConfig)
-
-  const { data: balanceRaw, refetch: refetchBalance } = useReadContract({
-    address: tokenAddress,
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    args: address ? [address] : undefined,
-    query: {
-      enabled: Boolean(isConnected && address && isSupportedChain),
-    },
+  const { tokenAddress, balance, isLoading: isBalanceLoading, isSupportedChain, refetch: refetchBalance } = useUsdtBalance({
+    address,
+    chainId,
+    isConnected,
   })
-
-  const balance = useMemo(() => {
-    if (balanceRaw === undefined || balanceRaw === null) return 0
-    return Number(formatUnits(balanceRaw, tokenDecimals))
-  }, [balanceRaw, tokenDecimals])
 
   const amountNum = Number(amountInput)
   const recipientTrimmed = recipient.trim()
@@ -128,6 +116,8 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
   return {
     tokenAddress,
     balance,
+    isBalanceLoading,
+    isSupportedChain,
     recipient,
     amountInput,
     isSending,

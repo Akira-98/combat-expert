@@ -89,7 +89,14 @@ function App() {
         className="sticky top-0 z-30 border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:static md:border-0 md:bg-transparent md:px-0 md:pb-0 md:backdrop-blur-none"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
-        <AppHeaderContainer wallet={wallet} onTitleClick={handleNavigateToExplore} onGuideClick={handleNavigateToGuide} />
+        <AppHeaderContainer
+          wallet={wallet}
+          usdtBalance={usdtTransfer.balance}
+          isUsdtBalanceLoading={usdtTransfer.isBalanceLoading}
+          isUsdtSupportedChain={usdtTransfer.isSupportedChain}
+          onTitleClick={handleNavigateToExplore}
+          onGuideClick={handleNavigateToGuide}
+        />
       </div>
 
       {!isGuidePage && <AppGameFiltersContainer filters={filters} games={games} mobileStickyTop={mobileHeaderHeight} />}

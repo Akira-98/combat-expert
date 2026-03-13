@@ -3,11 +3,14 @@ import type { useWalletConnection } from '../hooks/useWalletConnection'
 
 type AppHeaderContainerProps = {
   wallet: ReturnType<typeof useWalletConnection>
+  usdtBalance: number
+  isUsdtBalanceLoading: boolean
+  isUsdtSupportedChain: boolean
   onTitleClick: () => void
   onGuideClick: () => void
 }
 
-export function AppHeaderContainer({ wallet, onTitleClick, onGuideClick }: AppHeaderContainerProps) {
+export function AppHeaderContainer({ wallet, usdtBalance, isUsdtBalanceLoading, isUsdtSupportedChain, onTitleClick, onGuideClick }: AppHeaderContainerProps) {
   return (
     <Header
       isAuthenticated={wallet.isAuthenticated}
@@ -18,6 +21,9 @@ export function AppHeaderContainer({ wallet, onTitleClick, onGuideClick }: AppHe
       address={wallet.address}
       chainId={wallet.chainId}
       isAAWallet={wallet.isAAWallet}
+      usdtBalance={usdtBalance}
+      isUsdtBalanceLoading={isUsdtBalanceLoading}
+      isUsdtSupportedChain={isUsdtSupportedChain}
       canOpenAuthModal={wallet.canOpenAuthModal}
       connectErrorMessage={wallet.connectErrorMessage}
       onTitleClick={onTitleClick}
