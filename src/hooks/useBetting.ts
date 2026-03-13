@@ -12,6 +12,7 @@ import { useAppConfig } from '../config/useAppConfig'
 import { useBetHistory } from './useBetHistory'
 import { useBetRedeem } from './useBetRedeem'
 import { useTransactionNotice } from './useTransactionNotice'
+import { useBetSettlementSync } from './useBetSettlementSync'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const DEFAULT_SLIPPAGE = 3
@@ -72,6 +73,10 @@ export function useBetting({
     onError: (err) => setErrorNotice({ title: '베팅 실패', error: err }),
   })
   const { bets } = useBetHistory({ address, isPollingEnabled: isBetHistoryPollingEnabled })
+  const { betSettlementSyncStateByTokenId } = useBetSettlementSync({
+    bets,
+    enabled: Boolean(address),
+  })
   const { redeemingBetTokenId, redeemPending, redeemBet } = useBetRedeem({
     onBeforeSubmit: clearTransactionNotice,
     onSuccess: (txHash) =>
@@ -175,6 +180,7 @@ export function useBetting({
     redeemPending,
     clearTransactionNotice,
     submitBet,
+    betSettlementSyncStateByTokenId,
     clearBetslip: () => {
       clear()
       resetSelectionMeta()

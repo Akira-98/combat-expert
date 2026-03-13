@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react'
 import type { Bet } from '@azuro-org/sdk'
+import type { BetSettlementSyncState } from '../hooks/useBetSettlementSync'
 
 type MyBetsProps = {
   address?: `0x${string}`
   bets: Bet[]
+  betSettlementSyncStateByTokenId?: Record<string, BetSettlementSyncState>
   redeemPending: boolean
   redeemingBetTokenId?: string
   onRedeemBet: (bet: Bet) => void
@@ -24,7 +26,14 @@ function readHiddenBetTokenIds(storageKey: string | undefined) {
   }
 }
 
-export function MyBets({ address, bets, redeemPending, redeemingBetTokenId, onRedeemBet }: MyBetsProps) {
+export function MyBets({
+  address,
+  bets,
+  betSettlementSyncStateByTokenId = {},
+  redeemPending,
+  redeemingBetTokenId,
+  onRedeemBet,
+}: MyBetsProps) {
   const storageKey = address ? `combat-expert:hidden-bets:${address.toLowerCase()}` : undefined
   const [hiddenBetTokenIdsByStorageKey, setHiddenBetTokenIdsByStorageKey] = useState<Record<string, string[]>>({})
   const hiddenBetTokenIds = useMemo(
@@ -49,6 +58,7 @@ export function MyBets({ address, bets, redeemPending, redeemingBetTokenId, onRe
             const canRedeem = bet.isRedeemable && !bet.isRedeemed
             const isRedeeming = redeemPending && redeemingBetTokenId === bet.tokenId
             const canDelete = bet.isLose || bet.isRedeemed
+            const settlementSyncState = betSettlementSyncStateByTokenId[bet.tokenId]
             const actionLabel = isRedeeming
               ? '수령 중...'
               : canRedeem
@@ -57,6 +67,8 @@ export function MyBets({ address, bets, redeemPending, redeemingBetTokenId, onRe
                   ? '수령완료'
                   : bet.isLose
                     ? '정산완료'
+                    : settlementSyncState === 'awaiting-result-sync'
+                      ? '결과 반영 대기'
                     : '정산대기'
             const primaryOutcome = bet.outcomes[0]
             const gameTitle = primaryOutcome?.game?.title || '경기 정보 없음'

@@ -21,6 +21,7 @@ export function BetsAndTransferPanel({ wallet, betting, usdtTransfer }: BetsAndT
       <MyBets
         address={wallet.address}
         bets={betting.bets}
+        betSettlementSyncStateByTokenId={betting.betSettlementSyncStateByTokenId}
         redeemPending={betting.redeemPending}
         redeemingBetTokenId={betting.redeemingBetTokenId}
         onRedeemBet={betting.redeemBet}
