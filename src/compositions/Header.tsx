@@ -122,10 +122,6 @@ export function Header({
             </div>
           ) : (
             <div className="flex items-center justify-end gap-2">
-              <div className="hidden items-center gap-1 rounded-full border px-2.5 py-1 md:inline-flex">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                <span className="ui-text-muted text-[11px] font-medium">{networkName}</span>
-              </div>
               <button
                 aria-expanded={isAccountModalOpen}
                 aria-haspopup="dialog"
@@ -150,8 +146,8 @@ export function Header({
             onClick={() => setIsAccountModalOpen(false)}
             type="button"
           />
-          <div className="absolute inset-x-2 top-1/2 mx-auto w-full max-w-sm -translate-y-1/2 md:inset-x-0">
-            <section className="ui-surface-soft rounded-2xl border p-4 shadow-2xl">
+          <div className="absolute inset-x-2 top-1/2 mx-auto w-[calc(100%-16px)] max-w-sm -translate-y-1/2 md:inset-x-0">
+            <section className="ui-surface-soft max-h-[min(80dvh,42rem)] overflow-y-auto rounded-2xl border p-4 pb-[calc(env(safe-area-inset-bottom)+16px)] shadow-2xl md:pb-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
                   <img alt="" className="h-14 w-14 rounded-full border object-cover" src={avatarUrl} />
