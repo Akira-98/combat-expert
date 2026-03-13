@@ -45,7 +45,7 @@ export function AppBottomNav({
               <path d="M12 4.75 18.25 7.3v4.02c0 3.77-2.33 7.21-5.9 8.72l-.35.15-.35-.15c-3.57-1.51-5.9-4.95-5.9-8.72V7.3z" stroke="currentColor" strokeWidth="1.8" />
               <path d="m9.75 12 1.5 1.5 3-3" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
             </svg>
-            <span className="mt-1">탐색</span>
+            <span className="mt-1">경기</span>
           </button>
           <button
             className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
