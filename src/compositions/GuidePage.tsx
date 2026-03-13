@@ -5,10 +5,12 @@ export function GuidePage({ onBack }: { onBack: () => void }) {
         <div>
           <p className="ui-text-muted m-0 text-xs font-semibold uppercase tracking-[0.18em]">Guide</p>
           <h2 className="ui-text-strong mt-1 text-xl font-semibold">이용 가이드</h2>
-          <p className="ui-text-muted mt-2 text-sm">처음 들어온 사용자가 로그인, 지갑 연결, 베팅 흐름을 빠르게 이해할 수 있게 정리한 안내 페이지입니다.</p>
         </div>
-        <button className="ui-btn-secondary shrink-0 rounded-lg border px-3 py-2 text-sm font-semibold" onClick={onBack} type="button">
-          탐색으로 돌아가기
+        <button className="ui-btn-secondary inline-flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold" onClick={onBack} type="button">
+          <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
+            <path d="m15 6-6 6 6 6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+          </svg>
+          뒤로
         </button>
       </div>
 

@@ -129,8 +129,6 @@ export function Header({
                   <path d="m17 8 4 4-4 4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
                 </svg>
               </button>
-            </div>
-            <div className="mt-2">
               <span className="ui-text-strong inline-flex items-center rounded-full border px-2 py-1 text-[11px] font-medium">{networkName}</span>
             </div>
           </div>
@@ -148,11 +146,6 @@ export function Header({
           <p className="ui-text-muted m-0 text-[11px] font-medium">보유 잔액</p>
           <p className="ui-text-strong m-0 text-xs font-semibold">{usdtBalanceLabel}</p>
         </div>
-      </div>
-
-      <div className="mt-2 rounded-xl border px-3 py-2.5">
-        <p className="ui-text-muted m-0 text-[11px] font-medium">전체 주소</p>
-        <p className="ui-text-strong mt-1 break-all text-xs font-medium">{address}</p>
       </div>
     </>
   )

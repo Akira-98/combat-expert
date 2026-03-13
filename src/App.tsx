@@ -217,7 +217,6 @@ function App() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="ui-text-strong m-0 text-base font-semibold">메뉴</p>
-                  <p className="ui-text-muted mt-1 text-xs">서비스 안내와 추가 페이지로 이동합니다.</p>
                 </div>
                 <button className="ui-btn-secondary inline-flex h-8 w-8 items-center justify-center rounded-md border" onClick={handleCloseMobileMenu} type="button">
                   <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
