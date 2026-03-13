@@ -18,7 +18,7 @@ const getWalletConnectErrorMessage = (error: unknown) => {
 }
 
 export function useWalletConnection() {
-  const { address, isConnected, isConnecting, chainId, isAAWallet } = useAccount()
+  const { address, isConnected, isConnecting, chainId, isAAWallet, isReady } = useAccount()
   const { ready, authenticated, logout } = usePrivy()
   const { disconnect } = useDisconnect()
   const [connectErrorMessage, setConnectErrorMessage] = useState<string>()
@@ -32,6 +32,7 @@ export function useWalletConnection() {
   })
 
   const canOpenAuthModal = ready && !isConnecting
+  const isWalletStatusReady = ready && isReady
 
   const visibleConnectErrorMessage = isConnected || !authenticated ? undefined : connectErrorMessage
 
@@ -48,6 +49,7 @@ export function useWalletConnection() {
     isAuthenticated: authenticated,
     isConnected,
     isConnecting,
+    isWalletStatusReady,
     canOpenAuthModal,
     connectErrorMessage: visibleConnectErrorMessage,
     openAuthModal,

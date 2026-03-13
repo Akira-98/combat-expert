@@ -20,6 +20,11 @@ export const getChainName = (chainId: number | undefined) => {
   return CHAIN_NAME_BY_ID[chainId] ?? `Chain ${chainId}`
 }
 
+export const getWalletAvatarUrl = (address?: string) => {
+  const seed = address?.toLowerCase() ?? 'combat-expert-guest'
+  return `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(seed)}&backgroundType=gradientLinear`
+}
+
 export const shortenAddress = (address?: string, head = 6, tail = 4) => {
   if (!address) return '-'
   if (address.length <= head + tail) return address

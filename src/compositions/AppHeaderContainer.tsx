@@ -12,7 +12,9 @@ export function AppHeaderContainer({ wallet, onTitleClick }: AppHeaderContainerP
       isAuthenticated={wallet.isAuthenticated}
       isConnected={wallet.isConnected}
       isConnecting={wallet.isConnecting}
+      isWalletStatusReady={wallet.isWalletStatusReady}
       address={wallet.address}
+      chainId={wallet.chainId}
       isAAWallet={wallet.isAAWallet}
       canOpenAuthModal={wallet.canOpenAuthModal}
       connectErrorMessage={wallet.connectErrorMessage}
