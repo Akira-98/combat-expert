@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { BetslipPanel } from './compositions/BetslipPanel'
 import { MarketList } from './compositions/MarketList'
 import { BetsAndTransferPanel } from './compositions/BetsAndTransferPanel'
 import { AppBottomNav } from './compositions/AppBottomNav'
 import { AppHeaderContainer } from './compositions/AppHeaderContainer'
 import { AppGameFiltersContainer } from './compositions/AppGameFiltersContainer'
+import { GuidePage } from './compositions/GuidePage'
 import { MobileBetslipSheet } from './compositions/MobileBetslipSheet'
 import { LiveChatPanel } from './compositions/LiveChatPanel'
 import { buildBetslipPanelProps } from './helpers/buildBetslipPanelProps'
@@ -18,6 +20,7 @@ import { useUsdtTransfer } from './hooks/useUsdtTransfer'
 
 function App() {
   const [isMobileBetslipOpen, setIsMobileBetslipOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const wallet = useWalletConnection()
   const market = useMarketData()
   const {
@@ -33,7 +36,7 @@ function App() {
     marketSections,
   } = market
   const filters = useGameFilters(games)
-  const { mobileHeaderRef, mobileHeaderHeight } = useAppLayout({ isMobileBetslipOpen })
+  const { mobileHeaderRef, mobileHeaderHeight } = useAppLayout({ isBodyScrollLocked: isMobileBetslipOpen || isMobileMenuOpen })
   const {
     mobileView,
     setMobileView,
@@ -44,6 +47,7 @@ function App() {
     handleOpenGameMarkets,
     handleBackToGames,
     handleNavigateToExplore,
+    handleNavigateToGuide,
   } = useAppNavigation({
     filteredGames: filters.filteredGames,
     selectedGameId,
@@ -68,6 +72,16 @@ function App() {
   })
 
   const betslipPanelProps = buildBetslipPanelProps({ wallet, betting })
+  const isGuidePage = pageMode === 'guide'
+  const handleOpenMobileMenu = () => {
+    setIsMobileBetslipOpen(false)
+    setIsMobileMenuOpen(true)
+  }
+  const handleCloseMobileMenu = () => setIsMobileMenuOpen(false)
+  const handleOpenGuideFromMenu = () => {
+    setIsMobileMenuOpen(false)
+    handleNavigateToGuide()
+  }
   return (
     <div className="app-theme mx-auto w-full max-w-[1440px] px-0 pb-36 pt-0 md:px-4 md:pt-4 lg:pb-10">
       <div
@@ -75,92 +89,102 @@ function App() {
         className="sticky top-0 z-30 border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:static md:border-0 md:bg-transparent md:px-0 md:pb-0 md:backdrop-blur-none"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
-        <AppHeaderContainer wallet={wallet} onTitleClick={handleNavigateToExplore} />
+        <AppHeaderContainer wallet={wallet} onTitleClick={handleNavigateToExplore} onGuideClick={handleNavigateToGuide} />
       </div>
 
-      <AppGameFiltersContainer filters={filters} games={games} mobileStickyTop={mobileHeaderHeight} />
+      {!isGuidePage && <AppGameFiltersContainer filters={filters} games={games} mobileStickyTop={mobileHeaderHeight} />}
 
-      <main className="mt-0 grid items-start gap-2 md:mt-4 md:gap-4 xl:grid-cols-[240px_minmax(0,1fr)_316px]">
-        <aside className="hidden xl:sticky xl:top-4 xl:block">
-          <LiveChatPanel address={wallet.address} />
-        </aside>
+      <main className={`mt-0 grid items-start gap-2 md:mt-4 md:gap-4 ${isGuidePage ? '' : 'xl:grid-cols-[240px_minmax(0,1fr)_316px]'}`}>
+        {!isGuidePage && (
+          <aside className="hidden xl:sticky xl:top-4 xl:block">
+            <LiveChatPanel address={wallet.address} />
+          </aside>
+        )}
 
         <section className="min-w-0">
-          <div className={`${mobileView === 'explore' ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}`}>
-            <MarketList
-              pageMode={pageMode}
-              isGamesLoading={isGamesLoading}
-              isMarketsLoading={pageSelectedGameId ? isMarketsLoading : false}
-              gamesErrorMessage={gamesErrorMessage}
-              marketsErrorMessage={pageSelectedGameId ? marketsErrorMessage : undefined}
-              selectedGameId={pageSelectedGameId}
-              games={filters.filteredGames}
-              marketSections={pageSelectedGameId ? marketSections : []}
-              selectedOutcomes={betting.selectedOutcomes}
-              selectedOutcomePriceChanges={betting.selectedOutcomePriceChanges}
-              onSelectGame={handleOpenGameMarkets}
-              onBackToGames={handleBackToGames}
-              onSelectOutcome={betting.selectOutcome}
-              onRetryGames={retryGames}
-              onRetryMarkets={retryMarkets}
-            />
-          </div>
+          {isGuidePage ? (
+            <GuidePage onBack={handleNavigateToExplore} />
+          ) : (
+            <div className={`${mobileView === 'explore' ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}`}>
+              <MarketList
+                pageMode={pageMode}
+                isGamesLoading={isGamesLoading}
+                isMarketsLoading={pageSelectedGameId ? isMarketsLoading : false}
+                gamesErrorMessage={gamesErrorMessage}
+                marketsErrorMessage={pageSelectedGameId ? marketsErrorMessage : undefined}
+                selectedGameId={pageSelectedGameId}
+                games={filters.filteredGames}
+                marketSections={pageSelectedGameId ? marketSections : []}
+                selectedOutcomes={betting.selectedOutcomes}
+                selectedOutcomePriceChanges={betting.selectedOutcomePriceChanges}
+                onSelectGame={handleOpenGameMarkets}
+                onBackToGames={handleBackToGames}
+                onSelectOutcome={betting.selectOutcome}
+                onRetryGames={retryGames}
+                onRetryMarkets={retryMarkets}
+              />
+            </div>
+          )}
 
-          <div className={`${mobileView === 'bets' ? 'xl:hidden' : 'hidden'}`}>
+          <div className={`${!isGuidePage && mobileView === 'bets' ? 'xl:hidden' : 'hidden'}`}>
             <BetsAndTransferPanel wallet={wallet} betting={betting} usdtTransfer={usdtTransfer} />
           </div>
 
-          <div className={`${mobileView === 'chat' ? 'xl:hidden' : 'hidden'}`}>
+          <div className={`${!isGuidePage && mobileView === 'chat' ? 'xl:hidden' : 'hidden'}`}>
             <LiveChatPanel address={wallet.address} className="h-[calc(100dvh-13rem)]" />
           </div>
         </section>
 
-        <aside className="hidden xl:sticky xl:top-4 xl:block xl:max-h-[calc(100dvh-2rem)] xl:overflow-y-auto">
-          <div className="grid gap-3">
-            <div className="ui-surface rounded-xl border p-2">
-              <div className="grid grid-cols-2 gap-1">
-                <button
-                  className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${
-                    desktopSidePanelTab === 'myBets'
-                      ? 'ui-btn-primary'
-                      : 'ui-btn-ghost ui-text-body'
-                  }`}
-                  onClick={() => setDesktopSidePanelTab('myBets')}
-                  type="button"
-                >
-                  내 베팅
-                </button>
-                <button
-                  className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${
-                    desktopSidePanelTab === 'betslip'
-                      ? 'ui-btn-primary'
-                      : 'ui-btn-ghost ui-text-body'
-                  }`}
-                  onClick={() => setDesktopSidePanelTab('betslip')}
-                  type="button"
-                >
-                  베팅슬립 {betting.selectionItems.length > 0 ? `(${betting.selectionItems.length})` : ''}
-                </button>
+        {!isGuidePage && (
+          <aside className="hidden xl:sticky xl:top-4 xl:block xl:max-h-[calc(100dvh-2rem)] xl:overflow-y-auto">
+            <div className="grid gap-3">
+              <div className="ui-surface rounded-xl border p-2">
+                <div className="grid grid-cols-2 gap-1">
+                  <button
+                    className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${
+                      desktopSidePanelTab === 'myBets'
+                        ? 'ui-btn-primary'
+                        : 'ui-btn-ghost ui-text-body'
+                    }`}
+                    onClick={() => setDesktopSidePanelTab('myBets')}
+                    type="button"
+                  >
+                    내 베팅
+                  </button>
+                  <button
+                    className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${
+                      desktopSidePanelTab === 'betslip'
+                        ? 'ui-btn-primary'
+                        : 'ui-btn-ghost ui-text-body'
+                    }`}
+                    onClick={() => setDesktopSidePanelTab('betslip')}
+                    type="button"
+                  >
+                    베팅슬립 {betting.selectionItems.length > 0 ? `(${betting.selectionItems.length})` : ''}
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {desktopSidePanelTab === 'myBets' ? (
-              <BetsAndTransferPanel wallet={wallet} betting={betting} usdtTransfer={usdtTransfer} />
-            ) : (
-              <BetslipPanel {...betslipPanelProps} />
-            )}
-          </div>
-        </aside>
+              {desktopSidePanelTab === 'myBets' ? (
+                <BetsAndTransferPanel wallet={wallet} betting={betting} usdtTransfer={usdtTransfer} />
+              ) : (
+                <BetslipPanel {...betslipPanelProps} />
+              )}
+            </div>
+          </aside>
+        )}
       </main>
 
       <AppBottomNav
         mobileView={mobileView}
         isMobileBetslipOpen={isMobileBetslipOpen}
+        isMobileMenuOpen={isMobileMenuOpen}
         selectionCount={betting.selectionItems.length}
         onOpenExplore={() => setMobileView('explore')}
         onOpenBetslip={() => setIsMobileBetslipOpen(true)}
         onOpenChat={() => setMobileView('chat')}
         onOpenBets={() => setMobileView('bets')}
+        onOpenMenu={handleOpenMobileMenu}
       />
 
       <MobileBetslipSheet
@@ -171,6 +195,39 @@ function App() {
         panelProps={betslipPanelProps}
         showLauncher={false}
       />
+
+      {isMobileMenuOpen &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div aria-modal="true" className="fixed inset-0 z-[72] xl:hidden" role="dialog">
+            <button
+              aria-label="메뉴 닫기"
+              className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
+              onClick={handleCloseMobileMenu}
+              type="button"
+            />
+            <aside className="ui-surface-soft absolute inset-y-0 right-0 flex w-[min(82vw,320px)] flex-col border-l p-4 shadow-2xl">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="ui-text-strong m-0 text-base font-semibold">메뉴</p>
+                  <p className="ui-text-muted mt-1 text-xs">서비스 안내와 추가 페이지로 이동합니다.</p>
+                </div>
+                <button className="ui-btn-secondary inline-flex h-8 w-8 items-center justify-center rounded-md border" onClick={handleCloseMobileMenu} type="button">
+                  <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <path d="M6 6L18 18" stroke="currentColor" strokeWidth="1.8" />
+                    <path d="M18 6L6 18" stroke="currentColor" strokeWidth="1.8" />
+                  </svg>
+                </button>
+              </div>
+              <div className="mt-5 grid gap-2">
+                <button className="ui-btn-secondary rounded-xl border px-3 py-3 text-left text-sm font-semibold" onClick={handleOpenGuideFromMenu} type="button">
+                  가이드
+                </button>
+              </div>
+            </aside>
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }

@@ -15,6 +15,7 @@ type HeaderProps = {
   canOpenAuthModal: boolean
   connectErrorMessage?: string
   onTitleClick?: () => void
+  onGuideClick: () => void
   onOpenAuthModal: () => void
   onDisconnect: () => void
 }
@@ -31,6 +32,7 @@ export function Header({
   canOpenAuthModal,
   connectErrorMessage,
   onTitleClick,
+  onGuideClick,
   onOpenAuthModal,
   onDisconnect,
 }: HeaderProps) {
@@ -81,6 +83,11 @@ export function Header({
   const handleDisconnect = () => {
     setIsAccountModalOpen(false)
     onDisconnect()
+  }
+
+  const handleGuideNavigation = () => {
+    setIsAccountModalOpen(false)
+    onGuideClick()
   }
 
   const accountPanel = (
@@ -153,6 +160,13 @@ export function Header({
           {!isConnected ? (
             <div className="flex flex-col items-end gap-2">
               <div className="flex flex-wrap items-center justify-end gap-2">
+                <button
+                  className="ui-btn-secondary hidden rounded-lg border px-3 py-2 text-sm font-semibold md:inline-flex"
+                  onClick={handleGuideNavigation}
+                  type="button"
+                >
+                  가이드
+                </button>
                 <button className={primaryButtonClass} disabled={!canOpenAuthModal || isConnecting} onClick={onOpenAuthModal}>
                   {isConnecting ? '연결 중...' : isAuthenticated ? '지갑 연결' : '로그인'}
                 </button>
@@ -171,6 +185,13 @@ export function Header({
             </div>
           ) : (
             <div className="relative flex items-center justify-end gap-2">
+              <button
+                className="ui-btn-secondary hidden rounded-lg border px-3 py-2 text-sm font-semibold md:inline-flex"
+                onClick={handleGuideNavigation}
+                type="button"
+              >
+                가이드
+              </button>
               <button
                 aria-expanded={isAccountModalOpen}
                 aria-haspopup="dialog"

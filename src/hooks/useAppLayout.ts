@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { useBodyScrollLock } from './useBodyScrollLock'
 
 type UseAppLayoutParams = {
-  isMobileBetslipOpen: boolean
+  isBodyScrollLocked: boolean
 }
 
-export function useAppLayout({ isMobileBetslipOpen }: UseAppLayoutParams) {
+export function useAppLayout({ isBodyScrollLocked }: UseAppLayoutParams) {
   const [mobileHeaderHeight, setMobileHeaderHeight] = useState(72)
   const mobileHeaderRef = useRef<HTMLDivElement | null>(null)
 
-  useBodyScrollLock(isMobileBetslipOpen)
+  useBodyScrollLock(isBodyScrollLocked)
 
   useEffect(() => {
     const headerNode = mobileHeaderRef.current
