@@ -19,7 +19,6 @@ export function AppHeaderContainer({ wallet, usdtBalance, isUsdtBalanceLoading, 
       isReconnecting={wallet.isReconnecting}
       isWalletStatusReady={wallet.isWalletStatusReady}
       address={wallet.address}
-      chainId={wallet.chainId}
       isAAWallet={wallet.isAAWallet}
       usdtBalance={usdtBalance}
       isUsdtBalanceLoading={isUsdtBalanceLoading}

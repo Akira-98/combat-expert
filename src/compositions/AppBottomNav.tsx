@@ -29,7 +29,7 @@ export function AppBottomNav({
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[calc(100%+env(safe-area-inset-bottom))] border-t border-slate-800/80 bg-[color:color-mix(in_oklab,var(--app-surface)_96%,black)] shadow-[0_-10px_24px_rgba(2,6,23,0.42)] backdrop-blur" />
         <div className="relative grid w-full grid-cols-[1fr_1fr_auto_1fr_1fr] items-end gap-1 px-2 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-2">
           <button
-            className={`relative rounded-2xl px-2 py-2 text-xs font-semibold transition ${
+            className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
               mobileView === 'explore' ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
             }`}
             onClick={onOpenExplore}
@@ -41,10 +41,14 @@ export function AppBottomNav({
                 mobileView === 'explore' ? 'opacity-100' : 'opacity-0'
               }`}
             />
-            탐색
+            <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <path d="M12 4.75 18.25 7.3v4.02c0 3.77-2.33 7.21-5.9 8.72l-.35.15-.35-.15c-3.57-1.51-5.9-4.95-5.9-8.72V7.3z" stroke="currentColor" strokeWidth="1.8" />
+              <path d="m9.75 12 1.5 1.5 3-3" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+            </svg>
+            <span className="mt-1">탐색</span>
           </button>
           <button
-            className={`relative rounded-2xl px-2 py-2 text-xs font-semibold transition ${
+            className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
               mobileView === 'chat' ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
             }`}
             onClick={onOpenChat}
@@ -56,7 +60,11 @@ export function AppBottomNav({
                 mobileView === 'chat' ? 'opacity-100' : 'opacity-0'
               }`}
             />
-            채팅
+            <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <path d="M7.5 17.25H5.75A1.75 1.75 0 0 1 4 15.5v-7A1.75 1.75 0 0 1 5.75 6.75h12.5A1.75 1.75 0 0 1 20 8.5v7a1.75 1.75 0 0 1-1.75 1.75H11l-3.5 2.25z" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
+              <path d="M8 11.25h8M8 14.25h5" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+            </svg>
+            <span className="mt-1">채팅</span>
           </button>
           <button
             aria-label="베팅슬립 열기"
@@ -80,7 +88,7 @@ export function AppBottomNav({
             <span className="mt-1">베팅</span>
           </button>
           <button
-            className={`relative rounded-2xl px-2 py-2 text-xs font-semibold transition ${
+            className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
               mobileView === 'bets' ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
             }`}
             onClick={onOpenBets}
@@ -92,10 +100,15 @@ export function AppBottomNav({
                 mobileView === 'bets' ? 'opacity-100' : 'opacity-0'
               }`}
             />
-            내 베팅
+            <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <path d="M6.75 7.75h10.5A1.75 1.75 0 0 1 19 9.5v7a1.75 1.75 0 0 1-1.75 1.75H6.75A1.75 1.75 0 0 1 5 16.5v-7a1.75 1.75 0 0 1 1.75-1.75Z" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M8.5 11.25h7M8.5 14.25h4.5" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+              <circle cx="16.25" cy="11.25" fill="currentColor" r="1" />
+            </svg>
+            <span className="mt-1">내 베팅</span>
           </button>
           <button
-            className={`relative rounded-2xl px-2 py-2 text-xs font-semibold transition ${
+            className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
               isMobileMenuOpen ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
             }`}
             onClick={onOpenMenu}
@@ -107,7 +120,10 @@ export function AppBottomNav({
                 isMobileMenuOpen ? 'opacity-100' : 'opacity-0'
               }`}
             />
-            메뉴
+            <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <path d="M5.5 7.5h13M5.5 12h13M5.5 16.5h13" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+            </svg>
+            <span className="mt-1">메뉴</span>
           </button>
         </div>
       </div>

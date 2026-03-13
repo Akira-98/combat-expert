@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { getChainName, getWalletAvatarUrl, shortenAddress } from '../helpers/walletUi'
+import { getWalletAvatarUrl, shortenAddress } from '../helpers/walletUi'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 
 type HeaderProps = {
@@ -10,7 +10,6 @@ type HeaderProps = {
   isReconnecting?: boolean
   isWalletStatusReady: boolean
   address?: `0x${string}`
-  chainId?: number
   isAAWallet?: boolean
   usdtBalance?: number
   isUsdtBalanceLoading?: boolean
@@ -30,7 +29,6 @@ export function Header({
   isReconnecting,
   isWalletStatusReady,
   address,
-  chainId,
   isAAWallet,
   usdtBalance,
   isUsdtBalanceLoading,
@@ -51,7 +49,6 @@ export function Header({
     'ui-btn-primary inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition md:h-auto md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'
   const iconButtonClass =
     'ui-btn-secondary inline-flex h-8 w-8 items-center justify-center rounded-md border text-xs font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
-  const networkName = getChainName(chainId)
   const avatarUrl = getWalletAvatarUrl(address)
   const usdtBalanceLabel = !isUsdtSupportedChain
     ? '지원되지 않는 네트워크'
@@ -129,7 +126,6 @@ export function Header({
                   <path d="m17 8 4 4-4 4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
                 </svg>
               </button>
-              <span className="ui-text-strong inline-flex items-center rounded-full border px-2 py-1 text-[11px] font-medium">{networkName}</span>
             </div>
           </div>
         </div>
