@@ -6,6 +6,7 @@ type HeaderProps = {
   isAuthenticated: boolean
   isConnected: boolean
   isConnecting: boolean
+  isReconnecting?: boolean
   isWalletStatusReady: boolean
   address?: `0x${string}`
   chainId?: number
@@ -21,6 +22,7 @@ export function Header({
   isAuthenticated,
   isConnected,
   isConnecting,
+  isReconnecting,
   isWalletStatusReady,
   address,
   chainId,
@@ -159,7 +161,7 @@ export function Header({
                   </button>
                 )}
               </div>
-              {isAuthenticated && isWalletStatusReady && !isConnecting && (
+              {isAuthenticated && isWalletStatusReady && !isConnecting && !isReconnecting && (
                 <p className="ui-text-muted m-0 text-right text-xs">
                   로그인은 완료됐지만 지갑이 아직 연결되지 않았습니다. 지갑 연결을 진행해 주세요.
                 </p>
@@ -198,19 +200,17 @@ export function Header({
             onClick={() => setIsAccountModalOpen(false)}
             type="button"
           />
-          <div aria-modal="true" className="fixed inset-0 z-50 md:hidden" role="dialog">
+          <div aria-modal="true" className="fixed inset-0 z-50 flex items-end md:hidden" role="dialog">
             <button
               aria-label="계정 시트 닫기"
               className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
               onClick={() => setIsAccountModalOpen(false)}
               type="button"
             />
-            <div className="absolute inset-x-0 bottom-0">
-              <section className="ui-surface-soft max-h-[min(86dvh,42rem)] overflow-y-auto rounded-t-3xl border p-4 pb-[calc(env(safe-area-inset-bottom)+16px)] shadow-2xl">
-                <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-white/15" />
-                {accountPanel}
-              </section>
-            </div>
+            <section className="ui-surface-soft relative z-10 max-h-[min(86dvh,42rem)] w-full overflow-y-auto rounded-t-3xl border p-4 pb-[calc(env(safe-area-inset-bottom)+16px)] shadow-2xl">
+              <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-white/15" />
+              {accountPanel}
+            </section>
           </div>
         </>
       )}
