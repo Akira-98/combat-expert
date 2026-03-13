@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { getChainName, getWalletAvatarUrl, shortenAddress } from '../helpers/walletUi'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 
@@ -200,18 +201,22 @@ export function Header({
             onClick={() => setIsAccountModalOpen(false)}
             type="button"
           />
-          <div aria-modal="true" className="fixed inset-0 z-50 flex items-end md:hidden" role="dialog">
-            <button
-              aria-label="계정 시트 닫기"
-              className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
-              onClick={() => setIsAccountModalOpen(false)}
-              type="button"
-            />
-            <section className="ui-surface-soft relative z-10 max-h-[min(86dvh,42rem)] w-full overflow-y-auto rounded-t-3xl border p-4 pb-[calc(env(safe-area-inset-bottom)+16px)] shadow-2xl">
-              <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-white/15" />
-              {accountPanel}
-            </section>
-          </div>
+          {typeof document !== 'undefined' &&
+            createPortal(
+              <div aria-modal="true" className="fixed inset-0 z-[70] flex items-end md:hidden" role="dialog">
+                <button
+                  aria-label="계정 시트 닫기"
+                  className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
+                  onClick={() => setIsAccountModalOpen(false)}
+                  type="button"
+                />
+                <section className="ui-surface-soft relative z-10 max-h-[min(86dvh,42rem)] w-full overflow-y-auto rounded-t-3xl border p-4 pb-[calc(env(safe-area-inset-bottom)+16px)] shadow-2xl">
+                  <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-white/15" />
+                  {accountPanel}
+                </section>
+              </div>,
+              document.body,
+            )}
         </>
       )}
     </>
