@@ -1,6 +1,27 @@
+const steps = [
+  {
+    step: 'Step 1',
+    title: 'USDT 구매 후 해외 거래소로 이동',
+    summary: '국내 거래소에서 USDT를 준비합니다.',
+    points: ['거래소 예시: 바이낸스, OKX, 코인베이스', '출금 네트워크: Tron 권장'],
+  },
+  {
+    step: 'Step 2',
+    title: 'CombatExpert 지갑으로 입금',
+    summary: '프로필의 0x 주소로 USDT를 보냅니다.',
+    points: ['로그인 후 프로필에서 주소 복사', '입금 네트워크: Polygon 필수'],
+  },
+  {
+    step: 'Step 3',
+    title: '베팅 제출 후 정산 확인',
+    summary: '금액 확인 후 제출하고 결과를 기다립니다.',
+    points: ['내 베팅에서 상태 확인', "결과 전에는 '정산 대기' 표시"],
+  },
+] as const
+
 export function GuidePage({ onBack }: { onBack: () => void }) {
   return (
-    <section className="ui-surface grid gap-4 rounded-none border-x-0 p-3 md:gap-5 md:rounded-xl md:border md:p-5">
+    <section className="ui-surface grid gap-3 rounded-none border-x-0 p-3 md:gap-4 md:rounded-xl md:border md:p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="ui-text-muted m-0 text-xs font-semibold uppercase tracking-[0.18em]">Guide</p>
@@ -14,56 +35,68 @@ export function GuidePage({ onBack }: { onBack: () => void }) {
         </button>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-3">
-        <article className="ui-surface-soft rounded-xl border p-4">
-          <p className="ui-text-muted m-0 text-xs font-semibold uppercase tracking-[0.14em]">Step 1</p>
-          <h3 className="ui-text-strong mt-2 text-base font-semibold">국내 거래소 USDT(테더) 구매 후 해외 거래소 송금</h3>
-          <p className="ui-text-muted mt-2 text-sm">국내 거래소에서 테더 구매 후 해외거래소(바이낸스, okx, 코인베이스)로 송금합니다. 이 때 네트워크는 Tron이 가장 저렴합니다.</p>
-        </article>
-        <article className="ui-surface-soft rounded-xl border p-4">
-          <p className="ui-text-muted m-0 text-xs font-semibold uppercase tracking-[0.14em]">Step 2</p>
-          <h3 className="ui-text-strong mt-2 text-base font-semibold">해외 거래소에서 세기의 격잘알로 송금</h3>
-          <p className="ui-text-muted mt-2 text-sm">해외 거래소에서 세기의 격잘알로 USDT를 송금합니다. 구글로 로그인 후 프로필을 누르면 0x...으로 시작하는 주소가 뜹니다. 해당 주소를 복사한 후 거래소 송금 창에 붙혀넣습니다. 이 때 네트워크는 반드시 Polygon으로 합니다.</p>
-        </article>
-        <article className="ui-surface-soft rounded-xl border p-4">
-          <p className="ui-text-muted m-0 text-xs font-semibold uppercase tracking-[0.14em]">Step 3</p>
-          <h3 className="ui-text-strong mt-2 text-base font-semibold">베팅 제출과 정산 확인</h3>
-          <p className="ui-text-muted mt-2 text-sm">베팅에서 수량과 금액을 확인해 제출하고, 내 베팅에서 정산 상태를 추적합니다. 경기 결과가 나오지 않은 경우 '정산 대기' 문구가 뜹니다.</p>
-        </article>
+      <div className="grid gap-2.5 md:grid-cols-3">
+        {steps.map((item) => (
+          <article key={item.title} className="ui-surface-soft rounded-xl border p-4">
+            <p className="ui-text-muted m-0 text-[11px] font-semibold uppercase tracking-[0.14em]">{item.step}</p>
+            <h3 className="ui-text-strong mt-1 text-base font-semibold">{item.title}</h3>
+            <p className="ui-text-muted mt-3 text-sm">{item.summary}</p>
+            <ul className="ui-text-muted mt-2.5 grid gap-1.5 pl-5 text-sm">
+              {item.points.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
       </div>
 
-      <div className="grid gap-3 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-        <article className="ui-surface-soft rounded-xl border p-4">
-          <h3 className="ui-text-strong m-0 text-base font-semibold">체크 포인트</h3>
+      <div className="grid gap-2.5 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+        <article className="ui-surface-soft rounded-xl border border-amber-400/30 p-4">
+          <p className="m-0 text-xs font-semibold uppercase tracking-[0.14em] text-amber-600">Important</p>
+          <h3 className="ui-text-strong mt-2 text-base font-semibold">실수하기 쉬운 포인트</h3>
           <ul className="ui-text-muted mt-3 grid gap-2 pl-5 text-sm">
-            <li>베팅은 USDT(테더)로 이루어집니다.</li>
-            <li>해외거래소에서 지갑주소로 USDT가 들어올 때 네트워크는 반드시 Polygon이어야 합니다.</li>
-            <li>메타마스크로 로그인 하는 경우 가스비가 대납되지 않아 Polygon 토큰이 필요합니다.</li>
+            <li>베팅 통화는 USDT입니다.</li>
+            <li>CombatExpert 입금은 Polygon만 사용합니다.</li>
+            <li>메타마스크 로그인 시 POL 가스비가 필요할 수 있습니다.</li>
           </ul>
         </article>
         <article className="ui-surface-soft rounded-xl border p-4">
-          <h3 className="ui-text-strong m-0 text-base font-semibold">문의 사항</h3>
-          <div className="mt-3 grid gap-2">
+          <p className="ui-text-strong m-0 text-sm font-semibold">도움이 필요하신가요?</p>
+          <div className="mt-3 flex items-center gap-3">
             <a
-              className="ui-btn-secondary flex items-center justify-between rounded-xl border px-3 py-3 text-sm font-semibold no-underline transition hover:translate-y-[-1px]"
+              aria-label="텔레그램 문의"
+              className="ui-btn-secondary inline-flex h-12 w-12 items-center justify-center rounded-full border no-underline transition hover:translate-y-[-1px]"
               href="https://t.me/LegendaryChoi"
               rel="noreferrer"
               target="_blank"
+              title="텔레그램 문의"
             >
-              <span>텔레그램 문의</span>
-              <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
-                <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+              <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path
+                  d="M21 5 3.8 11.6c-.8.3-.8 1.4 0 1.7l4.4 1.4 1.4 4.4c.3.8 1.4.8 1.7 0L18 1.9c.3-.8-.5-1.6-1.3-1.3Z"
+                  stroke="currentColor"
+                  strokeLinejoin="round"
+                  strokeWidth="1.8"
+                />
+                <path d="m8 14 10-10" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
               </svg>
             </a>
             <a
-              className="ui-btn-secondary flex items-center justify-between rounded-xl border px-3 py-3 text-sm font-semibold no-underline transition hover:translate-y-[-1px]"
+              aria-label="디스코드 입장"
+              className="ui-btn-secondary inline-flex h-12 w-12 items-center justify-center rounded-full border no-underline transition hover:translate-y-[-1px]"
               href="https://discord.gg/kb7x9SH7M"
               rel="noreferrer"
               target="_blank"
+              title="디스코드 입장"
             >
-              <span>디스코드 입장</span>
-              <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
-                <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+              <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path
+                  d="M8.7 7.6A14.6 14.6 0 0 1 12 7c1.1 0 2.2.2 3.3.6l.7 1.5c1.8.2 3.1 1.1 3.6 2.8.4 1.4.3 3-.4 4.8a9.7 9.7 0 0 1-3.3 1.7l-.8-1.3c.5-.2 1-.4 1.4-.7-.1.1-.2.1-.3.2A10.3 10.3 0 0 1 12 18c-1.5 0-2.9-.3-4.2-.9l-.3-.2c.4.3.9.5 1.4.7l-.8 1.3a9.7 9.7 0 0 1-3.3-1.7c-.7-1.8-.8-3.4-.4-4.8.5-1.7 1.8-2.6 3.6-2.8l.7-1.5Z"
+                  stroke="currentColor"
+                  strokeLinejoin="round"
+                  strokeWidth="1.8"
+                />
+                <path d="M9.4 12.3h.1m5 0h.1" stroke="currentColor" strokeLinecap="round" strokeWidth="2.2" />
               </svg>
             </a>
           </div>
