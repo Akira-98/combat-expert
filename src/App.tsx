@@ -39,14 +39,15 @@ function App() {
   const { mobileHeaderRef, mobileHeaderHeight } = useAppLayout({ isBodyScrollLocked: isMobileBetslipOpen || isMobileMenuOpen })
   const {
     mobileView,
-    setMobileView,
     desktopSidePanelTab,
     setDesktopSidePanelTab,
-    pageMode,
-    pageSelectedGameId,
+    isGuideRoute,
+    marketPageMode,
+    activeGameId,
     handleOpenGameMarkets,
     handleBackToGames,
     handleNavigateToExplore,
+    handleNavigateToMobileView,
     handleNavigateToGuide,
   } = useAppNavigation({
     filteredGames: filters.filteredGames,
@@ -72,7 +73,13 @@ function App() {
   })
 
   const betslipPanelProps = buildBetslipPanelProps({ wallet, betting })
-  const isGuidePage = pageMode === 'guide'
+  const shouldShowFilters = !isGuideRoute
+  const shouldShowDesktopChat = !isGuideRoute
+  const shouldShowDesktopSidebar = !isGuideRoute
+  const shouldShowGuideContent = isGuideRoute
+  const shouldShowExploreContent = !isGuideRoute && mobileView === 'explore'
+  const shouldShowMobileBetsPanel = !isGuideRoute && mobileView === 'bets'
+  const shouldShowMobileChatPanel = !isGuideRoute && mobileView === 'chat'
   const handleOpenMobileMenu = () => {
     setIsMobileBetslipOpen(false)
     setIsMobileMenuOpen(true)
@@ -99,29 +106,29 @@ function App() {
         />
       </div>
 
-      {!isGuidePage && <AppGameFiltersContainer filters={filters} games={games} mobileStickyTop={mobileHeaderHeight} />}
+      {shouldShowFilters && <AppGameFiltersContainer filters={filters} games={games} mobileStickyTop={mobileHeaderHeight} />}
 
-      <main className={`mt-0 grid items-start gap-2 md:mt-4 md:gap-4 ${isGuidePage ? '' : 'xl:grid-cols-[240px_minmax(0,1fr)_316px]'}`}>
-        {!isGuidePage && (
+      <main className={`mt-0 grid items-start gap-2 md:mt-4 md:gap-4 ${isGuideRoute ? '' : 'xl:grid-cols-[240px_minmax(0,1fr)_316px]'}`}>
+        {shouldShowDesktopChat && (
           <aside className="hidden xl:sticky xl:top-4 xl:block">
             <LiveChatPanel address={wallet.address} />
           </aside>
         )}
 
         <section className="min-w-0">
-          {isGuidePage ? (
+          {shouldShowGuideContent ? (
             <GuidePage onBack={handleNavigateToExplore} />
           ) : (
-            <div className={`${mobileView === 'explore' ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}`}>
+            <div className={`${shouldShowExploreContent ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}`}>
               <MarketList
-                pageMode={pageMode}
+                pageMode={marketPageMode}
                 isGamesLoading={isGamesLoading}
-                isMarketsLoading={pageSelectedGameId ? isMarketsLoading : false}
+                isMarketsLoading={activeGameId ? isMarketsLoading : false}
                 gamesErrorMessage={gamesErrorMessage}
-                marketsErrorMessage={pageSelectedGameId ? marketsErrorMessage : undefined}
-                selectedGameId={pageSelectedGameId}
+                marketsErrorMessage={activeGameId ? marketsErrorMessage : undefined}
+                selectedGameId={activeGameId}
                 games={filters.filteredGames}
-                marketSections={pageSelectedGameId ? marketSections : []}
+                marketSections={activeGameId ? marketSections : []}
                 selectedOutcomes={betting.selectedOutcomes}
                 selectedOutcomePriceChanges={betting.selectedOutcomePriceChanges}
                 onSelectGame={handleOpenGameMarkets}
@@ -133,16 +140,16 @@ function App() {
             </div>
           )}
 
-          <div className={`${!isGuidePage && mobileView === 'bets' ? 'xl:hidden' : 'hidden'}`}>
+          <div className={`${shouldShowMobileBetsPanel ? 'xl:hidden' : 'hidden'}`}>
             <BetsAndTransferPanel wallet={wallet} betting={betting} usdtTransfer={usdtTransfer} />
           </div>
 
-          <div className={`${!isGuidePage && mobileView === 'chat' ? 'xl:hidden' : 'hidden'}`}>
+          <div className={`${shouldShowMobileChatPanel ? 'xl:hidden' : 'hidden'}`}>
             <LiveChatPanel address={wallet.address} className="h-[calc(100dvh-13rem)]" />
           </div>
         </section>
 
-        {!isGuidePage && (
+        {shouldShowDesktopSidebar && (
           <aside className="hidden xl:sticky xl:top-4 xl:block xl:max-h-[calc(100dvh-2rem)] xl:overflow-y-auto">
             <div className="grid gap-3">
               <div className="ui-surface rounded-xl border p-2">
@@ -187,10 +194,10 @@ function App() {
         isMobileBetslipOpen={isMobileBetslipOpen}
         isMobileMenuOpen={isMobileMenuOpen}
         selectionCount={betting.selectionItems.length}
-        onOpenExplore={() => setMobileView('explore')}
+        onOpenExplore={handleNavigateToExplore}
         onOpenBetslip={() => setIsMobileBetslipOpen(true)}
-        onOpenChat={() => setMobileView('chat')}
-        onOpenBets={() => setMobileView('bets')}
+        onOpenChat={() => handleNavigateToMobileView('chat')}
+        onOpenBets={() => handleNavigateToMobileView('bets')}
         onOpenMenu={handleOpenMobileMenu}
       />
 

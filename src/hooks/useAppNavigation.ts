@@ -3,7 +3,7 @@ import type { GameItem } from '../types/ui'
 
 export type MobileView = 'explore' | 'bets' | 'chat'
 export type DesktopSidePanelTab = 'myBets' | 'betslip'
-export type PageMode = 'games' | 'markets' | 'guide'
+export type MarketPageMode = 'games' | 'markets'
 
 const GAME_ROUTE_QUERY_KEY = 'game'
 const PAGE_ROUTE_QUERY_KEY = 'page'
@@ -105,8 +105,15 @@ export function useAppNavigation({
   const visibleSelectedGameId = filteredGames.some((game) => game.gameId === selectedGameId)
     ? selectedGameId
     : undefined
-  const pageMode: PageMode = routedPage === 'guide' ? 'guide' : routedGameId ? 'markets' : 'games'
-  const pageSelectedGameId = pageMode === 'markets' ? routedGameId : visibleSelectedGameId
+  const isGuideRoute = routedPage === 'guide'
+  const marketPageMode: MarketPageMode = routedGameId ? 'markets' : 'games'
+  const activeGameId = marketPageMode === 'markets' ? routedGameId : visibleSelectedGameId
+
+  const clearRouteState = () => {
+    writeRouteState({})
+    setRoutedGameId(undefined)
+    setRoutedPage(undefined)
+  }
 
   const handleOpenGameMarkets = (gameId: string) => {
     setSelectedGameId(gameId)
@@ -116,16 +123,20 @@ export function useAppNavigation({
   }
 
   const handleBackToGames = () => {
-    writeRouteState({})
-    setRoutedGameId(undefined)
-    setRoutedPage(undefined)
+    clearRouteState()
   }
 
   const handleNavigateToExplore = () => {
     onCloseMobileBetslip()
     setMobileView('explore')
     onResetFilters()
-    handleBackToGames()
+    clearRouteState()
+  }
+
+  const handleNavigateToMobileView = (view: MobileView) => {
+    onCloseMobileBetslip()
+    setMobileView(view)
+    clearRouteState()
   }
 
   const handleNavigateToGuide = () => {
@@ -141,11 +152,13 @@ export function useAppNavigation({
     setMobileView,
     desktopSidePanelTab,
     setDesktopSidePanelTab,
-    pageMode,
-    pageSelectedGameId,
+    isGuideRoute,
+    marketPageMode,
+    activeGameId,
     handleOpenGameMarkets,
     handleBackToGames,
     handleNavigateToExplore,
+    handleNavigateToMobileView,
     handleNavigateToGuide,
   }
 }
