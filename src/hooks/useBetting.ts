@@ -48,8 +48,11 @@ export function useBetting({
     maxBet,
     isMaxBetFetching,
   } = useDetailedBetslip()
-  const { data: betTokenBalanceData, isLoading: isBalanceLoading } = useBetTokenBalance({
-    query: { enabled: isConnected },
+  const { data: betTokenBalanceData, isLoading: isBalanceLoading, refetch: refetchBetTokenBalance } = useBetTokenBalance({
+    query: {
+      enabled: isConnected,
+      refetchOnWindowFocus: true,
+    },
   })
 
   const affiliateAddress = (affiliateAddressFromConfig || ZERO_ADDRESS) as Address
@@ -64,6 +67,7 @@ export function useBetting({
     onSuccess: (receipt) => {
       clear()
       resetSelectionMeta()
+      void refetchBetTokenBalance()
       setSuccessNotice({
         title: '베팅 완료',
         message: '트랜잭션이 성공적으로 처리되었습니다.',
@@ -79,12 +83,14 @@ export function useBetting({
   })
   const { redeemingBetTokenId, redeemPending, redeemBet } = useBetRedeem({
     onBeforeSubmit: clearTransactionNotice,
-    onSuccess: (txHash) =>
+    onSuccess: (txHash) => {
+      void refetchBetTokenBalance()
       setSuccessNotice({
         title: '수익 수령 완료',
         message: '수익 수령 트랜잭션이 성공적으로 처리되었습니다.',
         txHash,
-      }),
+      })
+    },
     onError: (err) => setErrorNotice({ title: '수익 수령 실패', error: err }),
   })
 

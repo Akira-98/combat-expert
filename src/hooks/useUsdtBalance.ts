@@ -22,6 +22,7 @@ export function useUsdtBalance({ address, chainId, isConnected }: UseUsdtBalance
     args: address ? [address] : undefined,
     query: {
       enabled: Boolean(isConnected && address && isSupportedChain),
+      refetchOnWindowFocus: true,
     },
   })
 

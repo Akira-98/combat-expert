@@ -53,7 +53,7 @@ export function GuidePage({ onBack }: { onBack: () => void }) {
       <div className="grid gap-2.5 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
         <article className="ui-surface-soft rounded-xl border border-amber-400/30 p-4">
           <p className="m-0 text-xs font-semibold uppercase tracking-[0.14em] text-amber-600">Important</p>
-          <h3 className="ui-text-strong mt-2 text-base font-semibold">놓치기 쉬운 체크 포인트</h3>
+          <h3 className="ui-text-strong mt-2 text-base font-semibold">체크 포인트</h3>
           <ul className="ui-text-muted mt-3 grid gap-2 pl-5 text-sm">
             <li>베팅 통화는 USDT입니다.</li>
             <li>세기의 격잘알 입금은 Polygon만 사용합니다.</li>
