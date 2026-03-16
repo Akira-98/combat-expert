@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import type { GameItem } from '../../types/ui'
 import { formatCommentTime, COMMENT_MAX_LENGTH } from '../../helpers/comments'
 import { useMarketComments } from '../../hooks/useMarketComments'
@@ -18,31 +18,13 @@ export function MarketCommentsPanel({
   isAAWallet,
   onConnectWallet,
 }: MarketCommentsPanelProps) {
-  const [draft, setDraft] = useState('')
   const comments = useMarketComments({
     marketId: selectedGame?.gameId,
     address,
     isConnected,
     isAAWallet,
   })
-
-  useEffect(() => {
-    setDraft('')
-  }, [selectedGame?.gameId])
-
-  const canSubmit = Boolean(selectedGame?.gameId && draft.trim() && !comments.isSubmitting)
-
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault()
-    if (!canSubmit) return
-
-    try {
-      await comments.createComment(draft)
-      setDraft('')
-    } catch {
-      // Error is surfaced by the hook state below.
-    }
-  }
+  const canInteract = isConnected || comments.isAuthenticated
 
   if (!selectedGame) return null
 
@@ -51,35 +33,18 @@ export function MarketCommentsPanel({
       <div className="flex items-center justify-between gap-2">
         <div>
           <h3 className="ui-text-strong m-0 text-sm font-semibold">댓글</h3>
-          <p className="ui-text-muted mt-1 text-xs">{selectedGame.title}에 대한 의견을 남겨보세요.</p>
         </div>
         <span className="ui-pill rounded-full border px-2 py-0.5 text-[11px] font-semibold">{comments.comments.length}</span>
       </div>
 
-      <form className="grid gap-2" onSubmit={handleSubmit}>
-        <textarea
-          className="ui-input min-h-24 rounded-md border px-3 py-2 text-sm"
-          maxLength={COMMENT_MAX_LENGTH}
-          placeholder={isConnected ? '이 마켓에 대한 생각을 남겨보세요' : '댓글을 작성하려면 지갑 연결이 필요합니다'}
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          disabled={!isConnected || comments.isSubmitting}
-        />
-        <div className="flex items-center justify-between gap-2">
-          <p className="ui-text-muted m-0 text-[11px]">
-            {isConnected ? `${draft.trim().length}/${COMMENT_MAX_LENGTH}` : '댓글 작성 시 지갑 서명이 필요합니다.'}
-          </p>
-          {isConnected ? (
-            <button className="ui-btn-primary rounded-lg border px-3 py-2 text-sm font-semibold" disabled={!canSubmit} type="submit">
-              {comments.isSubmitting ? '등록 중...' : '댓글 등록'}
-            </button>
-          ) : (
-            <button className="ui-btn-secondary rounded-lg border px-3 py-2 text-sm font-semibold" onClick={onConnectWallet} type="button">
-              지갑 연결
-            </button>
-          )}
-        </div>
-      </form>
+      <CommentComposer
+        key={selectedGame.gameId}
+        canInteract={canInteract}
+        isAuthenticated={comments.isAuthenticated}
+        isSubmitting={comments.isSubmitting}
+        onConnectWallet={onConnectWallet}
+        onSubmit={comments.createComment}
+      />
 
       {comments.errorMessage && <p className="ui-state-danger m-0 rounded-md border px-2 py-1 text-[11px]">{comments.errorMessage}</p>}
 
@@ -101,5 +66,63 @@ export function MarketCommentsPanel({
         )}
       </div>
     </section>
+  )
+}
+
+type CommentComposerProps = {
+  canInteract: boolean
+  isAuthenticated: boolean
+  isSubmitting: boolean
+  onConnectWallet: () => void
+  onSubmit: (draft: string) => Promise<unknown>
+}
+
+function CommentComposer({
+  canInteract,
+  isAuthenticated,
+  isSubmitting,
+  onConnectWallet,
+  onSubmit,
+}: CommentComposerProps) {
+  const [draft, setDraft] = useState('')
+  const canSubmit = Boolean(draft.trim() && !isSubmitting && canInteract)
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault()
+    if (!canSubmit) return
+
+    try {
+      await onSubmit(draft)
+      setDraft('')
+    } catch {
+      // Error is surfaced by the hook state above.
+    }
+  }
+
+  return (
+    <form className="grid gap-2" onSubmit={handleSubmit}>
+      <textarea
+        className="ui-input min-h-24 rounded-md border px-3 py-2 text-sm"
+        maxLength={COMMENT_MAX_LENGTH}
+        placeholder={canInteract ? '이 마켓에 대한 생각을 남겨보세요' : '댓글을 작성하려면 지갑 연결이 필요합니다'}
+        value={draft}
+        onChange={(event) => setDraft(event.target.value)}
+        disabled={!canInteract || isSubmitting}
+      />
+      <div className="flex items-center justify-between gap-2">
+        <p className="ui-text-muted m-0 text-[11px]">
+          {canInteract ? `${draft.trim().length}/${COMMENT_MAX_LENGTH}` : '첫 댓글 로그인 시 지갑 서명이 1회 필요합니다.'}
+        </p>
+        {canInteract ? (
+          <button className="ui-btn-primary rounded-lg border px-3 py-2 text-sm font-semibold" disabled={!canSubmit} type="submit">
+            {isSubmitting ? '등록 중...' : isAuthenticated ? '댓글 등록' : '서명 후 댓글 등록'}
+          </button>
+        ) : (
+          <button className="ui-btn-secondary rounded-lg border px-3 py-2 text-sm font-semibold" onClick={onConnectWallet} type="button">
+            지갑 연결
+          </button>
+        )}
+      </div>
+    </form>
   )
 }

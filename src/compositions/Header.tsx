@@ -54,8 +54,6 @@ export function Header({
   void isAAWallet
   const [copyLabel, setCopyLabel] = useState<'idle' | 'copied' | 'failed'>('idle')
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false)
-  const [nicknameDraft, setNicknameDraft] = useState(profileNickname || '')
-  const [nicknameNotice, setNicknameNotice] = useState<string>()
   const secondaryButtonClass =
     'ui-btn-secondary inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition md:h-auto md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'
   const primaryButtonClass =
@@ -70,10 +68,6 @@ export function Header({
       : `${(usdtBalance ?? 0).toFixed(4)} USDT`
 
   useBodyScrollLock(isAccountModalOpen)
-
-  useEffect(() => {
-    setNicknameDraft(profileNickname || '')
-  }, [profileNickname])
 
   useEffect(() => {
     if (!isConnected || !isAccountModalOpen) return
@@ -102,15 +96,6 @@ export function Header({
   const handleDisconnect = () => {
     setIsAccountModalOpen(false)
     onDisconnect()
-  }
-
-  const handleSaveNickname = async () => {
-    try {
-      await onSaveNickname(normalizeProfileNickname(nicknameDraft))
-      setNicknameNotice(normalizeProfileNickname(nicknameDraft) ? '닉네임이 저장되었습니다.' : '닉네임이 초기화되었습니다.')
-    } catch {
-      // Surface the API error below instead of duplicating it here.
-    }
   }
 
   const handleGuideNavigation = () => {
@@ -167,27 +152,14 @@ export function Header({
       </div>
 
       <div className="mt-4 rounded-xl border px-3 py-2.5">
-        <label className="ui-text-muted grid gap-1 text-[11px] font-medium">
-          닉네임
-          <input
-            className="ui-input h-9 rounded-md border px-2 text-sm"
-            maxLength={24}
-            placeholder="비워두면 주소로 표시됩니다"
-            value={nicknameDraft}
-            onChange={(event) => {
-              setNicknameDraft(event.target.value)
-              setNicknameNotice(undefined)
-            }}
-          />
-        </label>
-        <div className="mt-2 flex items-center justify-between gap-2">
-          <p className="ui-text-muted m-0 text-[11px]">변경 시 지갑 서명이 필요합니다.</p>
-          <button className={primaryButtonClass} disabled={isProfileSaving} onClick={handleSaveNickname} type="button">
-            {isProfileSaving ? '저장 중...' : '저장'}
-          </button>
-        </div>
-        {nicknameNotice && !profileErrorMessage && <p className="ui-state-success mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]">{nicknameNotice}</p>}
-        {profileErrorMessage && <p className="ui-state-danger mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]">{profileErrorMessage}</p>}
+        <NicknameEditor
+          key={profileNickname || '__empty__'}
+          isProfileSaving={isProfileSaving}
+          onSaveNickname={onSaveNickname}
+          primaryButtonClass={primaryButtonClass}
+          profileErrorMessage={profileErrorMessage}
+          profileNickname={profileNickname}
+        />
       </div>
     </>
   )
@@ -296,6 +268,62 @@ export function Header({
             )}
         </>
       )}
+    </>
+  )
+}
+
+type NicknameEditorProps = {
+  isProfileSaving: boolean
+  onSaveNickname: (nickname: string) => Promise<unknown>
+  primaryButtonClass: string
+  profileErrorMessage?: string
+  profileNickname?: string | null
+}
+
+function NicknameEditor({
+  isProfileSaving,
+  onSaveNickname,
+  primaryButtonClass,
+  profileErrorMessage,
+  profileNickname,
+}: NicknameEditorProps) {
+  const [nicknameDraft, setNicknameDraft] = useState(profileNickname || '')
+  const [nicknameNotice, setNicknameNotice] = useState<string>()
+
+  const handleSaveNickname = async () => {
+    const nextNickname = normalizeProfileNickname(nicknameDraft)
+
+    try {
+      await onSaveNickname(nextNickname)
+      setNicknameNotice(nextNickname ? '닉네임이 저장되었습니다.' : '닉네임이 초기화되었습니다.')
+    } catch {
+      // Surface the API error below instead of duplicating it here.
+    }
+  }
+
+  return (
+    <>
+      <label className="ui-text-muted grid gap-1 text-[11px] font-medium">
+        닉네임
+        <input
+          className="ui-input h-9 rounded-md border px-2 text-sm"
+          maxLength={24}
+          placeholder="비워두면 주소로 표시됩니다"
+          value={nicknameDraft}
+          onChange={(event) => {
+            setNicknameDraft(event.target.value)
+            setNicknameNotice(undefined)
+          }}
+        />
+      </label>
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <p className="ui-text-muted m-0 text-[11px]">변경 시 지갑 서명이 필요합니다.</p>
+        <button className={primaryButtonClass} disabled={isProfileSaving} onClick={handleSaveNickname} type="button">
+          {isProfileSaving ? '저장 중...' : '저장'}
+        </button>
+      </div>
+      {nicknameNotice && !profileErrorMessage && <p className="ui-state-success mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]">{nicknameNotice}</p>}
+      {profileErrorMessage && <p className="ui-state-danger mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]">{profileErrorMessage}</p>}
     </>
   )
 }

@@ -1,13 +1,9 @@
 import { fetchCommentsByMarketId, insertCommentRow, mapCommentRow } from './_lib/commentStore.js'
-import { loadServerEnv, normalizeAddress, parseIssuedAt } from './_lib/env.js'
+import { loadServerEnv, normalizeAddress } from './_lib/env.js'
 import { allowMethods, sendJson } from './_lib/http.js'
 import { fetchNicknameMapByAddresses } from './_lib/profileStore.js'
-import { assertFreshIssuedAt, verifySignedMessage } from './_lib/signature.js'
-import {
-  buildCommentMessage,
-  COMMENT_MESSAGE_TTL_MS,
-  normalizeCommentContent as normalizeSharedCommentContent,
-} from '../shared/signingPayloads.js'
+import { readCommentSession } from './_lib/commentAuth.js'
+import { normalizeCommentContent as normalizeSharedCommentContent } from '../shared/signingPayloads.js'
 
 function normalizeMarketId(value) {
   if (typeof value !== 'string') return ''
@@ -23,7 +19,7 @@ function normalizeCommentContent(value) {
 export default async function handler(req, res) {
   if (!allowMethods(req, res, ['GET', 'POST'])) return
 
-  const { supabaseUrl, serviceRoleKey, rpcUrl } = loadServerEnv()
+  const { supabaseUrl, serviceRoleKey, commentAuthSecret } = loadServerEnv()
 
   if (!supabaseUrl || !serviceRoleKey) {
     return sendJson(res, 500, { error: 'Supabase server env is missing' })
@@ -44,35 +40,26 @@ export default async function handler(req, res) {
     }
 
     const marketId = normalizeMarketId(req.body?.marketId)
-    const address = normalizeAddress(req.body?.address)
     const content = normalizeCommentContent(req.body?.content)
-    const message = typeof req.body?.message === 'string' ? req.body.message : ''
-    const signature = typeof req.body?.signature === 'string' ? req.body.signature : ''
-    const issuedAt = typeof req.body?.issuedAt === 'string' ? req.body.issuedAt : ''
 
-    if (!marketId || !address || !content || !message || !signature || !issuedAt) {
+    if (!marketId || !content) {
       return sendJson(res, 400, { error: 'Missing required fields' })
     }
 
-    const issuedAtMs = parseIssuedAt(issuedAt)
-    if (!assertFreshIssuedAt(issuedAtMs, COMMENT_MESSAGE_TTL_MS)) {
-      return sendJson(res, 400, { error: 'Expired signature request' })
+    if (!commentAuthSecret) {
+      return sendJson(res, 500, { error: 'Comment auth env is missing' })
     }
 
-    const expectedMessage = buildCommentMessage({ marketId, address, content, issuedAt })
-    if (message !== expectedMessage) {
-      return sendJson(res, 400, { error: 'Invalid signature payload' })
+    let session
+    try {
+      session = readCommentSession(req, commentAuthSecret)
+    } catch {
+      return sendJson(res, 401, { error: 'Comment session expired' })
     }
 
-    const isValid = await verifySignedMessage({
-      rpcUrl,
-      address,
-      message,
-      signature,
-    })
-
-    if (!isValid) {
-      return sendJson(res, 401, { error: 'Signature verification failed' })
+    const address = normalizeAddress(session?.sub)
+    if (!address || session?.scope !== 'comments' || session?.type !== 'comment-session') {
+      return sendJson(res, 401, { error: 'Comment session required' })
     }
 
     const row = await insertCommentRow({ supabaseUrl, serviceRoleKey, marketId, address, content })
