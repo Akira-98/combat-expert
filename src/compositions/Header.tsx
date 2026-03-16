@@ -126,8 +126,7 @@ export function Header({
         <div className="flex min-w-0 items-center gap-3">
           <img alt="" className="h-14 w-14 rounded-full border object-cover" src={avatarUrl} />
           <div className="min-w-0">
-            <p className="ui-text-strong m-0 text-sm font-semibold">연결된 지갑</p>
-            <p className="ui-text-muted mt-1 truncate text-xs font-semibold">{profileDisplayName}</p>
+            <p className="ui-text-strong m-0 truncate text-sm font-semibold">{profileDisplayName}</p>
             <div className="mt-1 flex items-center gap-1.5">
               <p className="ui-text-muted truncate text-xs">{shortenAddress(address, 6, 4)}</p>
               <button

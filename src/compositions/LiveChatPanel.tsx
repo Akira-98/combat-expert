@@ -277,9 +277,6 @@ export function LiveChatPanel({ address, profile, className }: LiveChatPanelProp
             readOnly
           />
         </label>
-        <p className="ui-text-muted m-0 text-[11px]">
-          현재 표시 이름: {getProfileDisplayName(address, profile.nickname)}
-        </p>
         <div className="grid grid-cols-[1fr_auto] gap-2">
           <input
             className="ui-input h-9 rounded-md border px-3 text-sm outline-none md:rounded-lg"
