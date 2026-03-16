@@ -134,12 +134,16 @@ function App() {
                 gamesErrorMessage={gamesErrorMessage}
                 marketsErrorMessage={activeGameId ? marketsErrorMessage : undefined}
                 selectedGameId={activeGameId}
+                address={wallet.address}
+                isConnected={wallet.isConnected}
+                isAAWallet={wallet.isAAWallet}
                 games={filters.filteredGames}
                 marketSections={activeGameId ? marketSections : []}
                 selectedOutcomes={betting.selectedOutcomes}
                 selectedOutcomePriceChanges={betting.selectedOutcomePriceChanges}
                 onSelectGame={handleOpenGameMarkets}
                 onBackToGames={handleBackToGames}
+                onConnectWallet={wallet.openAuthModal}
                 onSelectOutcome={betting.selectOutcome}
                 onRetryGames={retryGames}
                 onRetryMarkets={retryMarkets}

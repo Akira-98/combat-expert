@@ -1,30 +1,7 @@
 import { shortenAddress } from './walletUi'
+import { normalizeProfileNickname } from '../../shared/signingPayloads.js'
 
-export const PROFILE_MESSAGE_PREFIX = 'Combat Expert nickname update'
-export const PROFILE_MAX_NICKNAME_LENGTH = 24
-
-export function normalizeProfileNickname(value: string) {
-  const trimmed = value.trim()
-  if (!trimmed) return ''
-  return trimmed.slice(0, PROFILE_MAX_NICKNAME_LENGTH)
-}
-
-export function buildProfileMessage({
-  address,
-  nickname,
-  issuedAt,
-}: {
-  address: string
-  nickname: string
-  issuedAt: string
-}) {
-  return [
-    PROFILE_MESSAGE_PREFIX,
-    `Address: ${address.toLowerCase()}`,
-    `Nickname: ${nickname || '(clear)'}`,
-    `Issued At: ${issuedAt}`,
-  ].join('\n')
-}
+export { buildProfileMessage, normalizeProfileNickname, PROFILE_MAX_NICKNAME_LENGTH } from '../../shared/signingPayloads.js'
 
 export function getProfileDisplayName(address?: string, nickname?: string | null) {
   const normalizedNickname = normalizeProfileNickname(nickname || '')

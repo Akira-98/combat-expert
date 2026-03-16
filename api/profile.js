@@ -1,113 +1,18 @@
-import { createPublicClient, http } from 'viem'
-import { polygon } from 'viem/chains'
-
-const PROFILE_MESSAGE_PREFIX = 'Combat Expert nickname update'
-const PROFILE_MESSAGE_TTL_MS = 5 * 60 * 1000
-const FALLBACK_POLYGON_RPC_URL = 'https://polygon-rpc.com'
-
-function sendJson(res, statusCode, payload) {
-  res.status(statusCode)
-  res.setHeader('Content-Type', 'application/json')
-  res.setHeader('Cache-Control', 'no-store')
-  res.send(JSON.stringify(payload))
-}
-
-function normalizePolygonRpcUrl(rpcUrl) {
-  const trimmed = (rpcUrl || '').trim()
-  if (!trimmed) return ''
-  if (trimmed === 'https://rpc.ankr.com/polygon') return FALLBACK_POLYGON_RPC_URL
-  return trimmed
-}
-
-function normalizeAddress(value) {
-  if (typeof value !== 'string') return ''
-  const trimmed = value.trim().toLowerCase()
-  return /^0x[a-f0-9]{40}$/.test(trimmed) ? trimmed : ''
-}
+import { loadServerEnv, normalizeAddress, parseIssuedAt } from './_lib/env.js'
+import { allowMethods, sendJson } from './_lib/http.js'
+import { fetchProfileByAddress, upsertProfileByAddress } from './_lib/profileStore.js'
+import { assertFreshIssuedAt, verifySignedMessage } from './_lib/signature.js'
+import { buildProfileMessage, normalizeProfileNickname, PROFILE_MESSAGE_TTL_MS } from '../shared/signingPayloads.js'
 
 function normalizeNickname(value) {
-  if (typeof value !== 'string') return null
-  const trimmed = value.trim()
-  if (!trimmed) return null
-  return trimmed.slice(0, 24)
-}
-
-function buildProfileMessage({ address, nickname, issuedAt }) {
-  const nicknameLine = nickname || '(clear)'
-  return [
-    PROFILE_MESSAGE_PREFIX,
-    `Address: ${address}`,
-    `Nickname: ${nicknameLine}`,
-    `Issued At: ${issuedAt}`,
-  ].join('\n')
-}
-
-function parseIssuedAt(value) {
-  const timestamp = Date.parse(String(value || ''))
-  return Number.isFinite(timestamp) ? timestamp : NaN
-}
-
-async function fetchProfile({ supabaseUrl, serviceRoleKey, address }) {
-  const response = await fetch(`${supabaseUrl}/rest/v1/profiles?wallet_address=eq.${encodeURIComponent(address)}&select=wallet_address,nickname`, {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      apikey: serviceRoleKey,
-      Authorization: `Bearer ${serviceRoleKey}`,
-    },
-  })
-
-  if (!response.ok) {
-    const text = await response.text()
-    throw new Error(text || 'Failed to fetch profile')
-  }
-
-  const rows = await response.json()
-  const profile = Array.isArray(rows) ? rows[0] : undefined
-  return {
-    address,
-    nickname: typeof profile?.nickname === 'string' && profile.nickname.trim() ? profile.nickname : null,
-  }
-}
-
-async function upsertProfile({ supabaseUrl, serviceRoleKey, address, nickname }) {
-  const response = await fetch(`${supabaseUrl}/rest/v1/profiles`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Prefer: 'resolution=merge-duplicates,return=representation',
-      apikey: serviceRoleKey,
-      Authorization: `Bearer ${serviceRoleKey}`,
-    },
-    body: JSON.stringify({
-      wallet_address: address,
-      nickname,
-    }),
-  })
-
-  if (!response.ok) {
-    const text = await response.text()
-    throw new Error(text || 'Failed to save profile')
-  }
-
-  const rows = await response.json()
-  const profile = Array.isArray(rows) ? rows[0] : undefined
-  return {
-    address,
-    nickname: typeof profile?.nickname === 'string' && profile.nickname.trim() ? profile.nickname : null,
-  }
+  const normalized = normalizeProfileNickname(value)
+  return normalized || null
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET' && req.method !== 'POST') {
-    res.setHeader('Allow', 'GET, POST')
-    return sendJson(res, 405, { error: 'Method not allowed' })
-  }
+  if (!allowMethods(req, res, ['GET', 'POST'])) return
 
-  const supabaseUrl = (process.env.SUPABASE_URL || '').trim()
-  const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim()
-  const rpcUrl = normalizePolygonRpcUrl(process.env.RPC_URL)
+  const { supabaseUrl, serviceRoleKey, rpcUrl } = loadServerEnv()
 
   if (!supabaseUrl || !serviceRoleKey) {
     return sendJson(res, 500, { error: 'Supabase server env is missing' })
@@ -118,7 +23,7 @@ export default async function handler(req, res) {
       const address = normalizeAddress(req.query?.address)
       if (!address) return sendJson(res, 400, { error: 'Invalid address' })
 
-      const profile = await fetchProfile({ supabaseUrl, serviceRoleKey, address })
+      const profile = await fetchProfileByAddress({ supabaseUrl, serviceRoleKey, address })
       return sendJson(res, 200, profile)
     }
 
@@ -133,7 +38,7 @@ export default async function handler(req, res) {
     }
 
     const issuedAtMs = parseIssuedAt(issuedAt)
-    if (!Number.isFinite(issuedAtMs) || Math.abs(Date.now() - issuedAtMs) > PROFILE_MESSAGE_TTL_MS) {
+    if (!assertFreshIssuedAt(issuedAtMs, PROFILE_MESSAGE_TTL_MS)) {
       return sendJson(res, 400, { error: 'Expired signature request' })
     }
 
@@ -142,16 +47,8 @@ export default async function handler(req, res) {
       return sendJson(res, 400, { error: 'Invalid signature payload' })
     }
 
-    if (!rpcUrl) {
-      return sendJson(res, 500, { error: 'RPC_URL is not set' })
-    }
-
-    const publicClient = createPublicClient({
-      chain: polygon,
-      transport: http(rpcUrl),
-    })
-
-    const isValid = await publicClient.verifyMessage({
+    const isValid = await verifySignedMessage({
+      rpcUrl,
       address,
       message,
       signature,
@@ -161,7 +58,7 @@ export default async function handler(req, res) {
       return sendJson(res, 401, { error: 'Signature verification failed' })
     }
 
-    const profile = await upsertProfile({ supabaseUrl, serviceRoleKey, address, nickname })
+    const profile = await upsertProfileByAddress({ supabaseUrl, serviceRoleKey, address, nickname })
     return sendJson(res, 200, profile)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'

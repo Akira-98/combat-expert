@@ -1,4 +1,5 @@
 import { GamesPane } from './GamesPane'
+import { MarketCommentsPanel } from './MarketCommentsPanel'
 import { MarketsPane } from './MarketsPane'
 import type { MarketListProps } from './types'
 
@@ -9,12 +10,16 @@ export function MarketList({
   gamesErrorMessage,
   marketsErrorMessage,
   selectedGameId,
+  address,
+  isConnected,
+  isAAWallet,
   games,
   marketSections,
   selectedOutcomes,
   selectedOutcomePriceChanges,
   onSelectGame,
   onBackToGames,
+  onConnectWallet,
   onSelectOutcome,
   onRetryGames,
   onRetryMarkets,
@@ -60,6 +65,14 @@ export function MarketList({
         selectedOutcomePriceChanges={selectedOutcomePriceChanges}
         onSelectOutcome={onSelectOutcome}
         onRetryMarkets={onRetryMarkets}
+      />
+
+      <MarketCommentsPanel
+        selectedGame={selectedGame}
+        address={address}
+        isConnected={isConnected}
+        isAAWallet={isAAWallet}
+        onConnectWallet={onConnectWallet}
       />
     </section>
   )

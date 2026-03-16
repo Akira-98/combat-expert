@@ -9,12 +9,16 @@ export type MarketListProps = {
   gamesErrorMessage?: string
   marketsErrorMessage?: string
   selectedGameId?: string
+  address?: `0x${string}`
+  isConnected: boolean
+  isAAWallet?: boolean
   games: GameItem[]
   marketSections: MarketSection[]
   selectedOutcomes: Set<SelectionKey>
   selectedOutcomePriceChanges: Map<SelectionKey, OutcomePriceChange>
   onSelectGame: (gameId: string) => void
   onBackToGames?: () => void
+  onConnectWallet: () => void
   onSelectOutcome: (outcome: OutcomeItem) => void
   onRetryGames: () => void
   onRetryMarkets: () => void
