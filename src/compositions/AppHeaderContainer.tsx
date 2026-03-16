@@ -1,8 +1,10 @@
 import { Header } from './Header'
+import type { useProfile } from '../hooks/useProfile'
 import type { useWalletConnection } from '../hooks/useWalletConnection'
 
 type AppHeaderContainerProps = {
   wallet: ReturnType<typeof useWalletConnection>
+  profile: ReturnType<typeof useProfile>
   usdtBalance: number
   isUsdtBalanceLoading: boolean
   isUsdtSupportedChain: boolean
@@ -10,7 +12,7 @@ type AppHeaderContainerProps = {
   onGuideClick: () => void
 }
 
-export function AppHeaderContainer({ wallet, usdtBalance, isUsdtBalanceLoading, isUsdtSupportedChain, onTitleClick, onGuideClick }: AppHeaderContainerProps) {
+export function AppHeaderContainer({ wallet, profile, usdtBalance, isUsdtBalanceLoading, isUsdtSupportedChain, onTitleClick, onGuideClick }: AppHeaderContainerProps) {
   return (
     <Header
       isAuthenticated={wallet.isAuthenticated}
@@ -19,6 +21,11 @@ export function AppHeaderContainer({ wallet, usdtBalance, isUsdtBalanceLoading, 
       isReconnecting={wallet.isReconnecting}
       isWalletStatusReady={wallet.isWalletStatusReady}
       address={wallet.address}
+      profileDisplayName={profile.displayName}
+      profileNickname={profile.nickname}
+      isProfileSaving={profile.isSaving}
+      profileErrorMessage={profile.errorMessage}
+      onSaveNickname={profile.saveNickname}
       isAAWallet={wallet.isAAWallet}
       usdtBalance={usdtBalance}
       isUsdtBalanceLoading={isUsdtBalanceLoading}

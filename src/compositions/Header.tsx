@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { normalizeProfileNickname } from '../helpers/profile'
 import { getWalletAvatarUrl, shortenAddress } from '../helpers/walletUi'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 
@@ -10,6 +11,11 @@ type HeaderProps = {
   isReconnecting?: boolean
   isWalletStatusReady: boolean
   address?: `0x${string}`
+  profileDisplayName: string
+  profileNickname?: string | null
+  isProfileSaving: boolean
+  profileErrorMessage?: string
+  onSaveNickname: (nickname: string) => Promise<unknown>
   isAAWallet?: boolean
   usdtBalance?: number
   isUsdtBalanceLoading?: boolean
@@ -29,6 +35,11 @@ export function Header({
   isReconnecting,
   isWalletStatusReady,
   address,
+  profileDisplayName,
+  profileNickname,
+  isProfileSaving,
+  profileErrorMessage,
+  onSaveNickname,
   isAAWallet,
   usdtBalance,
   isUsdtBalanceLoading,
@@ -43,6 +54,8 @@ export function Header({
   void isAAWallet
   const [copyLabel, setCopyLabel] = useState<'idle' | 'copied' | 'failed'>('idle')
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false)
+  const [nicknameDraft, setNicknameDraft] = useState(profileNickname || '')
+  const [nicknameNotice, setNicknameNotice] = useState<string>()
   const secondaryButtonClass =
     'ui-btn-secondary inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition md:h-auto md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'
   const primaryButtonClass =
@@ -59,13 +72,11 @@ export function Header({
   useBodyScrollLock(isAccountModalOpen)
 
   useEffect(() => {
-    if (!isConnected) {
-      setIsAccountModalOpen(false)
-    }
-  }, [isConnected])
+    setNicknameDraft(profileNickname || '')
+  }, [profileNickname])
 
   useEffect(() => {
-    if (!isAccountModalOpen) return
+    if (!isConnected || !isAccountModalOpen) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -75,7 +86,7 @@ export function Header({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isAccountModalOpen])
+  }, [isAccountModalOpen, isConnected])
 
   const handleCopyAddress = async () => {
     if (!address) return
@@ -93,10 +104,21 @@ export function Header({
     onDisconnect()
   }
 
+  const handleSaveNickname = async () => {
+    try {
+      await onSaveNickname(normalizeProfileNickname(nicknameDraft))
+      setNicknameNotice(normalizeProfileNickname(nicknameDraft) ? '닉네임이 저장되었습니다.' : '닉네임이 초기화되었습니다.')
+    } catch {
+      // Surface the API error below instead of duplicating it here.
+    }
+  }
+
   const handleGuideNavigation = () => {
     setIsAccountModalOpen(false)
     onGuideClick()
   }
+
+  const isAccountPanelVisible = isConnected && isAccountModalOpen
 
   const accountPanel = (
     <>
@@ -105,6 +127,7 @@ export function Header({
           <img alt="" className="h-14 w-14 rounded-full border object-cover" src={avatarUrl} />
           <div className="min-w-0">
             <p className="ui-text-strong m-0 text-sm font-semibold">연결된 지갑</p>
+            <p className="ui-text-muted mt-1 truncate text-xs font-semibold">{profileDisplayName}</p>
             <div className="mt-1 flex items-center gap-1.5">
               <p className="ui-text-muted truncate text-xs">{shortenAddress(address, 6, 4)}</p>
               <button
@@ -142,6 +165,30 @@ export function Header({
           <p className="ui-text-muted m-0 text-[11px] font-medium">보유 잔액</p>
           <p className="ui-text-strong m-0 text-xs font-semibold">{usdtBalanceLabel}</p>
         </div>
+      </div>
+
+      <div className="mt-4 rounded-xl border px-3 py-2.5">
+        <label className="ui-text-muted grid gap-1 text-[11px] font-medium">
+          닉네임
+          <input
+            className="ui-input h-9 rounded-md border px-2 text-sm"
+            maxLength={24}
+            placeholder="비워두면 주소로 표시됩니다"
+            value={nicknameDraft}
+            onChange={(event) => {
+              setNicknameDraft(event.target.value)
+              setNicknameNotice(undefined)
+            }}
+          />
+        </label>
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <p className="ui-text-muted m-0 text-[11px]">변경 시 지갑 서명이 필요합니다.</p>
+          <button className={primaryButtonClass} disabled={isProfileSaving} onClick={handleSaveNickname} type="button">
+            {isProfileSaving ? '저장 중...' : '저장'}
+          </button>
+        </div>
+        {nicknameNotice && !profileErrorMessage && <p className="ui-state-success mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]">{nicknameNotice}</p>}
+        {profileErrorMessage && <p className="ui-state-danger mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]">{profileErrorMessage}</p>}
       </div>
     </>
   )
@@ -211,10 +258,10 @@ export function Header({
                 type="button"
               >
                 <img alt="" className="h-10 w-10 rounded-full border object-cover" src={avatarUrl} />
-                <span className="ui-text-strong hidden text-sm font-semibold md:inline">{shortenAddress(address, 4, 4)}</span>
+                <span className="ui-text-strong hidden text-sm font-semibold md:inline">{profileDisplayName}</span>
               </button>
 
-              {isAccountModalOpen && (
+              {isAccountPanelVisible && (
                 <div className="absolute right-0 top-[calc(100%+12px)] z-50 hidden w-[min(24rem,calc(100vw-2rem))] md:block">
                   <section className="ui-surface-soft rounded-2xl border p-4 shadow-2xl">{accountPanel}</section>
                 </div>

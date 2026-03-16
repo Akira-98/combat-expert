@@ -2,14 +2,16 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import * as Ably from 'ably'
 import type { Address } from 'viem'
 import { useAppConfig } from '../config/useAppConfig'
+import type { useProfile } from '../hooks/useProfile'
+import { getProfileDisplayName } from '../helpers/profile'
 
 const CHAT_CLIENT_ID_KEY = 'ufc-live-chat-client-id'
-const CHAT_DISPLAY_NAME_KEY = 'ufc-live-chat-display-name'
 const MESSAGE_LIMIT = 180
 const MESSAGE_MAX_LENGTH = 220
 
 type LiveChatPanelProps = {
   address?: Address
+  profile: ReturnType<typeof useProfile>
   className?: string
 }
 
@@ -27,7 +29,8 @@ function shortAddress(address?: string) {
   return `${address.slice(0, 6)}...${address.slice(-4)}`
 }
 
-function sanitizeSenderName(value: string) {
+function sanitizeSenderName(value: string | null | undefined) {
+  if (!value) return 'Guest'
   const trimmed = value.trim()
   if (!trimmed) return 'Guest'
   return trimmed.slice(0, 24)
@@ -104,11 +107,10 @@ function isExpectedConnectionClosure(error: unknown) {
   return message.includes('connection closed') || message.includes('connection unavailable')
 }
 
-export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
+export function LiveChatPanel({ address, profile, className }: LiveChatPanelProps) {
   const { ablyChannel } = useAppConfig()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [draft, setDraft] = useState('')
-  const [displayName, setDisplayName] = useState(() => shortAddress(address))
   const [connectionState, setConnectionState] = useState<ConnectionUiState>('connecting')
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
   const [sendPending, setSendPending] = useState(false)
@@ -117,16 +119,7 @@ export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
   const chatChannelRef = useRef<Ably.RealtimeChannel | null>(null)
 
   useEffect(() => {
-    if (!address) return
-    setDisplayName((current) => (current === 'Guest' ? shortAddress(address) : current))
-  }, [address])
-
-  useEffect(() => {
     let canceled = false
-
-    const savedDisplayName = localStorage.getItem(CHAT_DISPLAY_NAME_KEY)
-    const nextDisplayName = sanitizeSenderName(savedDisplayName || shortAddress(address))
-    setDisplayName(nextDisplayName)
 
     let clientId = localStorage.getItem(CHAT_CLIENT_ID_KEY)
     if (!clientId) {
@@ -218,11 +211,10 @@ export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
     try {
       await channel.publish('message', {
         text,
-        name: sanitizeSenderName(displayName),
+        name: sanitizeSenderName(profile.nickname) || getProfileDisplayName(address, profile.nickname),
         sentAt: Date.now(),
       })
       setDraft('')
-      localStorage.setItem(CHAT_DISPLAY_NAME_KEY, sanitizeSenderName(displayName))
     } catch (error) {
       const message = error instanceof Error ? error.message : '메시지 전송에 실패했습니다.'
       setErrorMessage(message)
@@ -279,12 +271,15 @@ export function LiveChatPanel({ address, className }: LiveChatPanelProps) {
           닉네임
           <input
             className="ui-input h-8 rounded-md border px-2 text-xs"
-            value={displayName}
+            value={profile.nickname || ''}
             maxLength={24}
-            onChange={(event) => setDisplayName(event.target.value)}
-            onBlur={() => localStorage.setItem(CHAT_DISPLAY_NAME_KEY, sanitizeSenderName(displayName))}
+            placeholder={address ? '헤더의 계정 메뉴에서 변경하세요' : '지갑 연결 후 설정 가능'}
+            readOnly
           />
         </label>
+        <p className="ui-text-muted m-0 text-[11px]">
+          현재 표시 이름: {getProfileDisplayName(address, profile.nickname)}
+        </p>
         <div className="grid grid-cols-[1fr_auto] gap-2">
           <input
             className="ui-input h-9 rounded-md border px-3 text-sm outline-none md:rounded-lg"

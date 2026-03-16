@@ -16,12 +16,18 @@ import { useGameFilters } from './hooks/useGameFilters'
 import { useWalletConnection } from './hooks/useWalletConnection'
 import { useMarketData } from './hooks/useMarketData'
 import { useBetting } from './hooks/useBetting'
+import { useProfile } from './hooks/useProfile'
 import { useUsdtTransfer } from './hooks/useUsdtTransfer'
 
 function App() {
   const [isMobileBetslipOpen, setIsMobileBetslipOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const wallet = useWalletConnection()
+  const profile = useProfile({
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+    isAAWallet: wallet.isAAWallet,
+  })
   const market = useMarketData()
   const {
     selectedGameId,
@@ -98,6 +104,7 @@ function App() {
       >
         <AppHeaderContainer
           wallet={wallet}
+          profile={profile}
           usdtBalance={usdtTransfer.balance}
           isUsdtBalanceLoading={usdtTransfer.isBalanceLoading}
           isUsdtSupportedChain={usdtTransfer.isSupportedChain}
@@ -111,7 +118,7 @@ function App() {
       <main className={`mt-0 grid items-start gap-2 md:mt-4 md:gap-4 ${isGuideRoute ? '' : 'xl:grid-cols-[240px_minmax(0,1fr)_316px]'}`}>
         {shouldShowDesktopChat && (
           <aside className="hidden xl:sticky xl:top-4 xl:block">
-            <LiveChatPanel address={wallet.address} />
+            <LiveChatPanel address={wallet.address} profile={profile} />
           </aside>
         )}
 
@@ -145,7 +152,7 @@ function App() {
           </div>
 
           <div className={`${shouldShowMobileChatPanel ? 'xl:hidden' : 'hidden'}`}>
-            <LiveChatPanel address={wallet.address} className="h-[calc(100dvh-13rem)]" />
+            <LiveChatPanel address={wallet.address} profile={profile} className="h-[calc(100dvh-13rem)]" />
           </div>
         </section>
 

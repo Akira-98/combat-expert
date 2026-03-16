@@ -89,7 +89,7 @@ export function useAppNavigation({
     if (!selectedGameId || !filteredGames.some((game) => game.gameId === selectedGameId)) {
       setSelectedGameId(filteredGames[0].gameId)
     }
-  }, [filteredGames, routedGameId, selectedGameId, setSelectedGameId])
+  }, [filteredGames, routedGameId, routedPage, selectedGameId, setSelectedGameId])
 
   useEffect(() => {
     if (routedPage === 'guide') return
