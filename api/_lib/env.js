@@ -24,5 +24,6 @@ export function loadServerEnv() {
     serviceRoleKey: (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim(),
     rpcUrl: normalizePolygonRpcUrl(process.env.RPC_URL),
     commentAuthSecret: (process.env.COMMENT_AUTH_JWT_SECRET || '').trim(),
+    rankingSyncSecret: (process.env.RANKING_SYNC_SECRET || '').trim(),
   }
 }

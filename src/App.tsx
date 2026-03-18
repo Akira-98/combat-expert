@@ -7,6 +7,7 @@ import { AppBottomNav } from './compositions/AppBottomNav'
 import { AppHeaderContainer } from './compositions/AppHeaderContainer'
 import { AppGameFiltersContainer } from './compositions/AppGameFiltersContainer'
 import { GuidePage } from './compositions/GuidePage'
+import { RankingPage } from './compositions/RankingPage'
 import { MobileBetslipSheet } from './compositions/MobileBetslipSheet'
 import { LiveChatPanel } from './compositions/LiveChatPanel'
 import { buildBetslipPanelProps } from './helpers/buildBetslipPanelProps'
@@ -17,6 +18,7 @@ import { useWalletConnection } from './hooks/useWalletConnection'
 import { useMarketData } from './hooks/useMarketData'
 import { useBetting } from './hooks/useBetting'
 import { useProfile } from './hooks/useProfile'
+import { useRankings } from './hooks/useRankings'
 import { useUsdtTransfer } from './hooks/useUsdtTransfer'
 
 function App() {
@@ -48,6 +50,7 @@ function App() {
     desktopSidePanelTab,
     setDesktopSidePanelTab,
     isGuideRoute,
+    isRankingRoute,
     marketPageMode,
     activeGameId,
     handleOpenGameMarkets,
@@ -55,6 +58,7 @@ function App() {
     handleNavigateToExplore,
     handleNavigateToMobileView,
     handleNavigateToGuide,
+    handleNavigateToRanking,
   } = useAppNavigation({
     filteredGames: filters.filteredGames,
     selectedGameId,
@@ -77,15 +81,17 @@ function App() {
     isConnected: wallet.isConnected,
     isAAWallet: wallet.isAAWallet,
   })
+  const rankings = useRankings(wallet.address)
 
   const betslipPanelProps = buildBetslipPanelProps({ wallet, betting })
-  const shouldShowFilters = !isGuideRoute
-  const shouldShowDesktopChat = !isGuideRoute
-  const shouldShowDesktopSidebar = !isGuideRoute
+  const shouldShowFilters = !isGuideRoute && !isRankingRoute
+  const shouldShowDesktopChat = !isGuideRoute && !isRankingRoute
+  const shouldShowDesktopSidebar = !isGuideRoute && !isRankingRoute
   const shouldShowGuideContent = isGuideRoute
-  const shouldShowExploreContent = !isGuideRoute && mobileView === 'explore'
-  const shouldShowMobileBetsPanel = !isGuideRoute && mobileView === 'bets'
-  const shouldShowMobileChatPanel = !isGuideRoute && mobileView === 'chat'
+  const shouldShowRankingContent = isRankingRoute
+  const shouldShowExploreContent = !isGuideRoute && !isRankingRoute && mobileView === 'explore'
+  const shouldShowMobileBetsPanel = !isGuideRoute && !isRankingRoute && mobileView === 'bets'
+  const shouldShowMobileChatPanel = !isGuideRoute && !isRankingRoute && mobileView === 'chat'
   const handleOpenMobileMenu = () => {
     setIsMobileBetslipOpen(false)
     setIsMobileMenuOpen(true)
@@ -94,6 +100,10 @@ function App() {
   const handleOpenGuideFromMenu = () => {
     setIsMobileMenuOpen(false)
     handleNavigateToGuide()
+  }
+  const handleOpenRankingFromMenu = () => {
+    setIsMobileMenuOpen(false)
+    handleNavigateToRanking()
   }
   return (
     <div className="app-theme mx-auto w-full max-w-[1440px] px-0 pb-36 pt-0 md:px-4 md:pt-4 lg:pb-10">
@@ -108,14 +118,17 @@ function App() {
           usdtBalance={usdtTransfer.balance}
           isUsdtBalanceLoading={usdtTransfer.isBalanceLoading}
           isUsdtSupportedChain={usdtTransfer.isSupportedChain}
+          rankingViewer={rankings.viewer}
+          isRankingLoading={rankings.isLoading}
           onTitleClick={handleNavigateToExplore}
+          onRankingClick={handleNavigateToRanking}
           onGuideClick={handleNavigateToGuide}
         />
       </div>
 
       {shouldShowFilters && <AppGameFiltersContainer filters={filters} games={games} mobileStickyTop={mobileHeaderHeight} />}
 
-      <main className={`mt-0 grid items-start gap-2 md:mt-4 md:gap-4 ${isGuideRoute ? '' : 'xl:grid-cols-[240px_minmax(0,1fr)_316px]'}`}>
+      <main className={`mt-0 grid items-start gap-2 md:mt-4 md:gap-4 ${isGuideRoute || isRankingRoute ? '' : 'xl:grid-cols-[240px_minmax(0,1fr)_316px]'}`}>
         {shouldShowDesktopChat && (
           <aside className="hidden xl:sticky xl:top-4 xl:block">
             <LiveChatPanel address={wallet.address} profile={profile} />
@@ -125,6 +138,16 @@ function App() {
         <section className="min-w-0">
           {shouldShowGuideContent ? (
             <GuidePage onBack={handleNavigateToExplore} />
+          ) : shouldShowRankingContent ? (
+            <RankingPage
+              rankings={rankings.rankings}
+              viewer={rankings.viewer}
+              updatedAt={rankings.updatedAt}
+              isLoading={rankings.isLoading}
+              errorMessage={rankings.errorMessage}
+              onRetry={() => void rankings.refetch()}
+              isConnected={wallet.isConnected}
+            />
           ) : (
             <div className={`${shouldShowExploreContent ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}`}>
               <MarketList
@@ -244,6 +267,9 @@ function App() {
                 </button>
               </div>
               <div className="mt-5 grid gap-2">
+                <button className="ui-btn-secondary rounded-xl border px-3 py-3 text-left text-sm font-semibold" onClick={handleOpenRankingFromMenu} type="button">
+                  랭킹
+                </button>
                 <button className="ui-btn-secondary rounded-xl border px-3 py-3 text-left text-sm font-semibold" onClick={handleOpenGuideFromMenu} type="button">
                   가이드
                 </button>

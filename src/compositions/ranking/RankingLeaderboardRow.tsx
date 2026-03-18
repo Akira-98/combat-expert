@@ -1,0 +1,44 @@
+import { shortenAddress } from '../../helpers/walletUi'
+import type { RankingEntry, RankingViewer } from '../../hooks/useRankings'
+
+type RankingLeaderboardRowProps = {
+  entry: RankingEntry
+  rank: number
+  isViewer: boolean
+}
+
+export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderboardRowProps) {
+  return (
+    <div
+      className={`grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 px-4 py-3 md:grid-cols-[84px_minmax(0,1fr)_112px_280px] ${isViewer ? 'bg-orange-500/8' : ''}`}
+    >
+      <div className="flex items-center">
+        <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${isViewer ? 'bg-orange-300 text-slate-950' : 'bg-white/6 text-slate-200'}`}>#{rank}</span>
+      </div>
+      <div className="min-w-0">
+        <p className="ui-text-strong m-0 truncate text-sm font-semibold">{entry.nickname || shortenAddress(entry.address, 6, 4)}</p>
+        <p className="ui-text-muted mt-1 mb-0 truncate text-xs">{shortenAddress(entry.address, 7, 5)}</p>
+        <div className="mt-2 md:hidden">
+          <EntryMetrics entry={entry} />
+        </div>
+      </div>
+      <div className="flex items-center justify-end">
+        <p className="ui-text-strong m-0 text-lg font-black">{entry.totalScore.toFixed(1)}</p>
+      </div>
+      <div className="hidden items-center justify-end md:flex">
+        <EntryMetrics entry={entry} />
+      </div>
+    </div>
+  )
+}
+
+function EntryMetrics({ entry }: { entry: RankingEntry | RankingViewer }) {
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-300">
+      <span>적중 {entry.winCount}</span>
+      <span>미적중 {entry.loseCount}</span>
+      <span>언더독 {entry.underdogHitCount}</span>
+      <span>총 {entry.eventCount}건</span>
+    </div>
+  )
+}

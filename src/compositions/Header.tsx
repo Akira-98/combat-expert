@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { normalizeProfileNickname } from '../helpers/profile'
-import { getWalletAvatarUrl, shortenAddress } from '../helpers/walletUi'
+import { getWalletAvatarUrl } from '../helpers/walletUi'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
+import type { RankingViewer } from '../hooks/useRankings'
+import { AccountPanel } from './header/AccountPanel'
 
 type HeaderProps = {
   isAuthenticated: boolean
@@ -20,9 +21,12 @@ type HeaderProps = {
   usdtBalance?: number
   isUsdtBalanceLoading?: boolean
   isUsdtSupportedChain?: boolean
+  rankingViewer: RankingViewer | null
+  isRankingLoading: boolean
   canOpenAuthModal: boolean
   connectErrorMessage?: string
   onTitleClick?: () => void
+  onRankingClick: () => void
   onGuideClick: () => void
   onOpenAuthModal: () => void
   onDisconnect: () => void
@@ -44,9 +48,12 @@ export function Header({
   usdtBalance,
   isUsdtBalanceLoading,
   isUsdtSupportedChain,
+  rankingViewer,
+  isRankingLoading,
   canOpenAuthModal,
   connectErrorMessage,
   onTitleClick,
+  onRankingClick,
   onGuideClick,
   onOpenAuthModal,
   onDisconnect,
@@ -103,65 +110,31 @@ export function Header({
     onGuideClick()
   }
 
-  const isAccountPanelVisible = isConnected && isAccountModalOpen
+  const handleRankingNavigation = () => {
+    setIsAccountModalOpen(false)
+    onRankingClick()
+  }
 
   const accountPanel = (
-    <>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <img alt="" className="h-14 w-14 rounded-full border object-cover" src={avatarUrl} />
-          <div className="min-w-0">
-            <p className="ui-text-strong m-0 truncate text-sm font-semibold">{profileDisplayName}</p>
-            <div className="mt-1 flex items-center gap-1.5">
-              <p className="ui-text-muted truncate text-xs">{shortenAddress(address, 6, 4)}</p>
-              <button
-                aria-label={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
-                className={`${iconButtonClass} h-7 w-7 rounded-full border`}
-                onClick={handleCopyAddress}
-                title={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
-                type="button"
-              >
-                <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
-                  <rect height="11" rx="2" stroke="currentColor" strokeWidth="1.8" width="11" x="9" y="9" />
-                  <path d="M7 15H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1" stroke="currentColor" strokeWidth="1.8" />
-                </svg>
-              </button>
-              <button aria-label="로그아웃" className={`${iconButtonClass} h-7 w-7 rounded-full border`} onClick={handleDisconnect} title="로그아웃" type="button">
-                <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
-                  <path d="M14 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2" stroke="currentColor" strokeWidth="1.8" />
-                  <path d="M10 12h10" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
-                  <path d="m17 8 4 4-4 4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        <button className={`${iconButtonClass} shrink-0 md:hidden`} onClick={() => setIsAccountModalOpen(false)} title="닫기" type="button">
-          <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
-            <path d="M6 6L18 18" stroke="currentColor" strokeWidth="1.8" />
-            <path d="M18 6L6 18" stroke="currentColor" strokeWidth="1.8" />
-          </svg>
-        </button>
-      </div>
-
-      <div className="mt-4 rounded-xl border px-3 py-2.5">
-        <div className="flex items-center justify-between gap-3">
-          <p className="ui-text-muted m-0 text-[11px] font-medium">보유 잔액</p>
-          <p className="ui-text-strong m-0 text-xs font-semibold">{usdtBalanceLabel}</p>
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-xl border px-3 py-2.5">
-        <NicknameEditor
-          key={profileNickname || '__empty__'}
-          isProfileSaving={isProfileSaving}
-          onSaveNickname={onSaveNickname}
-          primaryButtonClass={primaryButtonClass}
-          profileErrorMessage={profileErrorMessage}
-          profileNickname={profileNickname}
-        />
-      </div>
-    </>
+    <AccountPanel
+      address={address}
+      avatarUrl={avatarUrl}
+      profileDisplayName={profileDisplayName}
+      profileNickname={profileNickname}
+      isProfileSaving={isProfileSaving}
+      profileErrorMessage={profileErrorMessage}
+      onSaveNickname={onSaveNickname}
+      rankingViewer={rankingViewer}
+      isRankingLoading={isRankingLoading}
+      usdtBalanceLabel={usdtBalanceLabel}
+      iconButtonClass={iconButtonClass}
+      primaryButtonClass={primaryButtonClass}
+      copyLabel={copyLabel}
+      onCopyAddress={handleCopyAddress}
+      onDisconnect={handleDisconnect}
+      onClose={() => setIsAccountModalOpen(false)}
+      onOpenRanking={handleRankingNavigation}
+    />
   )
 
   return (
@@ -187,23 +160,16 @@ export function Header({
         <div className="shrink-0">
           {!isConnected ? (
             <div className="flex flex-col items-end gap-2">
-              <div className="flex flex-wrap items-center justify-end gap-2">
-                <button
-                  className="ui-btn-secondary hidden rounded-lg border px-3 py-2 text-sm font-semibold md:inline-flex"
-                  onClick={handleGuideNavigation}
-                  type="button"
-                >
-                  가이드
-                </button>
-                <button className={primaryButtonClass} disabled={!canOpenAuthModal || isConnecting} onClick={onOpenAuthModal}>
-                  {isConnecting ? '연결 중...' : isAuthenticated ? '지갑 연결' : '로그인'}
-                </button>
-                {isAuthenticated && (
-                  <button className={secondaryButtonClass} onClick={onDisconnect}>
-                    로그아웃
-                  </button>
-                )}
-              </div>
+              <HeaderActions
+                secondaryButtonClass={secondaryButtonClass}
+                isConnecting={isConnecting}
+                isAuthenticated={isAuthenticated}
+                canOpenAuthModal={canOpenAuthModal}
+                onOpenAuthModal={onOpenAuthModal}
+                onDisconnect={onDisconnect}
+                onGuideClick={handleGuideNavigation}
+                onRankingClick={handleRankingNavigation}
+              />
               {isAuthenticated && isWalletStatusReady && !isConnecting && !isReconnecting && (
                 <p className="ui-text-muted m-0 text-right text-xs">
                   로그인은 완료됐지만 지갑이 아직 연결되지 않았습니다. 지갑 연결을 진행해 주세요.
@@ -213,13 +179,7 @@ export function Header({
             </div>
           ) : (
             <div className="relative flex items-center justify-end gap-2">
-              <button
-                className="ui-btn-secondary hidden rounded-lg border px-3 py-2 text-sm font-semibold md:inline-flex"
-                onClick={handleGuideNavigation}
-                type="button"
-              >
-                가이드
-              </button>
+              <HeaderLinkButtons onGuideClick={handleGuideNavigation} onRankingClick={handleRankingNavigation} />
               <button
                 aria-expanded={isAccountModalOpen}
                 aria-haspopup="dialog"
@@ -232,7 +192,7 @@ export function Header({
                 <span className="ui-text-strong hidden text-sm font-semibold md:inline">{profileDisplayName}</span>
               </button>
 
-              {isAccountPanelVisible && (
+              {isConnected && isAccountModalOpen && (
                 <div className="absolute right-0 top-[calc(100%+12px)] z-50 hidden w-[min(24rem,calc(100vw-2rem))] md:block">
                   <section className="ui-surface-soft rounded-2xl border p-4 shadow-2xl">{accountPanel}</section>
                 </div>
@@ -272,58 +232,58 @@ export function Header({
   )
 }
 
-type NicknameEditorProps = {
-  isProfileSaving: boolean
-  onSaveNickname: (nickname: string) => Promise<unknown>
-  primaryButtonClass: string
-  profileErrorMessage?: string
-  profileNickname?: string | null
-}
-
-function NicknameEditor({
-  isProfileSaving,
-  onSaveNickname,
-  primaryButtonClass,
-  profileErrorMessage,
-  profileNickname,
-}: NicknameEditorProps) {
-  const [nicknameDraft, setNicknameDraft] = useState(profileNickname || '')
-  const [nicknameNotice, setNicknameNotice] = useState<string>()
-
-  const handleSaveNickname = async () => {
-    const nextNickname = normalizeProfileNickname(nicknameDraft)
-
-    try {
-      await onSaveNickname(nextNickname)
-      setNicknameNotice(nextNickname ? '닉네임이 저장되었습니다.' : '닉네임이 초기화되었습니다.')
-    } catch {
-      // Surface the API error below instead of duplicating it here.
-    }
-  }
+function HeaderActions({
+  secondaryButtonClass,
+  isConnecting,
+  isAuthenticated,
+  canOpenAuthModal,
+  onOpenAuthModal,
+  onDisconnect,
+  onGuideClick,
+  onRankingClick,
+}: {
+  secondaryButtonClass: string
+  isConnecting: boolean
+  isAuthenticated: boolean
+  canOpenAuthModal: boolean
+  onOpenAuthModal: () => void
+  onDisconnect: () => void
+  onGuideClick: () => void
+  onRankingClick: () => void
+}) {
+  const primaryButtonClass =
+    'ui-btn-primary inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition md:h-auto md:rounded-lg md:px-4 md:py-2 md:text-sm disabled:cursor-not-allowed disabled:opacity-60'
 
   return (
-    <>
-      <label className="ui-text-muted grid gap-1 text-[11px] font-medium">
-        닉네임
-        <input
-          className="ui-input h-9 rounded-md border px-2 text-sm"
-          maxLength={24}
-          placeholder="비워두면 주소로 표시됩니다"
-          value={nicknameDraft}
-          onChange={(event) => {
-            setNicknameDraft(event.target.value)
-            setNicknameNotice(undefined)
-          }}
-        />
-      </label>
-      <div className="mt-2 flex items-center justify-between gap-2">
-        <p className="ui-text-muted m-0 text-[11px]">변경 시 지갑 서명이 필요합니다.</p>
-        <button className={primaryButtonClass} disabled={isProfileSaving} onClick={handleSaveNickname} type="button">
-          {isProfileSaving ? '저장 중...' : '저장'}
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      <HeaderLinkButtons onGuideClick={onGuideClick} onRankingClick={onRankingClick} />
+      <button className={primaryButtonClass} disabled={!canOpenAuthModal || isConnecting} onClick={onOpenAuthModal}>
+        {isConnecting ? '연결 중...' : isAuthenticated ? '지갑 연결' : '로그인'}
+      </button>
+      {isAuthenticated && (
+        <button className={secondaryButtonClass} onClick={onDisconnect}>
+          로그아웃
         </button>
-      </div>
-      {nicknameNotice && !profileErrorMessage && <p className="ui-state-success mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]">{nicknameNotice}</p>}
-      {profileErrorMessage && <p className="ui-state-danger mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]">{profileErrorMessage}</p>}
+      )}
+    </div>
+  )
+}
+
+function HeaderLinkButtons({
+  onGuideClick,
+  onRankingClick,
+}: {
+  onGuideClick: () => void
+  onRankingClick: () => void
+}) {
+  return (
+    <>
+      <button className="ui-btn-secondary hidden rounded-lg border px-3 py-2 text-sm font-semibold md:inline-flex" onClick={onRankingClick} type="button">
+        랭킹
+      </button>
+      <button className="ui-btn-secondary hidden rounded-lg border px-3 py-2 text-sm font-semibold md:inline-flex" onClick={onGuideClick} type="button">
+        가이드
+      </button>
     </>
   )
 }

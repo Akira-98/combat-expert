@@ -1,5 +1,6 @@
 import { Header } from './Header'
 import type { useProfile } from '../hooks/useProfile'
+import type { RankingViewer } from '../hooks/useRankings'
 import type { useWalletConnection } from '../hooks/useWalletConnection'
 
 type AppHeaderContainerProps = {
@@ -8,11 +9,25 @@ type AppHeaderContainerProps = {
   usdtBalance: number
   isUsdtBalanceLoading: boolean
   isUsdtSupportedChain: boolean
+  rankingViewer: RankingViewer | null
+  isRankingLoading: boolean
   onTitleClick: () => void
+  onRankingClick: () => void
   onGuideClick: () => void
 }
 
-export function AppHeaderContainer({ wallet, profile, usdtBalance, isUsdtBalanceLoading, isUsdtSupportedChain, onTitleClick, onGuideClick }: AppHeaderContainerProps) {
+export function AppHeaderContainer({
+  wallet,
+  profile,
+  usdtBalance,
+  isUsdtBalanceLoading,
+  isUsdtSupportedChain,
+  rankingViewer,
+  isRankingLoading,
+  onTitleClick,
+  onRankingClick,
+  onGuideClick,
+}: AppHeaderContainerProps) {
   return (
     <Header
       isAuthenticated={wallet.isAuthenticated}
@@ -30,9 +45,12 @@ export function AppHeaderContainer({ wallet, profile, usdtBalance, isUsdtBalance
       usdtBalance={usdtBalance}
       isUsdtBalanceLoading={isUsdtBalanceLoading}
       isUsdtSupportedChain={isUsdtSupportedChain}
+      rankingViewer={rankingViewer}
+      isRankingLoading={isRankingLoading}
       canOpenAuthModal={wallet.canOpenAuthModal}
       connectErrorMessage={wallet.connectErrorMessage}
       onTitleClick={onTitleClick}
+      onRankingClick={onRankingClick}
       onGuideClick={onGuideClick}
       onOpenAuthModal={wallet.openAuthModal}
       onDisconnect={wallet.disconnectWallet}

@@ -38,3 +38,20 @@ export async function supabaseInsert({ supabaseUrl, serviceRoleKey, table, body,
 
   return response.json()
 }
+
+export async function supabaseRpc({ supabaseUrl, serviceRoleKey, fn, body, errorMessage }) {
+  const response = await fetch(`${supabaseUrl}/rest/v1/rpc/${fn}`, {
+    method: 'POST',
+    headers: buildHeaders(serviceRoleKey, {
+      'Content-Type': 'application/json',
+    }),
+    body: JSON.stringify(body || {}),
+  })
+
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(text || errorMessage)
+  }
+
+  return response.json()
+}
