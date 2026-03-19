@@ -42,6 +42,10 @@ export function AccountPanel({
   onClose,
   onOpenRanking,
 }: AccountPanelProps) {
+  const accountInfoCardClass = 'mt-4 rounded-xl border px-3 py-2.5'
+  const accountSectionCardClass = 'mt-4 rounded-xl border px-3 py-3'
+  const smallIconButtonClass = `${iconButtonClass} h-7 w-7 rounded-full border`
+  const rankingButtonClass = 'ui-btn-secondary btn-shell-lg px-3 py-2 text-xs font-semibold'
   return (
     <>
       <div className="flex items-start justify-between gap-3">
@@ -53,7 +57,7 @@ export function AccountPanel({
               <p className="ui-text-muted truncate text-xs">{shortenAddress(address, 6, 4)}</p>
               <button
                 aria-label={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
-                className={`${iconButtonClass} h-7 w-7 rounded-full border`}
+                className={smallIconButtonClass}
                 onClick={onCopyAddress}
                 title={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
                 type="button"
@@ -63,7 +67,7 @@ export function AccountPanel({
                   <path d="M7 15H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1" stroke="currentColor" strokeWidth="1.8" />
                 </svg>
               </button>
-              <button aria-label="로그아웃" className={`${iconButtonClass} h-7 w-7 rounded-full border`} onClick={onDisconnect} title="로그아웃" type="button">
+              <button aria-label="로그아웃" className={smallIconButtonClass} onClick={onDisconnect} title="로그아웃" type="button">
                 <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
                   <path d="M14 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2" stroke="currentColor" strokeWidth="1.8" />
                   <path d="M10 12h10" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
@@ -81,14 +85,14 @@ export function AccountPanel({
         </button>
       </div>
 
-      <div className="mt-4 rounded-xl border px-3 py-2.5">
+      <div className={accountInfoCardClass}>
         <div className="flex items-center justify-between gap-3">
           <p className="ui-text-muted m-0 text-[11px] font-medium">보유 잔액</p>
           <p className="ui-text-strong m-0 text-xs font-semibold">{usdtBalanceLabel}</p>
         </div>
       </div>
 
-      <div className="mt-4 rounded-xl border px-3 py-3">
+      <div className={accountSectionCardClass}>
         <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">내 랭킹</p>
         {isRankingLoading ? (
           <div className="mt-2 grid grid-cols-2 gap-2">
@@ -102,7 +106,7 @@ export function AccountPanel({
                 <p className="ui-text-strong m-0 text-lg font-semibold">#{rankingViewer.rank}</p>
                 <p className="ui-text-muted mt-1 mb-0 text-xs">현재 내 리더보드 순위</p>
               </div>
-              <button className="ui-btn-secondary rounded-lg border px-3 py-2 text-xs font-semibold" onClick={onOpenRanking} type="button">
+              <button className={rankingButtonClass} onClick={onOpenRanking} type="button">
                 전체 랭킹
               </button>
             </div>
@@ -119,7 +123,7 @@ export function AccountPanel({
         )}
       </div>
 
-      <div className="mt-4 rounded-xl border px-3 py-2.5">
+      <div className={accountInfoCardClass}>
         <NicknameEditor
           key={profileNickname || '__empty__'}
           isProfileSaving={isProfileSaving}
@@ -134,8 +138,9 @@ export function AccountPanel({
 }
 
 function MetricTile({ label, value }: { label: string; value: string }) {
+  const metricTileClass = 'rounded-xl border border-white/8 bg-white/4 px-2.5 py-2'
   return (
-    <div className="rounded-xl border border-white/8 bg-white/4 px-2.5 py-2">
+    <div className={metricTileClass}>
       <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.16em]">{label}</p>
       <p className="ui-text-strong mt-1 mb-0 text-sm font-bold">{value}</p>
     </div>
@@ -157,6 +162,8 @@ function NicknameEditor({
   profileErrorMessage,
   profileNickname,
 }: NicknameEditorProps) {
+  const nicknameInputClass = 'ui-input h-9 rounded-md border px-2 text-sm'
+  const noticeClass = 'mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]'
   const [nicknameDraft, setNicknameDraft] = useState(profileNickname || '')
   const [nicknameNotice, setNicknameNotice] = useState<string>()
 
@@ -176,7 +183,7 @@ function NicknameEditor({
       <label className="ui-text-muted grid gap-1 text-[11px] font-medium">
         닉네임
         <input
-          className="ui-input h-9 rounded-md border px-2 text-sm"
+          className={nicknameInputClass}
           maxLength={24}
           placeholder="비워두면 주소로 표시됩니다"
           value={nicknameDraft}
@@ -192,8 +199,8 @@ function NicknameEditor({
           {isProfileSaving ? '저장 중...' : '저장'}
         </button>
       </div>
-      {nicknameNotice && !profileErrorMessage && <p className="ui-state-success mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]">{nicknameNotice}</p>}
-      {profileErrorMessage && <p className="ui-state-danger mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]">{profileErrorMessage}</p>}
+      {nicknameNotice && !profileErrorMessage && <p className={`ui-state-success ${noticeClass}`}>{nicknameNotice}</p>}
+      {profileErrorMessage && <p className={`ui-state-danger ${noticeClass}`}>{profileErrorMessage}</p>}
     </>
   )
 }

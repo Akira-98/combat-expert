@@ -21,7 +21,7 @@ const steps = [
 
 export function GuidePage({ onBack }: { onBack: () => void }) {
   return (
-    <section className="ui-surface grid gap-3 rounded-none border-x-0 p-3 md:gap-4 md:rounded-xl md:border md:p-5">
+    <section className="panel section-shell desktop-surface-variant grid gap-3 p-3 md:gap-4 md:p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="ui-text-muted m-0 text-xs font-semibold uppercase tracking-[0.18em]">Guide</p>
@@ -37,7 +37,7 @@ export function GuidePage({ onBack }: { onBack: () => void }) {
 
       <div className="grid gap-2.5 md:grid-cols-3">
         {steps.map((item) => (
-          <article key={item.title} className="ui-surface-soft rounded-xl border p-4">
+          <article key={item.title} className="card-surface-soft card-shell-lg p-4">
             <p className="ui-text-muted m-0 text-[11px] font-semibold uppercase tracking-[0.14em]">{item.step}</p>
             <h3 className="ui-text-strong mt-1 text-base font-semibold">{item.title}</h3>
             <p className="ui-text-muted mt-3 text-sm">{item.summary}</p>
@@ -51,7 +51,7 @@ export function GuidePage({ onBack }: { onBack: () => void }) {
       </div>
 
       <div className="grid gap-2.5 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-        <article className="ui-surface-soft rounded-xl border border-amber-400/30 p-4">
+        <article className="card-surface-soft card-shell-lg border-amber-400/30 p-4">
           <p className="m-0 text-xs font-semibold uppercase tracking-[0.14em] text-amber-600">Important</p>
           <h3 className="ui-text-strong mt-2 text-base font-semibold">체크 포인트</h3>
           <ul className="ui-text-muted mt-3 grid gap-2 pl-5 text-sm">
@@ -60,7 +60,7 @@ export function GuidePage({ onBack }: { onBack: () => void }) {
             <li>메타마스크 로그인 시 POL 가스비가 필요할 수 있습니다.</li>
           </ul>
         </article>
-        <article className="ui-surface-soft rounded-xl border p-4">
+        <article className="card-surface-soft card-shell-lg p-4">
           <p className="ui-text-strong m-0 text-sm font-semibold">궁금한 점, 제안, 잡담 모두 환영합니다!</p>
           <div className="mt-3 flex items-center gap-4">
             <div className="flex flex-col items-center gap-2">

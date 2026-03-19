@@ -45,7 +45,7 @@ export function BetslipSummarySection({
 
   return (
     <>
-      <div className="ui-surface grid grid-cols-2 gap-2 rounded-md border p-3 md:rounded-lg">
+      <div className="card-surface card-shell grid grid-cols-2 gap-2 p-3">
         <div className="grid gap-1">
           <span className="ui-text-muted text-xs">총 배당</span>
           <strong className="ui-text-strong text-sm">{Number.isFinite(totalOdds) ? totalOdds.toFixed(3) : '0.000'}</strong>
@@ -56,7 +56,7 @@ export function BetslipSummarySection({
         </div>
       </div>
 
-      <div className="ui-surface rounded-md border p-3 md:rounded-lg">
+      <div className="card-surface card-shell p-3">
         <div className="grid grid-cols-3 gap-2">
           <div className="grid gap-1">
             <span className="ui-text-muted text-xs">잔액</span>

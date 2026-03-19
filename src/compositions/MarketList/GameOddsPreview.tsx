@@ -118,7 +118,7 @@ export function GameOddsPreview({
         <button
           key={item.key}
           aria-disabled={item.isDisabled}
-          className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] transition ${
+          className={`chip-shell inline-flex gap-1 px-2 py-1 text-[11px] transition ${
             item.isDisabled
               ? 'cursor-not-allowed border-slate-200/40 bg-[color:color-mix(in_oklab,var(--app-surface-soft)_86%,transparent)] text-slate-400'
               : item.isSelected

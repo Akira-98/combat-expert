@@ -1,7 +1,4 @@
 import { useState } from 'react'
-import { createPortal } from 'react-dom'
-import { BetslipPanel } from './compositions/BetslipPanel'
-import { MarketList } from './compositions/MarketList'
 import { BetsAndTransferPanel } from './compositions/BetsAndTransferPanel'
 import { AppBottomNav } from './compositions/AppBottomNav'
 import { AppHeaderContainer } from './compositions/AppHeaderContainer'
@@ -10,6 +7,9 @@ import { GuidePage } from './compositions/GuidePage'
 import { RankingPage } from './compositions/RankingPage'
 import { MobileBetslipSheet } from './compositions/MobileBetslipSheet'
 import { LiveChatPanel } from './compositions/LiveChatPanel'
+import { DesktopSidebar } from './compositions/app/DesktopSidebar'
+import { ExploreContent } from './compositions/app/ExploreContent'
+import { MobileMenuSheet } from './compositions/app/MobileMenuSheet'
 import { buildBetslipPanelProps } from './helpers/buildBetslipPanelProps'
 import { useAppNavigation } from './hooks/useAppNavigation'
 import { useAppLayout } from './hooks/useAppLayout'
@@ -36,10 +36,6 @@ function App() {
     setSelectedGameId,
     isGamesLoading,
     isMarketsLoading,
-    gamesErrorMessage,
-    marketsErrorMessage,
-    retryGames,
-    retryMarkets,
     games,
     marketSections,
   } = market
@@ -149,29 +145,17 @@ function App() {
               isConnected={wallet.isConnected}
             />
           ) : (
-            <div className={`${shouldShowExploreContent ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}`}>
-              <MarketList
-                pageMode={marketPageMode}
-                isGamesLoading={isGamesLoading}
-                isMarketsLoading={activeGameId ? isMarketsLoading : false}
-                gamesErrorMessage={gamesErrorMessage}
-                marketsErrorMessage={activeGameId ? marketsErrorMessage : undefined}
-                selectedGameId={activeGameId}
-                address={wallet.address}
-                isConnected={wallet.isConnected}
-                isAAWallet={wallet.isAAWallet}
-                games={filters.filteredGames}
-                marketSections={activeGameId ? marketSections : []}
-                selectedOutcomes={betting.selectedOutcomes}
-                selectedOutcomePriceChanges={betting.selectedOutcomePriceChanges}
-                onSelectGame={handleOpenGameMarkets}
-                onBackToGames={handleBackToGames}
-                onConnectWallet={wallet.openAuthModal}
-                onSelectOutcome={betting.selectOutcome}
-                onRetryGames={retryGames}
-                onRetryMarkets={retryMarkets}
-              />
-            </div>
+            <ExploreContent
+              shouldShowExploreContent={shouldShowExploreContent}
+              marketPageMode={marketPageMode}
+              activeGameId={activeGameId}
+              wallet={wallet}
+              filters={filters}
+              market={market}
+              betting={betting}
+              onOpenGameMarkets={handleOpenGameMarkets}
+              onBackToGames={handleBackToGames}
+            />
           )}
 
           <div className={`${shouldShowMobileBetsPanel ? 'xl:hidden' : 'hidden'}`}>
@@ -184,42 +168,15 @@ function App() {
         </section>
 
         {shouldShowDesktopSidebar && (
-          <aside className="hidden xl:sticky xl:top-4 xl:block xl:max-h-[calc(100dvh-2rem)] xl:overflow-y-auto">
-            <div className="grid gap-3">
-              <div className="ui-surface rounded-xl border p-2">
-                <div className="grid grid-cols-2 gap-1">
-                  <button
-                    className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${
-                      desktopSidePanelTab === 'myBets'
-                        ? 'ui-btn-primary'
-                        : 'ui-btn-ghost ui-text-body'
-                    }`}
-                    onClick={() => setDesktopSidePanelTab('myBets')}
-                    type="button"
-                  >
-                    내 베팅
-                  </button>
-                  <button
-                    className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${
-                      desktopSidePanelTab === 'betslip'
-                        ? 'ui-btn-primary'
-                        : 'ui-btn-ghost ui-text-body'
-                    }`}
-                    onClick={() => setDesktopSidePanelTab('betslip')}
-                    type="button"
-                  >
-                    베팅슬립 {betting.selectionItems.length > 0 ? `(${betting.selectionItems.length})` : ''}
-                  </button>
-                </div>
-              </div>
-
-              {desktopSidePanelTab === 'myBets' ? (
-                <BetsAndTransferPanel wallet={wallet} betting={betting} usdtTransfer={usdtTransfer} />
-              ) : (
-                <BetslipPanel {...betslipPanelProps} />
-              )}
-            </div>
-          </aside>
+          <DesktopSidebar
+            desktopSidePanelTab={desktopSidePanelTab}
+            selectionCount={betting.selectionItems.length}
+            wallet={wallet}
+            betting={betting}
+            usdtTransfer={usdtTransfer}
+            betslipPanelProps={betslipPanelProps}
+            onChangeTab={setDesktopSidePanelTab}
+          />
         )}
       </main>
 
@@ -244,40 +201,12 @@ function App() {
         showLauncher={false}
       />
 
-      {isMobileMenuOpen &&
-        typeof document !== 'undefined' &&
-        createPortal(
-          <div aria-modal="true" className="fixed inset-0 z-[72] xl:hidden" role="dialog">
-            <button
-              aria-label="메뉴 닫기"
-              className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
-              onClick={handleCloseMobileMenu}
-              type="button"
-            />
-            <aside className="ui-surface-soft absolute inset-y-0 right-0 flex w-[min(82vw,320px)] flex-col border-l p-4 shadow-2xl">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="ui-text-strong m-0 text-base font-semibold">메뉴</p>
-                </div>
-                <button className="ui-btn-secondary inline-flex h-8 w-8 items-center justify-center rounded-md border" onClick={handleCloseMobileMenu} type="button">
-                  <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <path d="M6 6L18 18" stroke="currentColor" strokeWidth="1.8" />
-                    <path d="M18 6L6 18" stroke="currentColor" strokeWidth="1.8" />
-                  </svg>
-                </button>
-              </div>
-              <div className="mt-5 grid gap-2">
-                <button className="ui-btn-secondary rounded-xl border px-3 py-3 text-left text-sm font-semibold" onClick={handleOpenRankingFromMenu} type="button">
-                  랭킹
-                </button>
-                <button className="ui-btn-secondary rounded-xl border px-3 py-3 text-left text-sm font-semibold" onClick={handleOpenGuideFromMenu} type="button">
-                  가이드
-                </button>
-              </div>
-            </aside>
-          </div>,
-          document.body,
-        )}
+      <MobileMenuSheet
+        isOpen={isMobileMenuOpen}
+        onClose={handleCloseMobileMenu}
+        onOpenRanking={handleOpenRankingFromMenu}
+        onOpenGuide={handleOpenGuideFromMenu}
+      />
     </div>
   )
 }

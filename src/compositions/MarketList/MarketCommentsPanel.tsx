@@ -29,7 +29,7 @@ export function MarketCommentsPanel({
   if (!selectedGame) return null
 
   return (
-    <section className="ui-surface grid gap-3 rounded-md border p-3 md:rounded-xl md:p-4">
+    <section className="card-surface card-shell-lg grid gap-3 p-3 md:p-4">
       <div className="flex items-center justify-between gap-2">
         <div>
           <h3 className="ui-text-strong m-0 text-sm font-semibold">댓글</h3>
@@ -55,7 +55,7 @@ export function MarketCommentsPanel({
           <p className="ui-text-muted m-0 text-xs">아직 댓글이 없습니다. 첫 댓글을 남겨보세요.</p>
         ) : (
           comments.comments.map((comment) => (
-            <article key={comment.id} className="ui-surface-soft rounded-md border px-3 py-2 md:rounded-lg">
+            <article key={comment.id} className="card-surface-soft card-shell px-3 py-2">
               <div className="flex items-center justify-between gap-2">
                 <p className="ui-text-strong m-0 text-xs font-semibold">{comments.getAuthorLabel(comment)}</p>
                 <time className="ui-text-muted text-[11px]">{formatCommentTime(comment.createdAt)}</time>

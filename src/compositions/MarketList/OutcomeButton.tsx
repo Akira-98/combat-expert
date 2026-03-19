@@ -25,12 +25,12 @@ export function OutcomeButton({
   return (
     <button
       aria-disabled={isDisabled}
-      className={`grid gap-1.5 rounded-md border px-2.5 py-2 text-left text-xs transition md:rounded-xl md:px-3 md:py-2.5 md:text-sm ${
+      className={`select-card grid gap-1.5 px-2.5 py-2 text-left text-xs transition md:px-3 md:py-2.5 md:text-sm ${
         isDisabled
-          ? 'ui-surface-soft ui-text-muted cursor-not-allowed opacity-70'
+          ? 'select-card-disabled ui-text-muted cursor-not-allowed'
           : isSelected
-            ? 'border-orange-400/70 bg-[color:color-mix(in_oklab,var(--app-surface)_92%,var(--app-accent-soft))] shadow-[0_10px_20px_-16px_rgba(0,0,0,0.8)] ring-1 ring-orange-400/25'
-            : 'ui-surface border-transparent hover:border-orange-400/35 hover:bg-[color:color-mix(in_oklab,var(--app-surface)_96%,var(--app-accent-soft))]'
+            ? 'select-card-active'
+            : 'select-card-idle'
       }`}
       onClick={() => {
         if (isDisabled) return
@@ -47,22 +47,22 @@ export function OutcomeButton({
 
       <div className="flex flex-wrap items-center gap-1">
         {isSelected && (
-          <span className="ui-state-success rounded-full border px-2 py-0.5 text-[10px] font-semibold">
+          <span className="ui-state-success chip-pill px-2 py-0.5 text-[10px] font-semibold">
             선택
           </span>
         )}
         {isDisabled && (
-          <span className="ui-pill rounded-full border px-2 py-0.5 text-[10px] font-semibold">
+          <span className="ui-pill chip-pill px-2 py-0.5 text-[10px] font-semibold">
             {isConditionInactive ? '마켓 비활성' : '배당 없음'}
           </span>
         )}
         {isSelected && priceChange && !isDisabled && (
-          <span className="ui-state-warning hidden rounded-full border px-2 py-0.5 text-[10px] font-semibold md:inline-flex">
+          <span className="ui-state-warning chip-pill hidden px-2 py-0.5 text-[10px] font-semibold md:inline-flex">
             변경 {priceChange.previousOdds.toFixed(2)}→{priceChange.currentOdds.toFixed(2)}
           </span>
         )}
         {outcome.isExpressForbidden && (
-          <span className="ui-pill hidden rounded-full border px-2 py-0.5 text-[10px] font-medium md:inline-flex">
+          <span className="ui-pill chip-pill hidden px-2 py-0.5 text-[10px] font-medium md:inline-flex">
             싱글 전용
           </span>
         )}

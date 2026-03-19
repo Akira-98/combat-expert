@@ -28,7 +28,7 @@ export function MarketList({
 
   if (pageMode === 'games') {
     return (
-      <section className="ui-surface rounded-none border-x-0 p-2 md:rounded-xl md:border md:p-4">
+      <section className="panel section-shell desktop-surface-variant p-2 md:p-4">
         <GamesPane
           isGamesLoading={isGamesLoading}
           gamesErrorMessage={gamesErrorMessage}
@@ -44,7 +44,7 @@ export function MarketList({
   }
 
   return (
-    <section className="ui-surface grid gap-3 rounded-none border-x-0 p-2 md:gap-4 md:rounded-xl md:border md:p-4">
+    <section className="panel section-shell desktop-surface-variant grid gap-3 p-2 md:gap-4 md:p-4">
       <div className="flex items-center justify-between gap-2">
         <button
           className="ui-btn-secondary rounded-lg border px-3 py-1.5 text-sm font-semibold"

@@ -59,14 +59,19 @@ export function BetslipPanel({
   actions,
 }: BetslipPanelProps) {
   const TOTAL_ODDS_WARNING_DELAY_MS = 900
+  const actionButtonBaseClass =
+    'px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60'
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [revealedDisableReasonKey, setRevealedDisableReasonKey] = useState<string | undefined>(undefined)
   const secondaryButtonClass =
-    'ui-btn-secondary rounded-md border px-3 py-2 text-sm font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
+    `ui-btn-secondary btn-shell md:btn-shell-lg ${actionButtonBaseClass}`
   const settingsButtonClass =
-    'ui-btn-ghost rounded-md border px-3 py-2 text-sm font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
+    `ui-btn-ghost btn-shell md:btn-shell-lg ${actionButtonBaseClass}`
   const clearButtonClass =
-    'ui-btn-danger-soft rounded-md border px-3 py-2 text-sm font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-60'
+    `ui-btn-danger-soft btn-shell md:btn-shell-lg ${actionButtonBaseClass}`
+  const noticeClass = 'm-0 rounded-md border p-2 text-sm md:rounded-lg'
+  const primarySubmitButtonClass =
+    'ui-btn-primary btn-shell md:btn-shell-lg w-full px-3 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50'
   const disableReasonText = bet.disableReason ? (DISABLE_REASON_LABEL[bet.disableReason] ?? bet.disableReason) : undefined
   const shouldDelayDisableReason = bet.disableReason === 'TotalOddsTooLow'
   const delayedDisableReasonKey = shouldDelayDisableReason && disableReasonText ? `${bet.disableReason}:${bet.selections.length}` : undefined
@@ -99,7 +104,7 @@ export function BetslipPanel({
   const primaryButtonLabel = !wallet.isConnected && wallet.isConnectingWallet ? '지갑 연결 중...' : bet.submitLabel
 
   return (
-    <section className="ui-surface rounded-none border-x-0 md:rounded-xl md:border">
+    <section className="panel section-shell desktop-surface-variant">
       <div className="ui-border flex items-center justify-between border-b px-4 py-3">
         <div>
           <h2 className="ui-text-strong m-0 text-base font-semibold">베팅슬립</h2>
@@ -120,7 +125,7 @@ export function BetslipPanel({
           {bet.selections.map((selection) => (
             <li
               key={selectionKey(selection.conditionId, selection.outcomeId)}
-              className="ui-surface-soft grid gap-2 rounded-md border p-3 md:rounded-lg"
+              className="card-surface-soft card-shell grid gap-2 p-3"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
@@ -131,7 +136,7 @@ export function BetslipPanel({
                   x
                 </button>
               </div>
-              <div className="ui-surface flex items-center justify-between rounded-md px-2 py-1.5 md:rounded-lg">
+              <div className="card-surface card-shell flex items-center justify-between px-2 py-1.5">
                 <span className="ui-text-muted text-xs">배당</span>
                 <strong className="ui-text-strong text-sm">{formatOdds(selection.odds)}</strong>
               </div>
@@ -173,18 +178,18 @@ export function BetslipPanel({
         />
 
         {visibleDisableReasonText && (
-          <p className="ui-state-warning-surface ui-text-body m-0 rounded-md border p-2 text-sm md:rounded-lg">
+          <p className={`ui-state-warning-surface ui-text-body ${noticeClass}`}>
             {visibleDisableReasonText}
           </p>
         )}
         {!visibleDisableReasonText && bet.uiBlockHint && (
-          <p className="ui-surface ui-text-body m-0 rounded-md border p-2 text-sm md:rounded-lg">
+          <p className={`ui-surface ui-text-body ${noticeClass}`}>
             {bet.uiBlockHint}
           </p>
         )}
 
         <button
-          className="ui-btn-primary w-full rounded-md border px-3 py-2.5 text-sm font-semibold transition md:rounded-lg disabled:cursor-not-allowed disabled:opacity-50"
+          className={primarySubmitButtonClass}
           disabled={isPrimaryDisabled}
           onClick={wallet.isConnected ? actions.onSubmit : actions.onConnectWallet}
           type="button"

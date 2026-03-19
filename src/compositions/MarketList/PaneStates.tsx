@@ -24,7 +24,7 @@ export function ErrorState({
 
 export function EmptyState({ title, description }: { title: string; description: string }) {
   return (
-    <div className="ui-surface-soft rounded-md border border-dashed p-4 text-center md:rounded-lg">
+    <div className="card-surface-soft card-shell border-dashed p-4 text-center">
       <p className="ui-text-strong m-0 text-sm font-semibold">{title}</p>
       <p className="ui-text-muted mt-1 text-xs">{description}</p>
     </div>

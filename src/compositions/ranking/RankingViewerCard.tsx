@@ -10,7 +10,7 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
   if (viewer) {
     return (
       <div className="border-b border-white/8 px-4 py-4 md:px-6">
-        <div className="ui-surface-soft grid gap-3 rounded-2xl border px-4 py-4 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center">
+        <div className="card-surface-soft card-shell-xl grid gap-3 px-4 py-4 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-orange-400/30 bg-orange-500/10 text-lg font-black text-orange-200">
             #{viewer.rank}
           </div>
@@ -35,7 +35,7 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
 
   return (
     <div className="border-b border-white/8 px-4 py-4 md:px-6">
-      <div className="ui-surface-soft rounded-2xl border px-4 py-4">
+      <div className="card-surface-soft card-shell-xl px-4 py-4">
         <p className="ui-text-strong m-0 text-sm font-semibold">내 랭킹 데이터가 아직 없습니다.</p>
         <p className="ui-text-muted mt-1 mb-0 text-sm">정산된 예측이 누적되면 여기서 내 순위와 점수를 바로 볼 수 있습니다.</p>
       </div>

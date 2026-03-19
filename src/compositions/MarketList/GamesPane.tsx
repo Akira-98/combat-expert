@@ -37,10 +37,10 @@ export function GamesPane({
           <div
             key={game.gameId}
             aria-pressed={isActive}
-            className={`group grid gap-2 rounded-md border px-2.5 py-2.5 text-left transition md:rounded-xl md:px-3 md:py-3 ${
+            className={`select-card group grid gap-2 px-2.5 py-2.5 text-left transition md:px-3 md:py-3 ${
               isActive
-                ? 'border-orange-400/70 bg-[color:color-mix(in_oklab,var(--app-surface)_92%,var(--app-accent-soft))] shadow-[0_8px_18px_-14px_rgba(0,0,0,0.7)] ring-1 ring-orange-400/25'
-                : 'ui-surface border-transparent hover:border-orange-400/35 hover:bg-[color:color-mix(in_oklab,var(--app-surface)_96%,var(--app-accent-soft))]'
+                ? 'select-card-active'
+                : 'select-card-idle hover:text-inherit'
             }`}
             onClick={() => onSelectGame(game.gameId)}
             onKeyDown={(event) => {
@@ -65,10 +65,10 @@ export function GamesPane({
 
             <div className="grid gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
               <div className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
-                <span className="ui-pill rounded-md border px-2 py-1 font-medium">
+                <span className="ui-pill chip-shell px-2 py-1 font-medium">
                   {game.leagueName}
                 </span>
-                <span className={`rounded-md border px-2 py-1 font-semibold ${badgeClass}`}>{timing.label}</span>
+                <span className={`chip-shell px-2 py-1 font-semibold ${badgeClass}`}>{timing.label}</span>
                 <span className="ui-text-muted">{timing.detail}</span>
               </div>
               <GameOddsPreview

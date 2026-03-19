@@ -18,7 +18,7 @@ export function MarketsPane({
     <div className="grid min-w-0 content-start gap-2 md:gap-3">
       <h2 className="ui-text-strong m-0 text-lg font-semibold">마켓</h2>
       {selectedGame && (
-        <div className="ui-surface-soft rounded-md border px-2.5 py-2 md:rounded-lg md:px-3">
+        <div className="card-surface-soft card-shell px-2.5 py-2 md:px-3">
           <p className="ui-text-strong m-0 text-sm font-semibold">{selectedGame.title}</p>
           <p className="ui-text-body mt-1 text-xs">
             {selectedGame.leagueName} · {formatGameStartTime(selectedGame.startsAt)}
@@ -36,7 +36,7 @@ export function MarketsPane({
           {marketSections.map((section) => (
             <article
               key={section.id}
-              className="ui-surface rounded-md border p-3 shadow-[0_8px_18px_-14px_rgba(0,0,0,0.65)] md:rounded-xl md:p-3.5"
+              className="card-surface card-shell-lg p-3 shadow-[0_8px_18px_-14px_rgba(0,0,0,0.65)] md:p-3.5"
             >
               <div className="mb-2.5 flex items-center justify-between gap-2 md:mb-3">
                 <h3 className="ui-text-strong m-0 text-sm font-semibold tracking-tight">{section.title}</h3>

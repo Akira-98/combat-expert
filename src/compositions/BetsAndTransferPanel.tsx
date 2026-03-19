@@ -26,7 +26,7 @@ export function BetsAndTransferPanel({ wallet, betting, usdtTransfer }: BetsAndT
         redeemingBetTokenId={betting.redeemingBetTokenId}
         onRedeemBet={betting.redeemBet}
       />
-      <section className="ui-surface rounded-none border-x-0 p-2.5 md:rounded-xl md:border md:p-4">
+      <section className="panel section-shell desktop-surface-variant p-2.5 md:p-4">
         <div className="flex items-center justify-between gap-2">
           <h2 className="ui-text-strong m-0 text-base font-semibold">USDT 송금</h2>
           <span className="ui-text-muted text-xs">Polygon</span>

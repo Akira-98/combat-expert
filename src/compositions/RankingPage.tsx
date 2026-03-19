@@ -29,7 +29,7 @@ export function RankingPage({ rankings, viewer, updatedAt, isLoading, errorMessa
 
   return (
     <section className="grid gap-4">
-      <div className="ui-surface overflow-hidden rounded-3xl border">
+      <div className="card-surface card-shell-xl overflow-hidden">
         <div className="border-b border-white/8 bg-[linear-gradient(135deg,rgba(255,107,0,0.22),rgba(11,15,20,0.4)_42%,rgba(255,255,255,0.03))] px-4 py-5 md:px-6 md:py-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
@@ -39,7 +39,7 @@ export function RankingPage({ rankings, viewer, updatedAt, isLoading, errorMessa
               <h2 className="ui-text-strong m-0 text-[28px] font-semibold tracking-tight md:text-[36px]">Top 100 격잘알 랭킹</h2>
               <p className="ui-text-muted mt-2 mb-0 text-sm md:text-base">승리 적중과 언더독 보너스를 합산한 시즌 리더보드다.</p>
             </div>
-            <div className="ui-surface-soft rounded-2xl border px-4 py-3 text-sm">
+            <div className="card-surface-soft card-shell-xl px-4 py-3 text-sm">
               <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">Last Sync</p>
               <p className="ui-text-strong mt-1 mb-0 font-semibold">{formatUpdatedAt(updatedAt)}</p>
             </div>
@@ -61,7 +61,7 @@ export function RankingPage({ rankings, viewer, updatedAt, isLoading, errorMessa
                 ))}
               </div>
 
-              <div className="ui-surface-soft overflow-hidden rounded-3xl border">
+              <div className="card-surface-soft card-shell-xl overflow-hidden">
                 <div className="grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b border-white/8 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 md:grid-cols-[84px_minmax(0,1fr)_112px_280px]">
                   <span>Rank</span>
                   <span>Player</span>
@@ -85,9 +85,9 @@ export function RankingPage({ rankings, viewer, updatedAt, isLoading, errorMessa
 function RankingLoadingState() {
   return (
     <div className="grid gap-3">
-      <div className="ui-surface-soft h-32 rounded-2xl border" />
-      <div className="ui-surface-soft h-20 rounded-2xl border" />
-      <div className="ui-surface-soft h-20 rounded-2xl border" />
+      <div className="card-surface-soft card-shell-xl h-32" />
+      <div className="card-surface-soft card-shell-xl h-20" />
+      <div className="card-surface-soft card-shell-xl h-20" />
     </div>
   )
 }

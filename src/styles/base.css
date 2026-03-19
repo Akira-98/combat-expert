@@ -1,0 +1,40 @@
+@layer base {
+  :root {
+    --app-bg: #0b0f14;
+    --app-bg-glow: #2a1b12;
+    --app-surface: #0b0f14;
+    --app-surface-soft: #0f141c;
+    --app-border: #1f2937;
+    --app-text-strong: #e6eef8;
+    --app-text-body: #b5c2d2;
+    --app-text-muted: #8090a4;
+    --app-accent: #ff6b00;
+    --app-accent-soft: #3a2519;
+    --state-success: #3eff8b;
+    --state-success-soft: #13251b;
+    --state-warning: #efb72a;
+    --state-warning-soft: #2c2414;
+    --state-danger: #f45a6c;
+    --state-danger-soft: #2e1a20;
+  }
+
+  html {
+    height: 100%;
+    background-color: var(--app-bg);
+  }
+
+  body {
+    @apply m-0 min-h-full antialiased;
+    background:
+      radial-gradient(1200px 700px at 85% -100px, color-mix(in oklab, var(--app-accent) 22%, transparent), transparent),
+      radial-gradient(900px 480px at 8% 0, color-mix(in oklab, var(--app-bg-glow) 55%, transparent), transparent),
+      var(--app-bg);
+    color: var(--app-text-body);
+    font-family: 'Space Grotesk', 'Noto Sans KR', 'Segoe UI', sans-serif;
+  }
+
+  #root {
+    min-height: 100dvh;
+    background-color: transparent;
+  }
+}

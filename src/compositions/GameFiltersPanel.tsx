@@ -30,6 +30,17 @@ export function GameFiltersPanel({
   onLeagueFilterChange,
   onResetFilters,
 }: GameFiltersPanelProps) {
+  const mobileFilterButtonClass = 'btn-pill shrink-0 px-2.5 py-1 text-[11px] font-semibold transition'
+  const filterPanelClass =
+    'sticky z-20 ui-bg-solid-soft section-shell px-2.5 py-1.5 md:static md:mt-4 md:p-3 md:backdrop-blur-none desktop-surface-fill desktop-surface-variant'
+  const searchTriggerButtonClass = 'ui-btn-secondary btn-shell inline-flex h-8 w-8 shrink-0 items-center justify-center'
+  const desktopFieldClass =
+    'h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 placeholder:text-slate-400 focus:border-blue-500'
+  const desktopSelectBaseClass = 'h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900'
+  const desktopResetButtonClass =
+    'text-[11px] font-semibold text-slate-300 underline-offset-2 hover:underline md:rounded-full md:border md:border-slate-300 md:bg-white md:px-2.5 md:py-1 md:text-xs md:text-slate-700 md:hover:bg-slate-50 md:hover:no-underline'
+  const mobileSearchDialogClass = 'mx-auto mt-[calc(env(safe-area-inset-top)+16px)] w-[calc(100%-20px)] max-w-xl rounded-xl border border-slate-300 ui-surface p-3'
+  const modalActionButtonClass = 'shrink-0 px-3 py-2 text-sm font-semibold'
   const [isLeagueExpanded, setIsLeagueExpanded] = useState(false)
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
   const mobileLeagueOptions = isLeagueExpanded ? leagueOptions : leagueOptions.slice(0, 8)
@@ -53,14 +64,14 @@ export function GameFiltersPanel({
   return (
     <>
       <section
-        className="sticky z-20 ui-bg-solid-soft px-2.5 py-1.5 md:static md:mt-4 md:rounded-xl md:border md:[background-color:var(--app-surface)] md:[border-color:var(--app-border)] md:p-3 md:backdrop-blur-none"
+        className={filterPanelClass}
         style={{ top: `${mobileStickyTop}px` }}
       >
         <div className="md:hidden">
           <div className="flex items-center gap-2">
             <button
               aria-label="검색 열기"
-              className="ui-btn-secondary inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border"
+              className={searchTriggerButtonClass}
               onClick={() => setIsSearchModalOpen(true)}
               type="button"
             >
@@ -72,7 +83,7 @@ export function GameFiltersPanel({
 
             <div className="scrollbar-thin flex min-w-0 items-center gap-1 overflow-x-auto pb-0.5">
               <button
-                className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition ${
+                className={`${mobileFilterButtonClass} ${
                   leagueFilter === 'all' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
                 }`}
                 onClick={() => onLeagueFilterChange('all')}
@@ -83,7 +94,7 @@ export function GameFiltersPanel({
               {mobileLeagueOptions.map((leagueName) => (
                 <button
                   key={leagueName}
-                  className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition ${
+                  className={`${mobileFilterButtonClass} ${
                     leagueFilter === leagueName ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'
                   }`}
                   onClick={() => onLeagueFilterChange(leagueName)}
@@ -94,7 +105,7 @@ export function GameFiltersPanel({
               ))}
               {leagueOptions.length > 8 && (
                 <button
-                  className="shrink-0 rounded-full border border-slate-300 px-2.5 py-1 text-[11px] font-semibold text-slate-300 transition hover:border-slate-200 hover:text-slate-200"
+                  className={`${mobileFilterButtonClass} border-slate-300 text-slate-300 hover:border-slate-200 hover:text-slate-200`}
                   onClick={() => setIsLeagueExpanded((value) => !value)}
                   type="button"
                 >
@@ -113,7 +124,7 @@ export function GameFiltersPanel({
           <label className="grid gap-1 text-xs font-semibold text-slate-600">
             게임 검색
             <input
-              className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 placeholder:text-slate-400 focus:border-blue-500"
+              className={desktopFieldClass}
               placeholder="팀명, 리그명으로 검색"
               type="search"
               value={gameSearchQuery}
@@ -124,7 +135,7 @@ export function GameFiltersPanel({
           <label className="grid gap-1 text-xs font-semibold text-slate-600">
             상태
             <select
-              className="h-10 min-w-32 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
+              className={`${desktopSelectBaseClass} min-w-32`}
               value={gameStatusFilter}
               onChange={(event) => onGameStatusFilterChange(event.target.value as GameStatusFilter)}
             >
@@ -137,7 +148,7 @@ export function GameFiltersPanel({
           <label className="grid gap-1 text-xs font-semibold text-slate-600">
             리그
             <select
-              className="h-10 min-w-40 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
+              className={`${desktopSelectBaseClass} min-w-40`}
               value={leagueFilter}
               onChange={(event) => onLeagueFilterChange(event.target.value)}
             >
@@ -157,7 +168,7 @@ export function GameFiltersPanel({
           </span>
           {hasActiveFilters && (
             <button
-              className="text-[11px] font-semibold text-slate-300 underline-offset-2 hover:underline md:rounded-full md:border md:border-slate-300 md:bg-white md:px-2.5 md:py-1 md:text-xs md:text-slate-700 md:hover:bg-slate-50 md:hover:no-underline"
+              className={desktopResetButtonClass}
               onClick={onResetFilters}
               type="button"
             >
@@ -175,7 +186,7 @@ export function GameFiltersPanel({
           role="dialog"
         >
           <div
-            className="mx-auto mt-[calc(env(safe-area-inset-top)+16px)] w-[calc(100%-20px)] max-w-xl rounded-xl border border-slate-300 ui-surface p-3"
+            className={mobileSearchDialogClass}
             onClick={(event) => event.stopPropagation()}
           >
             <form className="flex items-center gap-2" onSubmit={handleMobileSearchSubmit}>
@@ -191,11 +202,11 @@ export function GameFiltersPanel({
                 value={gameSearchQuery}
                 onChange={(event) => onGameSearchQueryChange(event.target.value)}
               />
-              <button className="ui-btn-primary shrink-0 rounded-lg border px-3 py-2 text-sm font-semibold" type="submit">
+              <button className={`ui-btn-primary btn-shell-lg ${modalActionButtonClass}`} type="submit">
                 검색
               </button>
               <button
-                className="ui-btn-secondary shrink-0 rounded-lg border px-3 py-2 text-sm font-semibold"
+                className={`ui-btn-secondary btn-shell-lg ${modalActionButtonClass}`}
                 onClick={() => setIsSearchModalOpen(false)}
                 type="button"
               >
