@@ -43,7 +43,6 @@ export function ExploreContent({
         games={filters.filteredGames}
         marketSections={activeGameId ? market.marketSections : []}
         selectedOutcomes={betting.selectedOutcomes}
-        sdkBlockedSelectionKeys={betting.sdkBlockedSelectionKeys}
         selectedOutcomePriceChanges={betting.selectedOutcomePriceChanges}
         gameSearchQuery={filters.gameSearchQuery}
         leagueFilter={filters.leagueFilter}

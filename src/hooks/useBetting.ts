@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Address } from 'viem'
 import { useBaseBetslip, useBet, useBetTokenBalance, useChain, useDetailedBetslip } from '@azuro-org/sdk'
-import type { MarketSection, OutcomeItem, SelectionKey } from '../types/ui'
+import type { MarketSection, OutcomeItem } from '../types/ui'
 import type { MarketManagerCondition } from '../types/marketManager'
-import { buildSelectedOutcomes, mapBetslipToSelectionItems, selectionKey } from '../helpers/mappers'
+import { buildSelectedOutcomes, mapBetslipToSelectionItems } from '../helpers/mappers'
 import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
 import { buildBettingDerivedState, clampSlippage } from './useBetting.helpers'
 import { useBetslipSelectionMeta } from './useBetslipSelectionMeta'
@@ -108,30 +108,12 @@ export function useBetting({
       marketSections,
       selectedOutcomes,
     })
-  const sdkBlockedSelectionKeys = useMemo<Set<SelectionKey>>(() => {
-    if (disableReason !== 'ConditionState') return new Set()
-    return new Set(items.map((item) => selectionKey(item.conditionId, item.outcomeId)))
-  }, [disableReason, items])
-  const effectiveMergedOutcomeMeta = useMemo(() => {
-    if (sdkBlockedSelectionKeys.size === 0) return mergedOutcomeMeta
-
-    const next = new Map(mergedOutcomeMeta)
-    sdkBlockedSelectionKeys.forEach((key) => {
-      const meta = next.get(key)
-      if (!meta) return
-      next.set(key, {
-        ...meta,
-        conditionState: 'Suspended',
-      })
-    })
-    return next
-  }, [mergedOutcomeMeta, sdkBlockedSelectionKeys])
-  const selectionItems = useMemo(() => mapBetslipToSelectionItems(items, effectiveMergedOutcomeMeta), [effectiveMergedOutcomeMeta, items])
+  const selectionItems = useMemo(() => mapBetslipToSelectionItems(items, mergedOutcomeMeta), [items, mergedOutcomeMeta])
   const { currentOutcomeStateMap, displayDisableReason, sdkConditionStateMismatch, uiSelectionAllowed } = useBetslipValidation({
     items,
     marketSections,
     marketConditions,
-    mergedOutcomeMeta: effectiveMergedOutcomeMeta,
+    mergedOutcomeMeta,
     disableReason,
     totalOdds,
     isMarketsLoading,
@@ -145,8 +127,24 @@ export function useBetting({
     }
     if (mismatchHandledRef.current) return
     mismatchHandledRef.current = true
+    console.warn('[CombatExpert][betslip-sync] sdk_betslip_state_snapshot', {
+      chainId: chainId ?? null,
+      environment,
+      disableReason: disableReason ?? null,
+      odds,
+      totalOdds,
+      betAmount,
+      minBet: minBet ?? null,
+      maxBet: maxBet ?? null,
+      itemCount: items.length,
+      selections: items.map((item) => ({
+        conditionId: item.conditionId,
+        outcomeId: item.outcomeId,
+        gameId: item.gameId,
+      })),
+    })
     refreshMarkets?.()
-  }, [refreshMarkets, sdkConditionStateMismatch])
+  }, [betAmount, chainId, disableReason, environment, items, maxBet, minBet, odds, refreshMarkets, sdkConditionStateMismatch, totalOdds])
 
   const approvePending = approveTx.isPending || approveTx.isProcessing
   const betPending = betTx.isPending || betTx.isProcessing
@@ -194,7 +192,6 @@ export function useBetting({
   return {
     bets,
     selectedOutcomes,
-    sdkBlockedSelectionKeys,
     selectedOutcomePriceChanges,
     selectionItems,
     betAmount,

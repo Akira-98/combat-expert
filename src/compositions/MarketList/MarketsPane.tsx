@@ -10,7 +10,6 @@ export function MarketsPane({
   selectedGame,
   marketSections,
   selectedOutcomes,
-  sdkBlockedSelectionKeys,
   selectedOutcomePriceChanges,
   onSelectOutcome,
   onRetryMarkets,
@@ -54,7 +53,6 @@ export function MarketsPane({
                       outcome={outcome}
                       selectedGameParticipants={selectedGame?.participants ?? []}
                       isSelected={selectedOutcomes.has(key)}
-                      isSdkBlocked={sdkBlockedSelectionKeys.has(key)}
                       priceChange={selectedOutcomePriceChanges.get(key)}
                       onSelectOutcome={onSelectOutcome}
                     />

@@ -10,7 +10,6 @@ export function GamesPane({
   selectedGameId,
   games,
   selectedOutcomes,
-  sdkBlockedSelectionKeys,
   gameSearchQuery,
   leagueFilter,
   leagueOptions,
@@ -162,7 +161,6 @@ export function GamesPane({
                   participants={game.participants}
                   priority={isActive}
                   selectedOutcomes={selectedOutcomes}
-                  sdkBlockedSelectionKeys={sdkBlockedSelectionKeys}
                   onSelectOutcome={onSelectOutcome}
                   className="min-w-0 text-left md:max-w-[18rem] md:justify-end md:text-right"
                 />

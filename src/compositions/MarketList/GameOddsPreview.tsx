@@ -11,7 +11,6 @@ type GameOddsPreviewProps = {
   priority?: boolean
   className?: string
   selectedOutcomes: Set<SelectionKey>
-  sdkBlockedSelectionKeys: Set<SelectionKey>
   onSelectOutcome: (outcome: OutcomeItem) => void
 }
 
@@ -49,7 +48,6 @@ export function GameOddsPreview({
   priority = false,
   className = 'mt-2',
   selectedOutcomes,
-  sdkBlockedSelectionKeys,
   onSelectOutcome,
 }: GameOddsPreviewProps) {
   const { anchorRef, hasEnteredViewport } = usePrefetchOnVisible(priority)
@@ -82,13 +80,9 @@ export function GameOddsPreview({
         odds: Number.isFinite(outcome.odds) ? outcome.odds.toFixed(2) : '0.00',
         outcome,
         isSelected: selectedOutcomes.has(selectionKey(outcome.conditionId, outcome.outcomeId)),
-        isDisabled:
-          sdkBlockedSelectionKeys.has(selectionKey(outcome.conditionId, outcome.outcomeId)) ||
-          outcome.conditionState !== 'Active' ||
-          !Number.isFinite(outcome.odds) ||
-          outcome.odds <= 1,
+        isDisabled: outcome.conditionState !== 'Active' || !Number.isFinite(outcome.odds) || outcome.odds <= 1,
       }))
-  }, [markets, participants, sdkBlockedSelectionKeys, selectedOutcomes])
+  }, [markets, participants, selectedOutcomes])
 
   if (!hasEnteredViewport) {
     return <div ref={anchorRef} className={`${className} h-5`} aria-hidden />

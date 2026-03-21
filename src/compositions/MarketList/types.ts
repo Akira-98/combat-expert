@@ -15,7 +15,6 @@ export type MarketListProps = {
   games: GameItem[]
   marketSections: MarketSection[]
   selectedOutcomes: Set<SelectionKey>
-  sdkBlockedSelectionKeys: Set<SelectionKey>
   selectedOutcomePriceChanges: Map<SelectionKey, OutcomePriceChange>
   gameSearchQuery: string
   leagueFilter: string
@@ -37,7 +36,6 @@ export type GamesPaneProps = {
   selectedGameId?: string
   games: GameItem[]
   selectedOutcomes: Set<SelectionKey>
-  sdkBlockedSelectionKeys: Set<SelectionKey>
   gameSearchQuery: string
   leagueFilter: string
   leagueOptions: string[]
@@ -55,7 +53,6 @@ export type MarketsPaneProps = {
   selectedGame?: GameItem
   marketSections: MarketSection[]
   selectedOutcomes: Set<SelectionKey>
-  sdkBlockedSelectionKeys: Set<SelectionKey>
   selectedOutcomePriceChanges: Map<SelectionKey, OutcomePriceChange>
   onSelectOutcome: (outcome: OutcomeItem) => void
   onRetryMarkets: () => void
