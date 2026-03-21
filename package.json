@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@azuro-org/dictionaries": "3.0.28",
-    "@azuro-org/sdk": "6.2.3",
+    "@azuro-org/sdk": "^7.0.2",
     "@azuro-org/sdk-social-aa-connector": "1.1.8",
     "@privy-io/react-auth": "3.14.1",
     "@privy-io/wagmi": "4.0.2",
