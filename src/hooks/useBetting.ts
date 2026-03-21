@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Address } from 'viem'
-import { useBaseBetslip, useBet, useBetTokenBalance, useChain, useDetailedBetslip } from '@azuro-org/sdk'
+import { useBaseBetslip, useBet, useBetTokenBalance, useDetailedBetslip } from '@azuro-org/sdk'
 import type { MarketSection, OutcomeItem } from '../types/ui'
-import type { MarketManagerCondition } from '../types/marketManager'
 import { buildSelectedOutcomes, mapBetslipToSelectionItems } from '../helpers/mappers'
 import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
 import { buildBettingDerivedState, clampSlippage } from './useBetting.helpers'
@@ -20,27 +19,20 @@ const DEFAULT_SLIPPAGE = 3
 
 type UseBettingParams = {
   address?: Address
-  chainId?: number
   isConnected: boolean
   marketSections: MarketSection[]
-  marketConditions: MarketManagerCondition[]
-  isMarketsLoading?: boolean
   isBetHistoryPollingEnabled?: boolean
   refreshMarkets?: () => void
 }
 
 export function useBetting({
   address,
-  chainId,
   isConnected,
   marketSections,
-  marketConditions,
-  isMarketsLoading = false,
   isBetHistoryPollingEnabled = false,
   refreshMarkets,
 }: UseBettingParams) {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
-  const { environment } = useChain()
   const { transactionNotice, clearTransactionNotice, setSuccessNotice, setErrorNotice } = useTransactionNotice({
     mapErrorMessage: getFriendlyTransactionErrorMessage,
   })
@@ -112,11 +104,9 @@ export function useBetting({
   const { currentOutcomeStateMap, displayDisableReason, sdkConditionStateMismatch, uiSelectionAllowed } = useBetslipValidation({
     items,
     marketSections,
-    marketConditions,
     mergedOutcomeMeta,
     disableReason,
     totalOdds,
-    isMarketsLoading,
   })
   const mismatchHandledRef = useRef(false)
 
@@ -127,24 +117,8 @@ export function useBetting({
     }
     if (mismatchHandledRef.current) return
     mismatchHandledRef.current = true
-    console.warn('[CombatExpert][betslip-sync] sdk_betslip_state_snapshot', {
-      chainId: chainId ?? null,
-      environment,
-      disableReason: disableReason ?? null,
-      odds,
-      totalOdds,
-      betAmount,
-      minBet: minBet ?? null,
-      maxBet: maxBet ?? null,
-      itemCount: items.length,
-      selections: items.map((item) => ({
-        conditionId: item.conditionId,
-        outcomeId: item.outcomeId,
-        gameId: item.gameId,
-      })),
-    })
     refreshMarkets?.()
-  }, [betAmount, chainId, disableReason, environment, items, maxBet, minBet, odds, refreshMarkets, sdkConditionStateMismatch, totalOdds])
+  }, [refreshMarkets, sdkConditionStateMismatch])
 
   const approvePending = approveTx.isPending || approveTx.isProcessing
   const betPending = betTx.isPending || betTx.isProcessing
@@ -181,8 +155,6 @@ export function useBetting({
     currentOutcomeStateMap,
     selectedOutcomePriceChanges,
     sdkConditionStateMismatch,
-    chainId,
-    environment,
     clearTransactionNotice,
     setErrorNotice,
     syncSelectionMeta,

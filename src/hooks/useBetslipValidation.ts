@@ -1,10 +1,5 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import type { MarketSection } from '../types/ui'
-import type { MarketManagerCondition } from '../types/marketManager'
-
-const BETSLIP_SYNC_LOG_PREFIX = '[CombatExpert][betslip-sync]'
-const SDK_CONDITION_STATE_MISMATCH_WARN_DELAY_MS = 400
-
 type BetslipItemLike = {
   conditionId: string
   outcomeId: string
@@ -21,21 +16,17 @@ type OutcomeMeta = {
 type UseBetslipValidationParams = {
   items: BetslipItemLike[]
   marketSections: MarketSection[]
-  marketConditions: MarketManagerCondition[]
   mergedOutcomeMeta: Map<string, OutcomeMeta>
   disableReason?: string
   totalOdds: number
-  isMarketsLoading?: boolean
 }
 
 export function useBetslipValidation({
   items,
   marketSections,
-  marketConditions,
   mergedOutcomeMeta,
   disableReason,
   totalOdds,
-  isMarketsLoading = false,
 }: UseBetslipValidationParams) {
   const currentOutcomeStateMap = useMemo(() => {
     const map = new Map<string, OutcomeMeta>()
@@ -101,41 +92,6 @@ export function useBetslipValidation({
     ?? (shouldIgnoreStaleTotalOddsTooLow ? undefined : sdkDisableReason)
   const uiSelectionAllowed = !displayDisableReason
   const sdkConditionStateMismatch = disableReason === 'ConditionState' && !localDisableReason
-  const mismatchDiagnostics = useMemo(() => (
-    items.map((item) => {
-      const selectionKey = `${item.conditionId}-${item.outcomeId}`
-      const localMeta = currentOutcomeStateMap.get(selectionKey)
-      const apiCondition = marketConditions.find((condition) => condition.conditionId === item.conditionId)
-      const apiOutcome = apiCondition?.outcomes.find((outcome) => outcome.outcomeId === item.outcomeId)
-      return {
-        conditionId: item.conditionId,
-        outcomeId: item.outcomeId,
-        gameId: item.gameId,
-        apiConditionState: apiCondition?.state ?? 'missing',
-        apiOutcomeOdds: apiOutcome ? Number(apiOutcome.odds) : null,
-        localConditionState: localMeta?.conditionState ?? 'missing',
-        localOdds: localMeta?.odds ?? null,
-        marketTitle: localMeta?.marketTitle ?? null,
-      }
-    })
-  ), [currentOutcomeStateMap, items, marketConditions])
-
-  useEffect(() => {
-    if (!sdkConditionStateMismatch || isMarketsLoading || items.length === 0) return
-
-    const timeoutId = window.setTimeout(() => {
-      console.warn(`${BETSLIP_SYNC_LOG_PREFIX} sdk_condition_state_mismatch`, {
-        itemCount: items.length,
-        sdkDisableReason: disableReason,
-        localDisableReason,
-        totalOdds,
-        localTotalOdds,
-        items: mismatchDiagnostics,
-      })
-    }, SDK_CONDITION_STATE_MISMATCH_WARN_DELAY_MS)
-
-    return () => window.clearTimeout(timeoutId)
-  }, [disableReason, isMarketsLoading, items.length, localDisableReason, localTotalOdds, mismatchDiagnostics, sdkConditionStateMismatch, totalOdds])
 
   return {
     currentOutcomeStateMap,
