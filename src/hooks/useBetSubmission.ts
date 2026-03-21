@@ -22,6 +22,8 @@ type UseBetSubmissionParams = {
   currentOutcomeStateMap: Map<string, OutcomeStateMeta>
   selectedOutcomePriceChanges: Map<string, OutcomePriceChange>
   sdkConditionStateMismatch: boolean
+  chainId?: number
+  environment?: string
   clearTransactionNotice: () => void
   setErrorNotice: (params: { title: string; message?: string; error?: unknown }) => void
   syncSelectionMeta: (items: BetslipItemLike[]) => void
@@ -33,6 +35,8 @@ export function useBetSubmission({
   currentOutcomeStateMap,
   selectedOutcomePriceChanges,
   sdkConditionStateMismatch,
+  chainId,
+  environment,
   clearTransactionNotice,
   setErrorNotice,
   syncSelectionMeta,
@@ -41,8 +45,28 @@ export function useBetSubmission({
   return async () => {
     clearTransactionNotice()
 
+    console.warn(`${BETSLIP_SYNC_LOG_PREFIX} submit_attempt`, {
+      chainId: chainId ?? null,
+      environment: environment ?? null,
+      itemCount: items.length,
+      items: items.map((item) => {
+        const key = `${item.conditionId}-${item.outcomeId}`
+        const meta = currentOutcomeStateMap.get(key)
+        return {
+          conditionId: item.conditionId,
+          outcomeId: item.outcomeId,
+          gameId: item.gameId,
+          localConditionState: meta?.conditionState ?? 'missing',
+          localOdds: meta?.odds ?? null,
+          marketTitle: meta?.marketTitle ?? null,
+        }
+      }),
+    })
+
     if (sdkConditionStateMismatch) {
       console.warn(`${BETSLIP_SYNC_LOG_PREFIX} blocked_submit_sdk_state_mismatch`, {
+        chainId: chainId ?? null,
+        environment: environment ?? null,
         itemCount: items.length,
         items: items.map((item) => {
           const key = `${item.conditionId}-${item.outcomeId}`
@@ -70,6 +94,8 @@ export function useBetSubmission({
 
       if (!meta) {
         console.warn(`${BETSLIP_SYNC_LOG_PREFIX} blocked_submit_missing_market`, {
+          chainId: chainId ?? null,
+          environment: environment ?? null,
           conditionId: item.conditionId,
           outcomeId: item.outcomeId,
           gameId: item.gameId,
@@ -83,6 +109,8 @@ export function useBetSubmission({
 
       if (meta.conditionState !== 'Active' || !Number.isFinite(meta.odds) || meta.odds <= 1) {
         console.warn(`${BETSLIP_SYNC_LOG_PREFIX} blocked_submit_inactive_market`, {
+          chainId: chainId ?? null,
+          environment: environment ?? null,
           conditionId: item.conditionId,
           outcomeId: item.outcomeId,
           gameId: item.gameId,
@@ -100,6 +128,8 @@ export function useBetSubmission({
 
     if (selectedOutcomePriceChanges.size > 0) {
       console.warn(`${BETSLIP_SYNC_LOG_PREFIX} blocked_submit_price_change`, {
+        chainId: chainId ?? null,
+        environment: environment ?? null,
         itemCount: items.length,
         priceChanges: Array.from(selectedOutcomePriceChanges.entries()).map(([key, value]) => ({
           selectionKey: key,

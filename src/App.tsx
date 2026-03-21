@@ -66,6 +66,7 @@ function App() {
   const isMyBetsViewActive = mobileView === 'bets' || desktopSidePanelTab === 'myBets'
   const betting = useBetting({
     address: wallet.address,
+    chainId: wallet.chainId,
     isConnected: wallet.isConnected,
     marketConditions: market.marketConditions,
     marketSections,

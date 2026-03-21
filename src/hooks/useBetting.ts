@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Address } from 'viem'
-import { useBaseBetslip, useBet, useBetTokenBalance, useDetailedBetslip } from '@azuro-org/sdk'
+import { useBaseBetslip, useBet, useBetTokenBalance, useChain, useDetailedBetslip } from '@azuro-org/sdk'
 import type { MarketSection, OutcomeItem, SelectionKey } from '../types/ui'
 import type { MarketManagerCondition } from '../types/marketManager'
 import { buildSelectedOutcomes, mapBetslipToSelectionItems, selectionKey } from '../helpers/mappers'
@@ -20,6 +20,7 @@ const DEFAULT_SLIPPAGE = 3
 
 type UseBettingParams = {
   address?: Address
+  chainId?: number
   isConnected: boolean
   marketSections: MarketSection[]
   marketConditions: MarketManagerCondition[]
@@ -30,6 +31,7 @@ type UseBettingParams = {
 
 export function useBetting({
   address,
+  chainId,
   isConnected,
   marketSections,
   marketConditions,
@@ -38,6 +40,7 @@ export function useBetting({
   refreshMarkets,
 }: UseBettingParams) {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
+  const { environment } = useChain()
   const { transactionNotice, clearTransactionNotice, setSuccessNotice, setErrorNotice } = useTransactionNotice({
     mapErrorMessage: getFriendlyTransactionErrorMessage,
   })
@@ -180,6 +183,8 @@ export function useBetting({
     currentOutcomeStateMap,
     selectedOutcomePriceChanges,
     sdkConditionStateMismatch,
+    chainId,
+    environment,
     clearTransactionNotice,
     setErrorNotice,
     syncSelectionMeta,
