@@ -44,6 +44,18 @@ export function useBetSubmission({
     if (sdkConditionStateMismatch) {
       console.warn(`${BETSLIP_SYNC_LOG_PREFIX} blocked_submit_sdk_state_mismatch`, {
         itemCount: items.length,
+        items: items.map((item) => {
+          const key = `${item.conditionId}-${item.outcomeId}`
+          const meta = currentOutcomeStateMap.get(key)
+          return {
+            conditionId: item.conditionId,
+            outcomeId: item.outcomeId,
+            gameId: item.gameId,
+            localConditionState: meta?.conditionState ?? 'missing',
+            localOdds: meta?.odds ?? null,
+            marketTitle: meta?.marketTitle ?? null,
+          }
+        }),
       })
       setErrorNotice({
         title: '상태 재확인 필요',

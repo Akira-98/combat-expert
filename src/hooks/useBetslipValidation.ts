@@ -98,6 +98,20 @@ export function useBetslipValidation({
     ?? (shouldIgnoreStaleTotalOddsTooLow ? undefined : sdkDisableReason)
   const uiSelectionAllowed = !displayDisableReason
   const sdkConditionStateMismatch = disableReason === 'ConditionState' && !localDisableReason
+  const mismatchDiagnostics = useMemo(() => (
+    items.map((item) => {
+      const selectionKey = `${item.conditionId}-${item.outcomeId}`
+      const localMeta = currentOutcomeStateMap.get(selectionKey)
+      return {
+        conditionId: item.conditionId,
+        outcomeId: item.outcomeId,
+        gameId: item.gameId,
+        localConditionState: localMeta?.conditionState ?? 'missing',
+        localOdds: localMeta?.odds ?? null,
+        marketTitle: localMeta?.marketTitle ?? null,
+      }
+    })
+  ), [currentOutcomeStateMap, items])
 
   useEffect(() => {
     if (!sdkConditionStateMismatch || isMarketsLoading || items.length === 0) return
@@ -105,16 +119,16 @@ export function useBetslipValidation({
     const timeoutId = window.setTimeout(() => {
       console.warn(`${BETSLIP_SYNC_LOG_PREFIX} sdk_condition_state_mismatch`, {
         itemCount: items.length,
-        items: items.map((item) => ({
-          conditionId: item.conditionId,
-          outcomeId: item.outcomeId,
-          gameId: item.gameId,
-        })),
+        sdkDisableReason: disableReason,
+        localDisableReason,
+        totalOdds,
+        localTotalOdds,
+        items: mismatchDiagnostics,
       })
     }, SDK_CONDITION_STATE_MISMATCH_WARN_DELAY_MS)
 
     return () => window.clearTimeout(timeoutId)
-  }, [isMarketsLoading, items, sdkConditionStateMismatch])
+  }, [disableReason, isMarketsLoading, items.length, localDisableReason, localTotalOdds, mismatchDiagnostics, sdkConditionStateMismatch, totalOdds])
 
   return {
     currentOutcomeStateMap,
