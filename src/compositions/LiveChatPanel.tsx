@@ -43,13 +43,6 @@ function resolveConnectionState(state: string): ConnectionUiState {
   return 'connecting'
 }
 
-function connectionStateLabel(state: ConnectionUiState) {
-  if (state === 'connected') return '연결됨'
-  if (state === 'failed') return '연결 실패'
-  if (state === 'disconnected') return '연결 끊김'
-  return '연결 중'
-}
-
 function formatMessageTime(timestamp: number) {
   return new Intl.DateTimeFormat('ko-KR', {
     hour: '2-digit',
@@ -224,60 +217,38 @@ export function LiveChatPanel({ address, profile, className }: LiveChatPanelProp
   }
 
   const rootClassName = className
-    ? `panel section-shell desktop-surface-variant grid ${className} grid-rows-[auto_1fr_auto] gap-2.5 p-2.5 md:gap-3 md:p-3`
-    : 'panel section-shell desktop-surface-variant grid h-[calc(100dvh-8rem)] grid-rows-[auto_1fr_auto] gap-2.5 p-2.5 md:gap-3 md:p-3'
+    ? `panel section-shell grid w-full min-w-0 ${className} grid-rows-[auto_1fr_auto] gap-2.5 p-2.5 md:rounded-2xl md:border md:gap-3 md:p-4`
+    : 'panel section-shell grid w-full min-w-0 h-[calc(100dvh-8rem)] grid-rows-[auto_1fr_auto] gap-2.5 p-2.5 md:rounded-2xl md:border md:gap-3 md:p-4'
 
   return (
     <div className={rootClassName}>
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="ui-text-muted m-0 text-xs font-semibold uppercase tracking-[0.08em]">Live Chat</p>
-          <p className="ui-text-strong mt-1 text-sm font-semibold">UFC 실시간 채팅</p>
-        </div>
-        <span
-          className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${
-            connectionState === 'connected'
-              ? 'ui-state-success'
-              : connectionState === 'failed'
-                ? 'ui-state-danger'
-                : 'ui-state-warning'
-          }`}
-        >
-          {connectionStateLabel(connectionState)}
-        </span>
+      <div className="flex w-full items-center gap-2">
+        <h2 className="ui-text-strong m-0 text-lg font-semibold">Live Chat</h2>
       </div>
 
       <div
         ref={scrollContainerRef}
-        className="card-surface-soft card-shell min-h-0 space-y-1.5 overflow-y-auto p-1.5 md:space-y-2 md:p-2"
+        className="card-surface-soft card-shell min-h-0 w-full overflow-y-auto p-1.5 md:p-2"
       >
         {messages.length === 0 ? (
           <p className="ui-text-muted m-0 px-1 py-2 text-xs">아직 메시지가 없습니다. 첫 메시지를 남겨보세요.</p>
         ) : (
-          messages.map((message) => (
-            <article key={message.id} className="card-surface card-shell px-2 py-1 md:py-1.5">
-              <div className="flex items-center justify-between gap-2">
-                <span className="ui-text-body text-xs font-semibold">{message.senderName}</span>
-                <time className="ui-text-muted text-[11px]">{formatMessageTime(message.timestamp)}</time>
-              </div>
-              <p className="ui-text-strong m-0 mt-1 break-words text-sm leading-5">{message.text}</p>
-            </article>
-          ))
+          <div className="grid w-full content-start gap-1.5 justify-items-stretch md:gap-2">
+            {messages.map((message) => (
+              <article key={message.id} className="card-surface card-shell w-full justify-self-stretch px-2 py-1 md:py-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="ui-text-body text-xs font-semibold">{message.senderName}</span>
+                  <time className="ui-text-muted text-[11px]">{formatMessageTime(message.timestamp)}</time>
+                </div>
+                <p className="ui-text-strong m-0 mt-1 break-words text-sm leading-5">{message.text}</p>
+              </article>
+            ))}
+          </div>
         )}
       </div>
 
-      <form className="grid gap-2" onSubmit={handleSubmit}>
-        <label className="ui-text-muted grid gap-1 text-[11px] font-semibold">
-          닉네임
-          <input
-            className="ui-input h-8 rounded-md border px-2 text-xs"
-            value={profile.nickname || ''}
-            maxLength={24}
-            placeholder={address ? '헤더의 계정 메뉴에서 변경하세요' : '지갑 연결 후 설정 가능'}
-            readOnly
-          />
-        </label>
-        <div className="grid grid-cols-[1fr_auto] gap-2">
+      <form className="grid w-full gap-2" onSubmit={handleSubmit}>
+        <div className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-2">
           <input
             className="ui-input h-9 rounded-md border px-3 text-sm outline-none md:rounded-lg"
             placeholder={connectionState === 'connected' ? '메시지를 입력하세요' : '연결 후 입력 가능합니다'}

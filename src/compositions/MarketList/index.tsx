@@ -17,9 +17,15 @@ export function MarketList({
   marketSections,
   selectedOutcomes,
   selectedOutcomePriceChanges,
+  gameSearchQuery,
+  leagueFilter,
+  leagueOptions,
+  totalGamesCount,
   onSelectGame,
   onBackToGames,
   onConnectWallet,
+  onGameSearchQueryChange,
+  onLeagueFilterChange,
   onSelectOutcome,
   onRetryGames,
   onRetryMarkets,
@@ -28,23 +34,29 @@ export function MarketList({
 
   if (pageMode === 'games') {
     return (
-      <section className="panel section-shell desktop-surface-variant p-2 md:p-4">
-        <GamesPane
-          isGamesLoading={isGamesLoading}
-          gamesErrorMessage={gamesErrorMessage}
-          selectedGameId={selectedGameId}
-          games={games}
-          selectedOutcomes={selectedOutcomes}
-          onSelectGame={onSelectGame}
-          onSelectOutcome={onSelectOutcome}
-          onRetryGames={onRetryGames}
-        />
+      <section className="panel section-shell bg-[linear-gradient(180deg,rgba(255,255,255,0.035)_0%,rgba(255,255,255,0.012)_100%)] p-2 md:rounded-2xl md:border md:px-4 md:py-4">
+          <GamesPane
+            isGamesLoading={isGamesLoading}
+            gamesErrorMessage={gamesErrorMessage}
+            selectedGameId={selectedGameId}
+            games={games}
+            selectedOutcomes={selectedOutcomes}
+            gameSearchQuery={gameSearchQuery}
+            leagueFilter={leagueFilter}
+            leagueOptions={leagueOptions}
+            totalGamesCount={totalGamesCount}
+            onSelectGame={onSelectGame}
+            onGameSearchQueryChange={onGameSearchQueryChange}
+            onLeagueFilterChange={onLeagueFilterChange}
+            onSelectOutcome={onSelectOutcome}
+            onRetryGames={onRetryGames}
+          />
       </section>
     )
   }
 
   return (
-    <section className="panel section-shell desktop-surface-variant grid gap-3 p-2 md:gap-4 md:p-4">
+    <section className="panel section-shell grid gap-3 p-2 md:gap-4 md:rounded-2xl md:border md:px-4 md:py-4">
       <div className="flex items-center justify-between gap-2">
         <button
           className="ui-btn-secondary rounded-lg border px-3 py-1.5 text-sm font-semibold"

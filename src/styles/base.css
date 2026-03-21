@@ -1,7 +1,7 @@
 @layer base {
   :root {
-    --app-bg: #0b0f14;
-    --app-bg-glow: #2a1b12;
+    --app-bg: #000000;
+    --app-bg-glow: #000000;
     --app-surface: #0b0f14;
     --app-surface-soft: #0f141c;
     --app-border: #1f2937;
@@ -25,10 +25,7 @@
 
   body {
     @apply m-0 min-h-full antialiased;
-    background:
-      radial-gradient(1200px 700px at 85% -100px, color-mix(in oklab, var(--app-accent) 22%, transparent), transparent),
-      radial-gradient(900px 480px at 8% 0, color-mix(in oklab, var(--app-bg-glow) 55%, transparent), transparent),
-      var(--app-bg);
+    background: var(--app-bg);
     color: var(--app-text-body);
     font-family: 'Space Grotesk', 'Noto Sans KR', 'Segoe UI', sans-serif;
   }

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { BetsAndTransferPanel } from './compositions/BetsAndTransferPanel'
 import { AppBottomNav } from './compositions/AppBottomNav'
-import { AppHeaderContainer } from './compositions/AppHeaderContainer'
 import { AppGameFiltersContainer } from './compositions/AppGameFiltersContainer'
+import { AppHeaderContainer } from './compositions/AppHeaderContainer'
 import { GuidePage } from './compositions/GuidePage'
 import { RankingPage } from './compositions/RankingPage'
 import { MobileBetslipSheet } from './compositions/MobileBetslipSheet'
@@ -67,6 +67,7 @@ function App() {
   const betting = useBetting({
     address: wallet.address,
     isConnected: wallet.isConnected,
+    marketConditions: market.marketConditions,
     marketSections,
     isMarketsLoading,
     isBetHistoryPollingEnabled: isMyBetsViewActive,
@@ -102,10 +103,10 @@ function App() {
     handleNavigateToRanking()
   }
   return (
-    <div className="app-theme mx-auto w-full max-w-[1440px] px-0 pb-36 pt-0 md:px-4 md:pt-4 lg:pb-10">
+    <div className="app-theme mx-auto w-full max-w-[1440px] px-0 pb-36 pt-0 lg:pb-10">
       <div
         ref={mobileHeaderRef}
-        className="sticky top-0 z-30 border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:static md:border-0 md:bg-transparent md:px-0 md:pb-0 md:backdrop-blur-none"
+        className="sticky top-0 z-30 border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:px-4 md:pb-0"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
         <AppHeaderContainer
@@ -121,10 +122,17 @@ function App() {
           onGuideClick={handleNavigateToGuide}
         />
       </div>
+      <div className="hidden px-3 md:block md:px-4">
+        <div className="h-px bg-white/10" />
+      </div>
 
-      {shouldShowFilters && <AppGameFiltersContainer filters={filters} games={games} mobileStickyTop={mobileHeaderHeight} />}
+      {shouldShowFilters && (
+        <div className="md:hidden">
+          <AppGameFiltersContainer filters={filters} games={games} mobileStickyTop={mobileHeaderHeight} />
+        </div>
+      )}
 
-      <main className={`mt-0 grid items-start gap-2 md:mt-4 md:gap-4 ${isGuideRoute || isRankingRoute ? '' : 'xl:grid-cols-[240px_minmax(0,1fr)_316px]'}`}>
+      <main className={`mt-0 grid items-start gap-2 px-0 md:mt-3 md:gap-4 md:px-4 ${isGuideRoute || isRankingRoute ? '' : 'xl:grid-cols-[240px_minmax(0,1fr)_316px]'}`}>
         {shouldShowDesktopChat && (
           <aside className="hidden xl:sticky xl:top-4 xl:block">
             <LiveChatPanel address={wallet.address} profile={profile} />

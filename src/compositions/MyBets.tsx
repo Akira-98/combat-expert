@@ -9,6 +9,7 @@ type MyBetsProps = {
   redeemPending: boolean
   redeemingBetTokenId?: string
   onRedeemBet: (bet: Bet) => void
+  isEmbedded?: boolean
 }
 
 function readHiddenBetTokenIds(storageKey: string | undefined) {
@@ -33,6 +34,7 @@ export function MyBets({
   redeemPending,
   redeemingBetTokenId,
   onRedeemBet,
+  isEmbedded = false,
 }: MyBetsProps) {
   const storageKey = address ? `combat-expert:hidden-bets:${address.toLowerCase()}` : undefined
   const [hiddenBetTokenIdsByStorageKey, setHiddenBetTokenIdsByStorageKey] = useState<Record<string, string[]>>({})
@@ -45,9 +47,12 @@ export function MyBets({
     () => bets.filter((bet) => !hiddenBetTokenIds.includes(bet.tokenId)),
     [bets, hiddenBetTokenIds],
   )
+  const sectionClassName = isEmbedded
+    ? 'section-shell border-0 bg-transparent px-0 py-0 shadow-none'
+    : 'panel section-shell desktop-surface-variant p-2.5 md:px-0 md:py-1'
 
   return (
-    <section className="panel section-shell desktop-surface-variant p-2.5 md:p-4">
+    <section className={sectionClassName}>
       <h2 className="ui-text-strong m-0 text-lg font-semibold">내 베팅</h2>
       {!address && <p className="ui-text-muted mt-2 text-sm">지갑 연결 후 조회됩니다.</p>}
       {address && bets.length === 0 && <p className="ui-text-muted mt-2 text-sm">베팅 내역이 없습니다.</p>}

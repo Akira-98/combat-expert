@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import type { MarketSection } from '../types/ui'
+import type { MarketManagerCondition } from '../types/marketManager'
 
 const BETSLIP_SYNC_LOG_PREFIX = '[CombatExpert][betslip-sync]'
 const SDK_CONDITION_STATE_MISMATCH_WARN_DELAY_MS = 400
@@ -20,6 +21,7 @@ type OutcomeMeta = {
 type UseBetslipValidationParams = {
   items: BetslipItemLike[]
   marketSections: MarketSection[]
+  marketConditions: MarketManagerCondition[]
   mergedOutcomeMeta: Map<string, OutcomeMeta>
   disableReason?: string
   totalOdds: number
@@ -29,6 +31,7 @@ type UseBetslipValidationParams = {
 export function useBetslipValidation({
   items,
   marketSections,
+  marketConditions,
   mergedOutcomeMeta,
   disableReason,
   totalOdds,
@@ -102,16 +105,20 @@ export function useBetslipValidation({
     items.map((item) => {
       const selectionKey = `${item.conditionId}-${item.outcomeId}`
       const localMeta = currentOutcomeStateMap.get(selectionKey)
+      const apiCondition = marketConditions.find((condition) => condition.conditionId === item.conditionId)
+      const apiOutcome = apiCondition?.outcomes.find((outcome) => outcome.outcomeId === item.outcomeId)
       return {
         conditionId: item.conditionId,
         outcomeId: item.outcomeId,
         gameId: item.gameId,
+        apiConditionState: apiCondition?.state ?? 'missing',
+        apiOutcomeOdds: apiOutcome ? Number(apiOutcome.odds) : null,
         localConditionState: localMeta?.conditionState ?? 'missing',
         localOdds: localMeta?.odds ?? null,
         marketTitle: localMeta?.marketTitle ?? null,
       }
     })
-  ), [currentOutcomeStateMap, items])
+  ), [currentOutcomeStateMap, items, marketConditions])
 
   useEffect(() => {
     if (!sdkConditionStateMismatch || isMarketsLoading || items.length === 0) return

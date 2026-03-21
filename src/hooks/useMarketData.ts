@@ -82,6 +82,7 @@ export function useMarketData() {
     retryGames: () => void gamesQuery.refetch(),
     retryMarkets: () => void marketsQuery.refetch(),
     games: gameItems,
+    marketConditions: marketsQuery.rawConditions,
     marketSections,
   }
 }

@@ -10,11 +10,15 @@ type BetsAndTransferPanelProps = {
   wallet: ReturnType<typeof useWalletConnection>
   betting: ReturnType<typeof useBetting>
   usdtTransfer: ReturnType<typeof useUsdtTransfer>
+  isEmbedded?: boolean
 }
 
-export function BetsAndTransferPanel({ wallet, betting, usdtTransfer }: BetsAndTransferPanelProps) {
+export function BetsAndTransferPanel({ wallet, betting, usdtTransfer, isEmbedded = false }: BetsAndTransferPanelProps) {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false)
   useBodyScrollLock(isTransferModalOpen)
+  const transferSectionClassName = isEmbedded
+    ? 'section-shell border-t border-[color:var(--app-border)] bg-transparent px-0 py-4 shadow-none'
+    : 'panel section-shell desktop-surface-variant p-2.5 md:px-0 md:py-1'
 
   return (
     <div className="grid gap-3">
@@ -25,8 +29,9 @@ export function BetsAndTransferPanel({ wallet, betting, usdtTransfer }: BetsAndT
         redeemPending={betting.redeemPending}
         redeemingBetTokenId={betting.redeemingBetTokenId}
         onRedeemBet={betting.redeemBet}
+        isEmbedded={isEmbedded}
       />
-      <section className="panel section-shell desktop-surface-variant p-2.5 md:p-4">
+      <section className={transferSectionClassName}>
         <div className="flex items-center justify-between gap-2">
           <h2 className="ui-text-strong m-0 text-base font-semibold">USDT 송금</h2>
           <span className="ui-text-muted text-xs">Polygon</span>

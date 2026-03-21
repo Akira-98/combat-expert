@@ -164,7 +164,6 @@ export function Header({
               <span className={titleClass}>세기의 격잘알</span>
             )}
           </h1>
-          <p className="ui-text-muted mt-0 whitespace-nowrap text-[11px] leading-[1.2] md:mt-1 md:text-sm">세계 최초 MMA 예측시장</p>
         </div>
         <div className="shrink-0">
           {!isConnected ? (
@@ -285,14 +284,25 @@ function HeaderLinkButtons({
   onGuideClick: () => void
   onRankingClick: () => void
 }) {
-  const navButtonClass = 'ui-btn-secondary btn-shell-lg hidden px-3 py-2 text-sm font-semibold md:inline-flex'
+  const navButtonClass =
+    'ui-text-body hidden h-9 w-9 items-center justify-center rounded-full bg-transparent text-sm transition hover:bg-black/5 md:inline-flex dark:hover:bg-white/5'
   return (
     <>
-      <button className={navButtonClass} onClick={onRankingClick} type="button">
-        랭킹
+      <button aria-label="랭킹" className={navButtonClass} onClick={onRankingClick} title="랭킹" type="button">
+        <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+          <path d="M8 21h8" strokeLinecap="round" />
+          <path d="M12 16v5" strokeLinecap="round" />
+          <path d="M7 4h10v3a5 5 0 0 1-10 0V4Z" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M7 6H5a2 2 0 0 0 2 2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M17 6h2a2 2 0 0 1-2 2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
-      <button className={navButtonClass} onClick={onGuideClick} type="button">
-        가이드
+      <button aria-label="가이드" className={navButtonClass} onClick={onGuideClick} title="가이드" type="button">
+        <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+          <path d="M6 5.75A2.75 2.75 0 0 1 8.75 3H19v16H8.75A2.75 2.75 0 0 0 6 21Z" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M6 5.75v15.5" strokeLinecap="round" />
+          <path d="M9.5 7.5h6M9.5 11h6M9.5 14.5h4" strokeLinecap="round" />
+        </svg>
       </button>
     </>
   )

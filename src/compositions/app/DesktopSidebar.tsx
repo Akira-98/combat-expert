@@ -28,8 +28,8 @@ export function DesktopSidebar({
 
   return (
     <aside className="hidden xl:sticky xl:top-4 xl:block xl:max-h-[calc(100dvh-2rem)] xl:overflow-y-auto">
-      <div className="grid gap-3">
-        <div className="card-surface card-shell-lg p-2">
+      <section className="card-surface card-shell-lg overflow-hidden">
+        <div className="border-b border-[color:var(--app-border)] p-2">
           <div className="grid grid-cols-2 gap-1">
             <button
               className={`${tabButtonBaseClass} ${desktopSidePanelTab === 'myBets' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'}`}
@@ -48,12 +48,14 @@ export function DesktopSidebar({
           </div>
         </div>
 
-        {desktopSidePanelTab === 'myBets' ? (
-          <BetsAndTransferPanel wallet={wallet} betting={betting} usdtTransfer={usdtTransfer} />
-        ) : (
-          <BetslipPanel {...betslipPanelProps} />
-        )}
-      </div>
+        <div className="p-3">
+          {desktopSidePanelTab === 'myBets' ? (
+            <BetsAndTransferPanel wallet={wallet} betting={betting} usdtTransfer={usdtTransfer} isEmbedded />
+          ) : (
+            <BetslipPanel {...betslipPanelProps} isEmbedded />
+          )}
+        </div>
+      </section>
     </aside>
   )
 }

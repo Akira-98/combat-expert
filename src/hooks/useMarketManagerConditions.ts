@@ -53,6 +53,7 @@ export function useMarketManagerConditions({
 
   return {
     ...query,
+    rawConditions: query.data ?? [],
     data: markets,
   }
 }

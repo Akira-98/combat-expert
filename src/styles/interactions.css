@@ -93,12 +93,12 @@
 
   .select-card-idle {
     background-color: var(--app-surface);
-    border-color: transparent;
+    border-color: color-mix(in oklab, var(--app-border) 82%, transparent);
   }
 
   .select-card-idle:hover {
-    border-color: color-mix(in oklab, var(--app-accent) 35%, transparent);
-    background-color: color-mix(in oklab, var(--app-surface) 96%, var(--app-accent-soft));
+    border-color: color-mix(in oklab, var(--app-accent) 28%, var(--app-border));
+    background-color: color-mix(in oklab, var(--app-surface) 94%, var(--app-accent-soft));
   }
 
   .select-card-disabled {
