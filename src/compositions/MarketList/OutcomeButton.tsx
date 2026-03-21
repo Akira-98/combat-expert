@@ -6,6 +6,7 @@ type OutcomeButtonProps = {
   outcome: OutcomeItem
   selectedGameParticipants: string[]
   isSelected: boolean
+  isSdkBlocked?: boolean
   priceChange?: OutcomePriceChange
   onSelectOutcome: (outcome: OutcomeItem) => void
 }
@@ -14,10 +15,11 @@ export function OutcomeButton({
   outcome,
   selectedGameParticipants,
   isSelected,
+  isSdkBlocked = false,
   priceChange,
   onSelectOutcome,
 }: OutcomeButtonProps) {
-  const isConditionInactive = outcome.conditionState !== 'Active'
+  const isConditionInactive = isSdkBlocked || outcome.conditionState !== 'Active'
   const isOddsUnavailable = !Number.isFinite(outcome.odds) || outcome.odds <= 1
   const isDisabled = isConditionInactive || isOddsUnavailable
   const outcomeLabel = normalizeOutcomeLabel(outcome.selectionName, selectedGameParticipants)

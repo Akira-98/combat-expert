@@ -67,6 +67,7 @@ export function Header({
     'ui-btn-secondary btn-shell inline-flex h-8 w-8 items-center justify-center text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 md:btn-shell-lg'
   const titleClass =
     'ui-text-strong ui-mma-logo whitespace-nowrap pt-0.5 text-[22px] leading-[1.18] md:pt-0 md:text-[27px] md:leading-[1.15]'
+  const titleWrapperClass = 'min-w-0 self-center py-0 md:py-0.5'
   const connectErrorClass = 'ui-state-danger m-0 rounded-md border px-2 py-1 text-right text-xs font-medium'
   const accountTriggerClass =
     'flex items-center gap-2 rounded-full border border-transparent bg-transparent p-0.5 transition hover:border-[color:var(--app-border)]'
@@ -148,8 +149,8 @@ export function Header({
 
   return (
     <>
-      <header className="section-shell flex min-h-[68px] items-start justify-between gap-2.5 bg-transparent px-2.5 py-1.5 shadow-none md:min-h-0 md:items-center md:gap-4 md:p-4 desktop-surface-fill desktop-surface-variant">
-        <div className="min-w-0 py-0.5">
+      <header className="section-shell flex min-h-[68px] items-center justify-between gap-2.5 bg-transparent px-2.5 py-1.5 shadow-none md:min-h-0 md:gap-4 md:p-4 desktop-surface-fill desktop-surface-variant">
+        <div className={titleWrapperClass}>
           <h1 className="m-0">
             {onTitleClick ? (
               <button

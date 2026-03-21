@@ -71,6 +71,7 @@ function App() {
     marketSections,
     isMarketsLoading,
     isBetHistoryPollingEnabled: isMyBetsViewActive,
+    refreshMarkets: market.retryMarkets,
   })
   const usdtTransfer = useUsdtTransfer({
     address: wallet.address,

@@ -16,6 +16,7 @@ export function MarketList({
   games,
   marketSections,
   selectedOutcomes,
+  sdkBlockedSelectionKeys,
   selectedOutcomePriceChanges,
   gameSearchQuery,
   leagueFilter,
@@ -41,6 +42,7 @@ export function MarketList({
             selectedGameId={selectedGameId}
             games={games}
             selectedOutcomes={selectedOutcomes}
+            sdkBlockedSelectionKeys={sdkBlockedSelectionKeys}
             gameSearchQuery={gameSearchQuery}
             leagueFilter={leagueFilter}
             leagueOptions={leagueOptions}
@@ -74,6 +76,7 @@ export function MarketList({
         selectedGame={selectedGame}
         marketSections={marketSections}
         selectedOutcomes={selectedOutcomes}
+        sdkBlockedSelectionKeys={sdkBlockedSelectionKeys}
         selectedOutcomePriceChanges={selectedOutcomePriceChanges}
         onSelectOutcome={onSelectOutcome}
         onRetryMarkets={onRetryMarkets}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useChain } from '@azuro-org/sdk'
 import { useQuery } from '@tanstack/react-query'
 import { COMBAT_GAMES_LIMIT, fetchPreferredCombatGames } from '../api/combatGames'
@@ -70,6 +70,12 @@ export function useMarketData() {
     if (gamesQuery.isError) return getErrorMessage(gamesQuery.error, '게임 목록을 불러오지 못했습니다.')
     return undefined
   }, [games.length, gamesQuery.error, gamesQuery.isError])
+  const retryGames = useCallback(() => {
+    void gamesQuery.refetch()
+  }, [gamesQuery])
+  const retryMarkets = useCallback(() => {
+    void marketsQuery.refetch()
+  }, [marketsQuery])
 
   return {
     selectedGameId,
@@ -79,8 +85,8 @@ export function useMarketData() {
     gamesErrorMessage,
     marketsErrorMessage:
       marketsQuery.isError ? getErrorMessage(marketsQuery.error, '마켓 정보를 불러오지 못했습니다.') : undefined,
-    retryGames: () => void gamesQuery.refetch(),
-    retryMarkets: () => void marketsQuery.refetch(),
+    retryGames,
+    retryMarkets,
     games: gameItems,
     marketConditions: marketsQuery.rawConditions,
     marketSections,
