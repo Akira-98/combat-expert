@@ -40,18 +40,39 @@ async function fetchJson(url, init) {
   return response.json()
 }
 
-async function fetchCombatFeedGames({ apiBaseUrl, environment, limit }) {
+function mergeUniqueGames(...gameGroups) {
+  const seen = new Set()
+
+  return gameGroups.flat().filter((game) => {
+    const gameId = typeof game?.gameId === 'string' ? game.gameId : ''
+    if (!gameId || seen.has(gameId)) return false
+    seen.add(gameId)
+    return true
+  })
+}
+
+async function fetchCombatGames({
+  apiBaseUrl,
+  environment,
+  limit,
+  gameState,
+  conditionState,
+  orderDirection = 'asc',
+}) {
   const buildUrl = (extraParams = {}) => {
     const params = new URLSearchParams({
       environment,
-      gameState: 'Prematch',
-      conditionState: 'Active',
+      gameState,
       orderBy: 'startsAt',
-      orderDirection: 'asc',
+      orderDirection,
       page: '1',
       perPage: String(limit),
       ...extraParams,
     })
+
+    if (conditionState) {
+      params.set('conditionState', conditionState)
+    }
 
     return `${apiBaseUrl}/market-manager/games-by-filters?${params.toString()}`
   }
@@ -65,26 +86,70 @@ async function fetchCombatFeedGames({ apiBaseUrl, environment, limit }) {
 
   const mmaPayload = await fetchJson(buildUrl({ sportSlug: 'mma' }))
   const mmaGames = Array.isArray(mmaPayload?.games) ? mmaPayload.games : []
-  const seen = new Set()
 
-  return [...ufcGames, ...mmaGames].filter((game) => {
-    const gameId = typeof game?.gameId === 'string' ? game.gameId : ''
-    if (!gameId || seen.has(gameId)) return false
-    seen.add(gameId)
-    return true
+  return mergeUniqueGames(ufcGames, mmaGames)
+}
+
+async function fetchCombatFeedGames({ apiBaseUrl, environment, limit }) {
+  return fetchCombatGames({
+    apiBaseUrl,
+    environment,
+    limit,
+    gameState: 'Prematch',
+    conditionState: 'Active',
+    orderDirection: 'asc',
   })
+}
+
+async function fetchSettledMmaGames({ apiBaseUrl, environment, limit }) {
+  const finishedGames = await fetchCombatGames({
+    apiBaseUrl,
+    environment,
+    limit,
+    gameState: 'Finished',
+    orderDirection: 'desc',
+  })
+
+  if (finishedGames.length >= limit) {
+    return finishedGames.slice(0, limit)
+  }
+
+  const stoppedGames = await fetchCombatGames({
+    apiBaseUrl,
+    environment,
+    limit,
+    gameState: 'Stopped',
+    orderDirection: 'desc',
+  })
+
+  const mergedWithStopped = mergeUniqueGames(finishedGames, stoppedGames)
+  if (mergedWithStopped.length >= limit) {
+    return mergedWithStopped.slice(0, limit)
+  }
+
+  const canceledGames = await fetchCombatGames({
+    apiBaseUrl,
+    environment,
+    limit,
+    gameState: 'Canceled',
+    orderDirection: 'desc',
+  })
+
+  return mergeUniqueGames(mergedWithStopped, canceledGames).slice(0, limit)
 }
 
 function printUsage() {
   console.log(`Usage:
   npm run ranking:sync -- --event-id <eventId> --game-id <gameId> [--game-id <gameId> ...] [--apply]
   npm run ranking:sync -- --source combat-feed [--limit 30] [--apply]
+  npm run ranking:sync -- --source settled-mma [--limit 30] [--apply]
 
 Options:
   --event-id <value>        Ranking batch identifier. Defaults to sync-YYYY-MM-DD.
   --game-id <value>         Single gameId. Repeatable.
   --game-ids <a,b,c>        Comma-separated gameIds.
   --source combat-feed      Resolve gameIds from the current combat feed selection.
+  --source settled-mma      Resolve gameIds from recently finished UFC/MMA games.
   --limit <value>           Game limit for --source combat-feed. Defaults to 30.
   --apply                   Execute sync. Default is dry-run preview.
   --include-multiples       Include parlays/multi-selection bets.
@@ -108,8 +173,9 @@ async function main() {
   const marketApiUrl = (readArgValue(args, '--market-api-url') || process.env.ONCHAINFEED_API_URL || 'https://api.onchainfeed.org/api/v1/public').trim()
   const environment = (readArgValue(args, '--environment') || process.env.ONCHAINFEED_ENVIRONMENT || 'PolygonUSDT').trim()
 
-  if (gameIds.length === 0 && source === 'combat-feed') {
-    const games = await fetchCombatFeedGames({
+  if (gameIds.length === 0 && (source === 'combat-feed' || source === 'settled-mma')) {
+    const fetchGames = source === 'settled-mma' ? fetchSettledMmaGames : fetchCombatFeedGames
+    const games = await fetchGames({
       apiBaseUrl: marketApiUrl,
       environment,
       limit,
@@ -120,7 +186,7 @@ async function main() {
     console.log(
       JSON.stringify(
         {
-          source: 'combat-feed',
+          source,
           eventId,
           environment,
           selectedGameCount: gameIds.length,
