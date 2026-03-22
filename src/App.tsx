@@ -80,13 +80,14 @@ function App() {
 
   const betslipPanelProps = buildBetslipPanelProps({ wallet, betting })
   const shouldShowFilters = !isGuideRoute && !isRankingRoute
-  const shouldShowDesktopChat = !isGuideRoute && !isRankingRoute
-  const shouldShowDesktopSidebar = !isGuideRoute && !isRankingRoute
+  const shouldShowDesktopChat = true
+  const shouldShowDesktopSidebar = true
   const shouldShowGuideContent = isGuideRoute
   const shouldShowRankingContent = isRankingRoute
   const shouldShowExploreContent = !isGuideRoute && !isRankingRoute && mobileView === 'explore'
   const shouldShowMobileBetsPanel = !isGuideRoute && !isRankingRoute && mobileView === 'bets'
   const shouldShowMobileChatPanel = !isGuideRoute && !isRankingRoute && mobileView === 'chat'
+  const shouldUseDesktopThreePanelLayout = true
   const handleOpenMobileMenu = () => {
     setIsMobileBetslipOpen(false)
     setIsMobileMenuOpen(true)
@@ -130,7 +131,7 @@ function App() {
         </div>
       )}
 
-      <main className={`mt-0 grid items-start gap-2 px-0 md:mt-3 md:gap-4 md:px-4 ${isGuideRoute || isRankingRoute ? '' : 'xl:grid-cols-[240px_minmax(0,1fr)_316px]'}`}>
+      <main className={`mt-0 grid items-start gap-2 px-0 md:mt-3 md:gap-4 md:px-4 ${shouldUseDesktopThreePanelLayout ? 'xl:grid-cols-[240px_minmax(0,1fr)_316px]' : ''}`}>
         {shouldShowDesktopChat && (
           <aside className="hidden xl:sticky xl:top-4 xl:block">
             <LiveChatPanel address={wallet.address} profile={profile} />
