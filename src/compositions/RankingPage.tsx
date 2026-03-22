@@ -33,15 +33,8 @@ export function RankingPage({ rankings, viewer, updatedAt, isLoading, errorMessa
         <div className="border-b border-white/8 bg-[linear-gradient(135deg,rgba(255,107,0,0.22),rgba(11,15,20,0.4)_42%,rgba(255,255,255,0.03))] px-4 py-5 md:px-6 md:py-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="mb-2 inline-flex rounded-full border border-orange-400/25 bg-orange-950/35 px-3 py-1 text-[11px] font-semibold tracking-[0.22em] text-orange-200 uppercase">
-                Leaderboard
-              </p>
-              <h2 className="ui-text-strong m-0 text-[28px] font-semibold tracking-tight md:text-[36px]">Top 100 격잘알 랭킹</h2>
-              <p className="ui-text-muted mt-2 mb-0 text-sm md:text-base">승리 적중과 언더독 보너스를 합산한 시즌 리더보드다.</p>
-            </div>
-            <div className="card-surface-soft card-shell-xl px-4 py-3 text-sm">
-              <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">Last Sync</p>
-              <p className="ui-text-strong mt-1 mb-0 font-semibold">{formatUpdatedAt(updatedAt)}</p>
+              <h2 className="ui-text-strong m-0 text-[28px] font-semibold tracking-tight md:text-[36px]">Top 격잘알 랭킹</h2>
+              <p className="ui-text-muted mt-2 mb-0 text-xs md:text-sm">{formatUpdatedAt(updatedAt)}</p>
             </div>
           </div>
         </div>

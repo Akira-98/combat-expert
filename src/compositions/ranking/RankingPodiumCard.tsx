@@ -2,33 +2,40 @@ import { shortenAddress } from '../../helpers/walletUi'
 import type { RankingEntry } from '../../hooks/useRankings'
 
 const medalStyles = [
-  'border-amber-300/45 bg-[radial-gradient(circle_at_top,#f7d487_0%,#7c4b1f_50%,#14181f_100%)]',
-  'border-slate-300/35 bg-[radial-gradient(circle_at_top,#dce5ee_0%,#556473_50%,#131921_100%)]',
-  'border-orange-400/35 bg-[radial-gradient(circle_at_top,#eeb486_0%,#74462d_52%,#14181f_100%)]',
+  'border-amber-300/18 bg-[linear-gradient(180deg,rgba(255,216,122,0.12)_0%,rgba(255,255,255,0.03)_28%,rgba(255,255,255,0.015)_100%)]',
+  'border-slate-200/14 bg-[linear-gradient(180deg,rgba(214,226,238,0.09)_0%,rgba(255,255,255,0.03)_28%,rgba(255,255,255,0.015)_100%)]',
+  'border-orange-300/16 bg-[linear-gradient(180deg,rgba(231,167,116,0.1)_0%,rgba(255,255,255,0.03)_28%,rgba(255,255,255,0.015)_100%)]',
 ] as const
 
 export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: number }) {
   return (
     <article
-      className={`relative overflow-hidden rounded-3xl border p-4 shadow-[0_20px_50px_rgba(0,0,0,0.22)] ${medalStyles[rank - 1] ?? medalStyles[2]}`}
+      className={`relative overflow-hidden rounded-3xl border p-4 shadow-[0_18px_38px_rgba(0,0,0,0.16)] backdrop-blur ${medalStyles[rank - 1] ?? medalStyles[2]}`}
     >
-      <div className="absolute right-4 top-4 rounded-full border border-white/15 bg-black/20 px-2.5 py-1 text-[11px] font-black text-white">
-        #{rank}
+      <div className="absolute inset-x-0 top-0 h-px bg-white/10" />
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="mb-3 inline-flex rounded-full border border-white/10 bg-black/18 px-2.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-slate-200">
+            #{rank}
+          </div>
+          <p className="ui-text-strong m-0 truncate text-lg font-semibold md:text-xl">{entry.nickname || shortenAddress(entry.address, 6, 4)}</p>
+          <p className="ui-text-muted mt-1 mb-0 truncate text-sm">{shortenAddress(entry.address, 7, 5)}</p>
+        </div>
+        <div className="text-right">
+          <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">Score</p>
+          <p className="ui-text-strong mt-1 mb-0 text-3xl font-semibold leading-none md:text-[2rem]">{entry.totalScore.toFixed(1)}</p>
+        </div>
       </div>
-      <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/70">Top Performer</p>
-      <p className="m-0 pr-12 text-xl font-semibold text-white">{entry.nickname || shortenAddress(entry.address, 6, 4)}</p>
-      <p className="mt-1 mb-0 text-sm text-white/75">{shortenAddress(entry.address, 7, 5)}</p>
-      <div className="mt-6 flex items-end justify-between gap-3">
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/8 pt-3">
         <div>
-          <p className="mb-1 text-[11px] uppercase tracking-[0.18em] text-white/60">Score</p>
-          <p className="m-0 text-4xl font-black leading-none text-white">{entry.totalScore.toFixed(1)}</p>
+          <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">Record</p>
+          <p className="ui-text-strong mt-1 mb-0 text-sm font-medium">
+            {entry.winCount}승 {entry.loseCount}패{entry.voidCount > 0 ? ` · 무효 ${entry.voidCount}` : ''}
+          </p>
         </div>
-        <div className="rounded-2xl border border-white/15 bg-black/15 px-3 py-2">
-          <p className="m-0 text-[11px] text-white/70">언더독</p>
-          <p className="m-0 text-lg font-bold text-white">{entry.underdogHitCount}</p>
-        </div>
+        <StatPill label="언더독" value={String(entry.underdogHitCount)} />
       </div>
-      <div className="mt-5 border-t border-white/10 pt-3">
+      <div className="mt-4">
         <EntryMetrics entry={entry} />
       </div>
     </article>
@@ -42,6 +49,15 @@ function EntryMetrics({ entry }: { entry: RankingEntry }) {
       <span>미적중 {entry.loseCount}</span>
       <span>언더독 {entry.underdogHitCount}</span>
       <span>총 {entry.eventCount}건</span>
+    </div>
+  )
+}
+
+function StatPill({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/16 px-3 py-2 text-right">
+      <p className="ui-text-muted m-0 text-[10px] font-medium tracking-[0.12em]">{label}</p>
+      <p className="ui-text-strong mt-1 mb-0 text-base font-semibold">{value}</p>
     </div>
   )
 }
