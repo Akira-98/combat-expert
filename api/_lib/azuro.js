@@ -1,6 +1,6 @@
 import { print } from 'graphql'
 import gql from 'graphql-tag'
-import { chainsData, GamesDocument } from '@azuro-org/toolkit'
+import { chainsData, getGamesByIds as getToolkitGamesByIds } from '@azuro-org/toolkit'
 
 const GAME_BETS_QUERY = gql`
   query RankingSyncGameBets($first: Int, $skip: Int, $where: V3_Bet_filter!) {
@@ -90,19 +90,10 @@ export function getPolygonChainData() {
 export async function fetchGamesByIds(gameIds) {
   if (gameIds.length === 0) return []
 
-  const chainData = getPolygonChainData()
-  const data = await gqlRequest({
-    url: chainData.graphql.feed,
-    document: GamesDocument,
-    variables: {
-      first: Math.min(gameIds.length, 1000),
-      where: {
-        gameId_in: gameIds,
-      },
-    },
+  return getToolkitGamesByIds({
+    chainId: POLYGON_CHAIN_ID,
+    gameIds,
   })
-
-  return Array.isArray(data?.games) ? data.games : []
 }
 
 export async function fetchSettledV3BetsByGameId(gameId) {
