@@ -56,14 +56,16 @@ export function AccountPanel({
         <div className="flex min-w-0 items-center gap-3">
           <img alt="" className="h-14 w-14 rounded-full border object-cover" src={avatarUrl} />
           <div className="min-w-0">
-            <p className="ui-text-strong m-0 truncate text-sm font-semibold">{profileDisplayName}</p>
-            <InlineNicknameEditor
-              isProfileSaving={isProfileSaving}
-              onSaveNickname={onSaveNickname}
-              primaryButtonClass={primaryButtonClass}
-              profileErrorMessage={profileErrorMessage}
-              profileNickname={profileNickname}
-            />
+            <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+              <p className="ui-text-strong m-0 truncate text-sm font-semibold">{profileDisplayName}</p>
+              <InlineNicknameEditor
+                isProfileSaving={isProfileSaving}
+                onSaveNickname={onSaveNickname}
+                primaryButtonClass={primaryButtonClass}
+                profileErrorMessage={profileErrorMessage}
+                profileNickname={profileNickname}
+              />
+            </div>
             <div className="mt-1 flex items-center gap-1.5">
               <p className="ui-text-muted truncate text-xs">{shortenAddress(address, 6, 4)}</p>
               <div className="relative">
@@ -182,29 +184,26 @@ function InlineNicknameEditor({
   }
 
   return (
-    <div className="mt-1">
+    <>
       {!isEditing ? (
-        <div className="flex items-center gap-1.5">
-          <p className="ui-text-muted m-0 truncate text-xs">{trimmedProfileNickname || '닉네임 없음'}</p>
-          <button
-            aria-label="닉네임 수정"
-            className={iconActionClass}
-            onClick={() => {
-              setNicknameDraft(profileNickname || '')
-              setNicknameNotice(undefined)
-              setIsEditing(true)
-            }}
-            title="닉네임 수정"
-            type="button"
-          >
-            <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
-              <path d="m4 20 4.2-1 9.3-9.3a1.7 1.7 0 0 0 0-2.4l-.8-.8a1.7 1.7 0 0 0-2.4 0L5 15.8 4 20Z" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
-              <path d="M13 8l3 3" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
-            </svg>
-          </button>
-        </div>
+        <button
+          aria-label={trimmedProfileNickname ? '닉네임 수정' : '닉네임 추가'}
+          className={`${iconActionClass} shrink-0`}
+          onClick={() => {
+            setNicknameDraft(profileNickname || '')
+            setNicknameNotice(undefined)
+            setIsEditing(true)
+          }}
+          title={trimmedProfileNickname ? '닉네임 수정' : '닉네임 추가'}
+          type="button"
+        >
+          <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+            <path d="m4 20 4.2-1 9.3-9.3a1.7 1.7 0 0 0 0-2.4l-.8-.8a1.7 1.7 0 0 0-2.4 0L5 15.8 4 20Z" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
+            <path d="M13 8l3 3" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+          </svg>
+        </button>
       ) : (
-        <div className="grid gap-2">
+        <div className="mt-2 grid basis-full gap-2">
           <div className="flex items-center gap-1.5">
             <input
               autoFocus
@@ -258,6 +257,6 @@ function InlineNicknameEditor({
 
       {nicknameNotice && !profileErrorMessage && <p className={`ui-state-success ${noticeClass}`}>{nicknameNotice}</p>}
       {profileErrorMessage && <p className={`ui-state-danger ${noticeClass}`}>{profileErrorMessage}</p>}
-    </div>
+    </>
   )
 }
