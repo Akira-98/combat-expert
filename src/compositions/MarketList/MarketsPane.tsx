@@ -72,26 +72,24 @@ export function MarketsPane({
 
 function MatchupHero({ selectedGame }: { selectedGame: NonNullable<MarketsPaneProps['selectedGame']> }) {
   const [leftName = 'Fighter A', rightName = 'Fighter B'] = selectedGame.participants
+  const matchupLabel = [leftName, rightName].filter(Boolean).join(' - ')
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 md:gap-5">
-      <CompetitorProfile name={leftName} align="left" />
+      <CompetitorProfile initials={getCompetitorInitials(leftName)} align="left" />
 
       <div className="min-w-[92px] text-center md:min-w-[128px]">
         <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em] md:text-[11px]">{selectedGame.leagueName}</p>
         <p className="ui-text-strong mt-2 mb-0 text-sm font-semibold md:text-base">{formatGameStartTime(selectedGame.startsAt)}</p>
-        <div className="mx-auto mt-3 inline-flex h-9 w-9 items-center justify-center rounded-full border border-orange-300/25 bg-orange-500/10 text-[11px] font-black tracking-[0.18em] text-orange-100 md:h-11 md:w-11 md:text-xs">
-          VS
-        </div>
+        <p className="ui-text-strong mt-3 mb-0 max-w-[18ch] text-xs font-semibold leading-tight md:max-w-[24ch] md:text-sm">{matchupLabel}</p>
       </div>
 
-      <CompetitorProfile name={rightName} align="right" />
+      <CompetitorProfile initials={getCompetitorInitials(rightName)} align="right" />
     </div>
   )
 }
 
-function CompetitorProfile({ name, align }: { name: string; align: 'left' | 'right' }) {
-  const initials = getCompetitorInitials(name)
+function CompetitorProfile({ initials, align }: { initials: string; align: 'left' | 'right' }) {
   const layoutClass = align === 'right' ? 'justify-items-end text-right' : 'justify-items-start text-left'
 
   return (
@@ -101,7 +99,6 @@ function CompetitorProfile({ name, align }: { name: string; align: 'left' | 'rig
           <span className="ui-text-strong text-lg font-black tracking-[0.08em] md:text-2xl">{initials}</span>
         </div>
       </div>
-      <p className="ui-text-strong m-0 max-w-[12ch] text-sm font-semibold leading-tight md:max-w-[16ch] md:text-lg">{name}</p>
     </div>
   )
 }

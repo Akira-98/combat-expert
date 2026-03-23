@@ -162,7 +162,6 @@ function App() {
               betting={betting}
               rankings={rankings}
               onOpenGameMarkets={handleOpenGameMarkets}
-              onOpenRanking={handleNavigateToRanking}
             />
           )}
 

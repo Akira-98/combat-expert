@@ -8,12 +8,24 @@ type RankingLeaderboardRowProps = {
 }
 
 export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderboardRowProps) {
+  const topRankStyle = getTopRankStyle(rank)
+  const rowClassName = topRankStyle
+    ? topRankStyle.row
+    : isViewer
+      ? 'bg-orange-500/8'
+      : ''
+  const badgeClassName = topRankStyle
+    ? topRankStyle.badge
+    : isViewer
+      ? 'bg-orange-300 text-slate-950'
+      : 'bg-white/6 text-slate-200'
+
   return (
     <div
-      className={`grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 px-4 py-3 md:grid-cols-[84px_minmax(0,1fr)_112px_280px] ${isViewer ? 'bg-orange-500/8' : ''}`}
+      className={`grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 px-4 py-3 md:grid-cols-[84px_minmax(0,1fr)_112px_280px] ${rowClassName}`}
     >
       <div className="flex items-center">
-        <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${isViewer ? 'bg-orange-300 text-slate-950' : 'bg-white/6 text-slate-200'}`}>#{rank}</span>
+        <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${badgeClassName}`}>#{rank}</span>
       </div>
       <div className="min-w-0">
         <p className="ui-text-strong m-0 truncate text-sm font-semibold">{entry.nickname || shortenAddress(entry.address, 6, 4)}</p>
@@ -41,4 +53,29 @@ function EntryMetrics({ entry }: { entry: RankingEntry | RankingViewer }) {
       <span>총 {entry.eventCount}건</span>
     </div>
   )
+}
+
+function getTopRankStyle(rank: number) {
+  if (rank === 1) {
+    return {
+      row: 'bg-amber-300/8',
+      badge: 'bg-amber-200 text-slate-950',
+    }
+  }
+
+  if (rank === 2) {
+    return {
+      row: 'bg-slate-200/8',
+      badge: 'bg-slate-200 text-slate-950',
+    }
+  }
+
+  if (rank === 3) {
+    return {
+      row: 'bg-orange-300/8',
+      badge: 'bg-orange-200 text-slate-950',
+    }
+  }
+
+  return null
 }

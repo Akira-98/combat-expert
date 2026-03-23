@@ -1,6 +1,5 @@
 import type { RankingEntry, RankingViewer } from '../hooks/useRankings'
 import { RankingLeaderboardRow } from './ranking/RankingLeaderboardRow'
-import { RankingPodiumCard } from './ranking/RankingPodiumCard'
 import { RankingViewerCard } from './ranking/RankingViewerCard'
 
 type RankingPageProps = {
@@ -24,9 +23,6 @@ function formatUpdatedAt(value: string | null) {
 }
 
 export function RankingPage({ rankings, viewer, updatedAt, isLoading, errorMessage, onRetry, isConnected }: RankingPageProps) {
-  const podium = rankings.slice(0, 3)
-  const leaderboard = rankings.slice(3)
-
   return (
     <section className="grid gap-4">
       <div className="card-surface card-shell-xl overflow-hidden">
@@ -47,25 +43,17 @@ export function RankingPage({ rankings, viewer, updatedAt, isLoading, errorMessa
           ) : errorMessage ? (
             <RankingErrorState errorMessage={errorMessage} onRetry={onRetry} />
           ) : (
-            <div className="grid gap-5">
-              <div className="grid gap-3 md:grid-cols-3">
-                {podium.map((entry, index) => (
-                  <RankingPodiumCard key={entry.address} entry={entry} rank={index + 1} />
-                ))}
+            <div className="card-surface-soft card-shell-xl overflow-hidden">
+              <div className="grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b border-white/8 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 md:grid-cols-[84px_minmax(0,1fr)_112px_280px]">
+                <span>Rank</span>
+                <span>Player</span>
+                <span className="text-right">Score</span>
+                <span className="hidden md:block">Stats</span>
               </div>
-
-              <div className="card-surface-soft card-shell-xl overflow-hidden">
-                <div className="grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b border-white/8 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 md:grid-cols-[84px_minmax(0,1fr)_112px_280px]">
-                  <span>Rank</span>
-                  <span>Player</span>
-                  <span className="text-right">Score</span>
-                  <span className="hidden md:block">Stats</span>
-                </div>
-                <div className="divide-y divide-white/6">
-                  {leaderboard.map((entry, index) => (
-                    <RankingLeaderboardRow key={entry.address} entry={entry} rank={index + 4} isViewer={viewer?.address === entry.address} />
-                  ))}
-                </div>
+              <div className="divide-y divide-white/6">
+                {rankings.map((entry, index) => (
+                  <RankingLeaderboardRow key={entry.address} entry={entry} rank={index + 1} isViewer={viewer?.address === entry.address} />
+                ))}
               </div>
             </div>
           )}

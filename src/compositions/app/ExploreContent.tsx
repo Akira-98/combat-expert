@@ -17,7 +17,6 @@ type ExploreContentProps = {
   betting: ReturnType<typeof useBetting>
   rankings: ReturnType<typeof useRankings>
   onOpenGameMarkets: (gameId: string) => void
-  onOpenRanking: () => void
 }
 
 export function ExploreContent({
@@ -30,17 +29,18 @@ export function ExploreContent({
   betting,
   rankings,
   onOpenGameMarkets,
-  onOpenRanking,
 }: ExploreContentProps) {
+  const shouldShowTopExperts = marketPageMode === 'games'
+
   return (
     <div className={shouldShowExploreContent ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}>
-      <TopExpertsShowcase
-        rankings={rankings.rankings}
-        updatedAt={rankings.updatedAt}
-        isLoading={rankings.isLoading}
-        errorMessage={rankings.errorMessage}
-        onOpenRanking={onOpenRanking}
-      />
+      {shouldShowTopExperts ? (
+        <TopExpertsShowcase
+          rankings={rankings.rankings}
+          isLoading={rankings.isLoading}
+          errorMessage={rankings.errorMessage}
+        />
+      ) : null}
       <MarketList
         pageMode={marketPageMode}
         isGamesLoading={market.isGamesLoading}
