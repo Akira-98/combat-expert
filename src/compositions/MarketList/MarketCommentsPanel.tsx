@@ -61,7 +61,6 @@ export function MarketCommentsPanel({
         <CommentComposer
           key={selectedGame.gameId}
           canInteract={canInteract}
-          isAuthenticated={comments.isAuthenticated}
           isSubmitting={comments.isSubmitting}
           onConnectWallet={onConnectWallet}
           onSubmit={comments.createComment}
@@ -73,7 +72,6 @@ export function MarketCommentsPanel({
 
 type CommentComposerProps = {
   canInteract: boolean
-  isAuthenticated: boolean
   isSubmitting: boolean
   onConnectWallet: () => void
   onSubmit: (draft: string) => Promise<unknown>
@@ -81,7 +79,6 @@ type CommentComposerProps = {
 
 function CommentComposer({
   canInteract,
-  isAuthenticated,
   isSubmitting,
   onConnectWallet,
   onSubmit,
