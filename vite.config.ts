@@ -184,12 +184,12 @@ export default defineConfig(({ mode }) => {
 
             if (pkg === 'react' || pkg === 'react-dom' || pkg === 'scheduler') return 'react-vendor'
             if (pkg === '@tanstack/react-query') return 'query'
+            if (pkg === 'viem') return 'viem-stack'
             if (
               pkg.startsWith('@privy-io/') ||
               pkg.startsWith('@walletconnect/') ||
               pkg.startsWith('@reown/') ||
               pkg === 'wagmi' ||
-              pkg === 'viem' ||
               pkg === '@wagmi/core' ||
               pkg.startsWith('@coinbase/') ||
               pkg.startsWith('@base-org/') ||

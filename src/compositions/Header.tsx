@@ -211,7 +211,13 @@ export function Header({
             </div>
           ) : (
             <div className="relative flex items-center justify-end gap-2">
-              <HeaderNavButtons onGuideClick={handleGuideNavigation} onRankingClick={handleRankingNavigation} onWalletClick={handleWalletAction} />
+              <HeaderNavButtons
+                onGuideClick={handleGuideNavigation}
+                onRankingClick={handleRankingNavigation}
+                onWalletClick={handleWalletAction}
+                showRankingOnMobile
+                showWalletOnMobile
+              />
               <button
                 aria-expanded={isAccountModalOpen}
                 aria-haspopup="dialog"
@@ -291,7 +297,13 @@ function HeaderActions({
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
-      <HeaderNavButtons onGuideClick={onGuideClick} onRankingClick={onRankingClick} onWalletClick={onWalletClick} />
+      <HeaderNavButtons
+        onGuideClick={onGuideClick}
+        onRankingClick={onRankingClick}
+        onWalletClick={onWalletClick}
+        showRankingOnMobile
+        showWalletOnMobile
+      />
       <button className={primaryButtonClass} disabled={!canOpenAuthModal || isConnecting} onClick={onOpenAuthModal}>
         {isConnecting ? '연결 중...' : isAuthenticated ? '지갑 연결' : '로그인'}
       </button>
