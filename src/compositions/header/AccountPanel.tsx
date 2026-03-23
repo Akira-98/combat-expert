@@ -113,20 +113,21 @@ export function AccountPanel({
             {isRankingLoading ? (
               <p className="ui-text-muted mt-1 mb-0 text-xs">랭킹을 불러오는 중...</p>
             ) : rankingViewer ? (
-              <div className="mt-2 grid gap-2">
-                <div className="grid grid-cols-2 gap-2">
-                  <RankingMetric label="현재 순위" value={`#${rankingViewer.rank}`} />
-                  <RankingMetric label="총점" value={rankingViewer.totalScore.toFixed(1)} />
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <RankingMetric label="승 / 패" value={`${rankingViewer.winCount} / ${rankingViewer.loseCount}`} />
-                  <RankingMetric label="무효" value={String(rankingViewer.voidCount)} />
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <RankingMetric label="언더독 적중" value={String(rankingViewer.underdogHitCount)} />
-                  <RankingMetric label="예측 경기 수" value={String(rankingViewer.eventCount)} />
-                </div>
-              </div>
+              <p className="ui-text-strong mt-2 mb-0 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold">
+                <span>{`#${rankingViewer.rank}`}</span>
+                <span aria-hidden="true" className="ui-text-muted text-xs font-medium">
+                  |
+                </span>
+                <span>{`${formatRankingScore(rankingViewer.totalScore)} 총점`}</span>
+                <span aria-hidden="true" className="ui-text-muted text-xs font-medium">
+                  |
+                </span>
+                <span>{`${rankingViewer.winCount}승 ${rankingViewer.loseCount}패`}</span>
+                <span aria-hidden="true" className="ui-text-muted text-xs font-medium">
+                  |
+                </span>
+                <span>{`${rankingViewer.eventCount}경기 예측`}</span>
+              </p>
             ) : (
               <>
                 <p className="ui-text-strong mt-1 mb-0 text-sm font-semibold">아직 랭킹 데이터가 없습니다.</p>
@@ -140,13 +141,8 @@ export function AccountPanel({
   )
 }
 
-function RankingMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-white/8 bg-white/[0.03] px-3 py-2">
-      <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.16em]">{label}</p>
-      <p className="ui-text-strong mt-1 mb-0 text-sm font-semibold">{value}</p>
-    </div>
-  )
+function formatRankingScore(score: number) {
+  return Math.round(score).toLocaleString('en-US')
 }
 
 type InlineNicknameEditorProps = {

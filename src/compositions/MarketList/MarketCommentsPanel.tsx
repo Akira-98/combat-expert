@@ -37,33 +37,35 @@ export function MarketCommentsPanel({
         <span className="ui-pill rounded-full border px-2 py-0.5 text-[11px] font-semibold">{comments.comments.length}</span>
       </div>
 
-      <CommentComposer
-        key={selectedGame.gameId}
-        canInteract={canInteract}
-        isAuthenticated={comments.isAuthenticated}
-        isSubmitting={comments.isSubmitting}
-        onConnectWallet={onConnectWallet}
-        onSubmit={comments.createComment}
-      />
-
       {comments.errorMessage && <p className="ui-state-danger m-0 rounded-md border px-2 py-1 text-[11px]">{comments.errorMessage}</p>}
 
-      <div className="grid gap-2">
+      <div className="grid gap-0">
         {comments.isLoading ? (
           <p className="ui-text-muted m-0 text-xs">댓글을 불러오는 중...</p>
         ) : comments.comments.length === 0 ? (
-          <p className="ui-text-muted m-0 text-xs">아직 댓글이 없습니다. 첫 댓글을 남겨보세요.</p>
+          <p className="ui-text-muted m-0 text-xs">아직 댓글이 없습니다. 아래에서 첫 댓글을 남겨보세요.</p>
         ) : (
           comments.comments.map((comment) => (
-            <article key={comment.id} className="card-surface-soft card-shell px-3 py-2">
-              <div className="flex items-center justify-between gap-2">
+            <article key={comment.id} className="border-b border-white/8 py-3 last:border-b-0 last:pb-0 first:pt-0">
+              <div className="flex items-center justify-between gap-3">
                 <p className="ui-text-strong m-0 text-xs font-semibold">{comments.getAuthorLabel(comment)}</p>
                 <time className="ui-text-muted text-[11px]">{formatCommentTime(comment.createdAt)}</time>
               </div>
-              <p className="ui-text-body m-0 mt-1 whitespace-pre-wrap break-words text-sm">{comment.content}</p>
+              <p className="ui-text-body m-0 mt-1 whitespace-pre-wrap break-words text-sm leading-6">{comment.content}</p>
             </article>
           ))
         )}
+      </div>
+
+      <div className="border-t border-white/8 pt-3">
+        <CommentComposer
+          key={selectedGame.gameId}
+          canInteract={canInteract}
+          isAuthenticated={comments.isAuthenticated}
+          isSubmitting={comments.isSubmitting}
+          onConnectWallet={onConnectWallet}
+          onSubmit={comments.createComment}
+        />
       </div>
     </section>
   )
@@ -115,7 +117,7 @@ function CommentComposer({
         </p>
         {canInteract ? (
           <button className="ui-btn-primary rounded-lg border px-3 py-2 text-sm font-semibold" disabled={!canSubmit} type="submit">
-            {isSubmitting ? '등록 중...' : isAuthenticated ? '댓글 등록' : '서명 후 댓글 등록'}
+            {isSubmitting ? '등록 중...' : '등록'}
           </button>
         ) : (
           <button className="ui-btn-secondary rounded-lg border px-3 py-2 text-sm font-semibold" onClick={onConnectWallet} type="button">
