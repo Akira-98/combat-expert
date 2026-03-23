@@ -7,9 +7,8 @@ const podiumCardTone =
 export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: number }) {
   return (
     <article
-      className={`relative overflow-hidden rounded-3xl border p-4 shadow-[0_18px_38px_rgba(0,0,0,0.16)] backdrop-blur ${podiumCardTone}`}
+      className={`relative overflow-hidden rounded-3xl border p-4 shadow-[0_0_0_1px_color-mix(in_oklab,var(--app-border)_24%,transparent)] ${podiumCardTone}`}
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-white/10" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="mb-3 inline-flex rounded-full border border-white/10 bg-black/18 px-2.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-slate-200">
@@ -23,7 +22,7 @@ export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: 
           <p className="ui-text-strong mt-1 mb-0 text-3xl font-semibold leading-none md:text-[2rem]">{entry.totalScore.toFixed(1)}</p>
         </div>
       </div>
-      <div className="mt-5 border-t border-white/8 pt-3">
+      <div className="mt-5 border-t border-white/6 pt-3">
         <div>
           <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">Record</p>
           <p className="ui-text-strong mt-1 mb-0 text-sm font-medium">
