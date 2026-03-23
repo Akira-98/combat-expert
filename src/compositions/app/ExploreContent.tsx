@@ -41,6 +41,7 @@ export function ExploreContent({
           errorMessage={rankings.errorMessage}
         />
       ) : null}
+      {shouldShowTopExperts ? <p className="ui-text-strong m-0 px-1 text-lg font-semibold">경기</p> : null}
       <MarketList
         pageMode={marketPageMode}
         isGamesLoading={market.isGamesLoading}

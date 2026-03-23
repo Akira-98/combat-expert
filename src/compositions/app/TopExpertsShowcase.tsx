@@ -14,7 +14,7 @@ export function TopExpertsShowcase({ rankings, isLoading, errorMessage }: TopExp
 
   return (
     <section className="grid gap-3 md:gap-4">
-      <p className="ui-text-muted m-0 px-1 text-[11px] font-medium uppercase tracking-[0.18em]">Top Expert</p>
+      <p className="ui-text-strong m-0 px-1 text-lg font-semibold">Top Expert</p>
 
       {isLoading ? (
         <div className="grid gap-3 md:grid-cols-3">
@@ -28,9 +28,9 @@ export function TopExpertsShowcase({ rankings, isLoading, errorMessage }: TopExp
         </div>
       ) : (
         <>
-          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 md:hidden">
+          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1 md:hidden">
             {podium.map((entry, index) => (
-              <div key={entry.address} className="w-[calc(100vw-2.5rem)] max-w-[360px] shrink-0 snap-center">
+              <div key={entry.address} className="w-[calc(100vw-2rem)] max-w-[360px] shrink-0 snap-center">
                 <RankingPodiumCard entry={entry} rank={index + 1} />
               </div>
             ))}

@@ -51,7 +51,6 @@ export function GamesPane({
 
   return (
     <div className="grid content-start gap-2 pr-0 md:gap-2.5 xl:max-h-[calc(100dvh-8rem)] xl:overflow-y-auto xl:pr-1">
-      <h2 className="ui-text-strong m-0 text-lg font-semibold">경기</h2>
       <div className="hidden items-center gap-2 md:flex">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="scrollbar-thin flex min-w-0 flex-1 items-center gap-1 overflow-x-auto pb-0.5">
