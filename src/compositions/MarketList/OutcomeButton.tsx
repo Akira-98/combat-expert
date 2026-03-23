@@ -25,7 +25,7 @@ export function OutcomeButton({
   return (
     <button
       aria-disabled={isDisabled}
-      className={`select-card grid gap-1.5 px-2.5 py-2 text-left text-xs transition md:px-3 md:py-2.5 md:text-sm ${
+      className={`select-card grid h-full w-full gap-1.5 px-2.5 py-2 text-left text-xs transition md:px-3 md:py-2.5 md:text-sm ${
         isDisabled
           ? 'select-card-disabled ui-text-muted cursor-not-allowed'
           : isSelected

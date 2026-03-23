@@ -19,11 +19,13 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
               </div>
               <p className="ui-text-strong m-0 truncate text-lg font-semibold">{viewer.nickname || shortenAddress(viewer.address, 6, 4)}</p>
             </div>
-            <p className="ui-text-muted mt-2 mb-0 text-sm">
-              {viewer.winCount}승 {viewer.loseCount}패{viewer.voidCount > 0 ? ` · 무효 ${viewer.voidCount}` : ''}
-            </p>
           </div>
-          <div className="grid grid-cols-3 gap-3 border-t border-white/8 pt-3 md:border-t-0 md:border-l md:pl-4 md:pt-0">
+          <div className="grid grid-cols-2 gap-3 border-t border-white/8 pt-3 md:grid-cols-4 md:border-t-0 md:border-l md:pl-4 md:pt-0">
+            <StatRow
+              label="전적"
+              value={`${viewer.winCount}승 ${viewer.loseCount}패`}
+              secondaryValue={viewer.voidCount > 0 ? `무효 ${viewer.voidCount}` : null}
+            />
             <StatRow label="점수" value={viewer.totalScore.toFixed(1)} />
             <StatRow label="언더독" value={String(viewer.underdogHitCount)} />
             <StatRow label="경기수" value={String(viewer.eventCount)} />
@@ -43,11 +45,20 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
   )
 }
 
-function StatRow({ label, value }: { label: string; value: string }) {
+function StatRow({
+  label,
+  value,
+  secondaryValue,
+}: {
+  label: string
+  value: string
+  secondaryValue?: string | null
+}) {
   return (
     <div className="min-w-0">
       <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">{label}</p>
       <p className="ui-text-strong mt-1 mb-0 truncate text-base font-bold">{value}</p>
+      {secondaryValue ? <p className="ui-text-muted mt-1 mb-0 truncate text-[11px]">{secondaryValue}</p> : null}
     </div>
   )
 }

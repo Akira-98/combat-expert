@@ -2,8 +2,10 @@ import type { useBetting } from '../../hooks/useBetting'
 import type { MarketPageMode } from '../../hooks/useAppNavigation'
 import type { useGameFilters } from '../../hooks/useGameFilters'
 import type { useMarketData } from '../../hooks/useMarketData'
+import type { useRankings } from '../../hooks/useRankings'
 import type { useWalletConnection } from '../../hooks/useWalletConnection'
 import { MarketList } from '../MarketList'
+import { TopExpertsShowcase } from './TopExpertsShowcase'
 
 type ExploreContentProps = {
   shouldShowExploreContent: boolean
@@ -13,7 +15,9 @@ type ExploreContentProps = {
   filters: ReturnType<typeof useGameFilters>
   market: ReturnType<typeof useMarketData>
   betting: ReturnType<typeof useBetting>
+  rankings: ReturnType<typeof useRankings>
   onOpenGameMarkets: (gameId: string) => void
+  onOpenRanking: () => void
 }
 
 export function ExploreContent({
@@ -24,10 +28,19 @@ export function ExploreContent({
   filters,
   market,
   betting,
+  rankings,
   onOpenGameMarkets,
+  onOpenRanking,
 }: ExploreContentProps) {
   return (
     <div className={shouldShowExploreContent ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}>
+      <TopExpertsShowcase
+        rankings={rankings.rankings}
+        updatedAt={rankings.updatedAt}
+        isLoading={rankings.isLoading}
+        errorMessage={rankings.errorMessage}
+        onOpenRanking={onOpenRanking}
+      />
       <MarketList
         pageMode={marketPageMode}
         isGamesLoading={market.isGamesLoading}
