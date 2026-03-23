@@ -3,7 +3,10 @@ import { createPortal } from 'react-dom'
 import { getWalletAvatarUrl } from '../helpers/walletUi'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 import type { RankingViewer } from '../hooks/useRankings'
+import type { useUsdtTransfer } from '../hooks/useUsdtTransfer'
 import { AccountPanel } from './header/AccountPanel'
+import { HeaderNavButtons } from './header/HeaderNavButtons'
+import { TransferModal } from './header/TransferModal'
 
 type HeaderProps = {
   isAuthenticated: boolean
@@ -11,6 +14,7 @@ type HeaderProps = {
   isConnecting: boolean
   isReconnecting?: boolean
   isWalletStatusReady: boolean
+  chainId?: number
   address?: `0x${string}`
   profileDisplayName: string
   profileNickname?: string | null
@@ -18,6 +22,7 @@ type HeaderProps = {
   profileErrorMessage?: string
   onSaveNickname: (nickname: string) => Promise<unknown>
   isAAWallet?: boolean
+  usdtTransfer: ReturnType<typeof useUsdtTransfer>
   usdtBalance?: number
   isUsdtBalanceLoading?: boolean
   isUsdtSupportedChain?: boolean
@@ -38,6 +43,7 @@ export function Header({
   isConnecting,
   isReconnecting,
   isWalletStatusReady,
+  chainId,
   address,
   profileDisplayName,
   profileNickname,
@@ -45,6 +51,7 @@ export function Header({
   profileErrorMessage,
   onSaveNickname,
   isAAWallet,
+  usdtTransfer,
   usdtBalance,
   isUsdtBalanceLoading,
   isUsdtSupportedChain,
@@ -77,6 +84,7 @@ export function Header({
   void isAAWallet
   const [copyLabel, setCopyLabel] = useState<'idle' | 'copied' | 'failed'>('idle')
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false)
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false)
   const avatarUrl = getWalletAvatarUrl(address)
   const usdtBalanceLabel = !isUsdtSupportedChain
     ? '지원되지 않는 네트워크'
@@ -84,20 +92,21 @@ export function Header({
       ? '불러오는 중...'
       : `${(usdtBalance ?? 0).toFixed(4)} USDT`
 
-  useBodyScrollLock(isAccountModalOpen)
+  useBodyScrollLock(isAccountModalOpen || isTransferModalOpen)
 
   useEffect(() => {
-    if (!isConnected || !isAccountModalOpen) return
+    if (!isAccountModalOpen && !isTransferModalOpen) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        setIsTransferModalOpen(false)
         setIsAccountModalOpen(false)
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isAccountModalOpen, isConnected])
+  }, [isAccountModalOpen, isTransferModalOpen])
 
   const handleCopyAddress = async () => {
     if (!address) return
@@ -116,13 +125,26 @@ export function Header({
   }
 
   const handleGuideNavigation = () => {
+    setIsTransferModalOpen(false)
     setIsAccountModalOpen(false)
     onGuideClick()
   }
 
   const handleRankingNavigation = () => {
+    setIsTransferModalOpen(false)
     setIsAccountModalOpen(false)
     onRankingClick()
+  }
+
+  const handleWalletAction = () => {
+    setIsAccountModalOpen(false)
+
+    if (!isConnected) {
+      onOpenAuthModal()
+      return
+    }
+
+    setIsTransferModalOpen(true)
   }
 
   const accountPanel = (
@@ -174,6 +196,7 @@ export function Header({
                 isConnecting={isConnecting}
                 isAuthenticated={isAuthenticated}
                 canOpenAuthModal={canOpenAuthModal}
+                onWalletClick={handleWalletAction}
                 onOpenAuthModal={onOpenAuthModal}
                 onDisconnect={onDisconnect}
                 onGuideClick={handleGuideNavigation}
@@ -188,7 +211,7 @@ export function Header({
             </div>
           ) : (
             <div className="relative flex items-center justify-end gap-2">
-              <HeaderLinkButtons onGuideClick={handleGuideNavigation} onRankingClick={handleRankingNavigation} />
+              <HeaderNavButtons onGuideClick={handleGuideNavigation} onRankingClick={handleRankingNavigation} onWalletClick={handleWalletAction} />
               <button
                 aria-expanded={isAccountModalOpen}
                 aria-haspopup="dialog"
@@ -237,6 +260,7 @@ export function Header({
             )}
         </>
       )}
+      <TransferModal isOpen={isTransferModalOpen} isConnected={isConnected} chainId={chainId} usdtTransfer={usdtTransfer} onClose={() => setIsTransferModalOpen(false)} />
     </>
   )
 }
@@ -246,6 +270,7 @@ function HeaderActions({
   isConnecting,
   isAuthenticated,
   canOpenAuthModal,
+  onWalletClick,
   onOpenAuthModal,
   onDisconnect,
   onGuideClick,
@@ -255,6 +280,7 @@ function HeaderActions({
   isConnecting: boolean
   isAuthenticated: boolean
   canOpenAuthModal: boolean
+  onWalletClick: () => void
   onOpenAuthModal: () => void
   onDisconnect: () => void
   onGuideClick: () => void
@@ -265,7 +291,7 @@ function HeaderActions({
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
-      <HeaderLinkButtons onGuideClick={onGuideClick} onRankingClick={onRankingClick} />
+      <HeaderNavButtons onGuideClick={onGuideClick} onRankingClick={onRankingClick} onWalletClick={onWalletClick} />
       <button className={primaryButtonClass} disabled={!canOpenAuthModal || isConnecting} onClick={onOpenAuthModal}>
         {isConnecting ? '연결 중...' : isAuthenticated ? '지갑 연결' : '로그인'}
       </button>
@@ -275,36 +301,5 @@ function HeaderActions({
         </button>
       )}
     </div>
-  )
-}
-
-function HeaderLinkButtons({
-  onGuideClick,
-  onRankingClick,
-}: {
-  onGuideClick: () => void
-  onRankingClick: () => void
-}) {
-  const navButtonClass =
-    'ui-text-body hidden h-9 w-9 items-center justify-center rounded-full bg-transparent text-sm transition hover:bg-black/5 md:inline-flex dark:hover:bg-white/5'
-  return (
-    <>
-      <button aria-label="랭킹" className={navButtonClass} onClick={onRankingClick} title="랭킹" type="button">
-        <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <path d="M8 21h8" strokeLinecap="round" />
-          <path d="M12 16v5" strokeLinecap="round" />
-          <path d="M7 4h10v3a5 5 0 0 1-10 0V4Z" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M7 6H5a2 2 0 0 0 2 2" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M17 6h2a2 2 0 0 1-2 2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-      <button aria-label="가이드" className={navButtonClass} onClick={onGuideClick} title="가이드" type="button">
-        <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <path d="M6 5.75A2.75 2.75 0 0 1 8.75 3H19v16H8.75A2.75 2.75 0 0 0 6 21Z" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M6 5.75v15.5" strokeLinecap="round" />
-          <path d="M9.5 7.5h6M9.5 11h6M9.5 14.5h4" strokeLinecap="round" />
-        </svg>
-      </button>
-    </>
   )
 }

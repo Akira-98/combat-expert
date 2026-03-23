@@ -1,5 +1,4 @@
 import type { useBetting } from '../../hooks/useBetting'
-import type { useUsdtTransfer } from '../../hooks/useUsdtTransfer'
 import type { useWalletConnection } from '../../hooks/useWalletConnection'
 import type { BetslipPanelProps } from '../BetslipPanel'
 import { BetslipPanel } from '../BetslipPanel'
@@ -10,7 +9,6 @@ type DesktopSidebarProps = {
   selectionCount: number
   wallet: ReturnType<typeof useWalletConnection>
   betting: ReturnType<typeof useBetting>
-  usdtTransfer: ReturnType<typeof useUsdtTransfer>
   betslipPanelProps: BetslipPanelProps
   onChangeTab: (tab: 'myBets' | 'betslip') => void
 }
@@ -20,7 +18,6 @@ export function DesktopSidebar({
   selectionCount,
   wallet,
   betting,
-  usdtTransfer,
   betslipPanelProps,
   onChangeTab,
 }: DesktopSidebarProps) {
@@ -50,7 +47,7 @@ export function DesktopSidebar({
 
         <div className="p-3">
           {desktopSidePanelTab === 'myBets' ? (
-            <BetsAndTransferPanel wallet={wallet} betting={betting} usdtTransfer={usdtTransfer} isEmbedded />
+            <BetsAndTransferPanel wallet={wallet} betting={betting} isEmbedded />
           ) : (
             <BetslipPanel {...betslipPanelProps} isEmbedded />
           )}

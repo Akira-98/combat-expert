@@ -111,6 +111,7 @@ function App() {
         <AppHeaderContainer
           wallet={wallet}
           profile={profile}
+          usdtTransfer={usdtTransfer}
           usdtBalance={usdtTransfer.balance}
           isUsdtBalanceLoading={usdtTransfer.isBalanceLoading}
           isUsdtSupportedChain={usdtTransfer.isSupportedChain}
@@ -166,7 +167,7 @@ function App() {
           )}
 
           <div className={`${shouldShowMobileBetsPanel ? 'xl:hidden' : 'hidden'}`}>
-            <BetsAndTransferPanel wallet={wallet} betting={betting} usdtTransfer={usdtTransfer} />
+            <BetsAndTransferPanel wallet={wallet} betting={betting} />
           </div>
 
           <div className={`${shouldShowMobileChatPanel ? 'xl:hidden' : 'hidden'}`}>
@@ -180,7 +181,6 @@ function App() {
             selectionCount={betting.selectionItems.length}
             wallet={wallet}
             betting={betting}
-            usdtTransfer={usdtTransfer}
             betslipPanelProps={betslipPanelProps}
             onChangeTab={setDesktopSidePanelTab}
           />
