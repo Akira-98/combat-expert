@@ -46,6 +46,10 @@ export function AccountPanel({
   const rowClass = 'flex items-start justify-between gap-3 border-b border-white/8 py-3 last:border-b-0 last:pb-0'
   const actionTextButtonClass =
     'ui-text-body inline-flex items-center rounded-full border border-white/10 px-3 py-1.5 text-xs font-semibold transition hover:bg-white/5'
+  const copyToastClass =
+    copyLabel === 'copied'
+      ? 'ui-state-success absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border px-2 py-1 text-[10px] font-semibold shadow-lg'
+      : 'ui-state-danger absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border px-2 py-1 text-[10px] font-semibold shadow-lg'
 
   return (
     <section className="grid gap-4">
@@ -56,18 +60,23 @@ export function AccountPanel({
             <p className="ui-text-strong m-0 truncate text-sm font-semibold">{profileDisplayName}</p>
             <div className="mt-1 flex items-center gap-1.5">
               <p className="ui-text-muted truncate text-xs">{shortenAddress(address, 6, 4)}</p>
-              <button
-                aria-label={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
-                className={smallIconButtonClass}
-                onClick={onCopyAddress}
-                title={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
-                type="button"
-              >
-                <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
-                  <rect height="11" rx="2" stroke="currentColor" strokeWidth="1.8" width="11" x="9" y="9" />
-                  <path d="M7 15H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1" stroke="currentColor" strokeWidth="1.8" />
-                </svg>
-              </button>
+              <div className="relative">
+                <button
+                  aria-label={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
+                  className={smallIconButtonClass}
+                  onClick={onCopyAddress}
+                  title={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
+                  type="button"
+                >
+                  <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+                    <rect height="11" rx="2" stroke="currentColor" strokeWidth="1.8" width="11" x="9" y="9" />
+                    <path d="M7 15H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1" stroke="currentColor" strokeWidth="1.8" />
+                  </svg>
+                </button>
+                {copyLabel !== 'idle' && (
+                  <span className={copyToastClass}>{copyLabel === 'copied' ? 'Copy' : 'Fail'}</span>
+                )}
+              </div>
               <button aria-label="로그아웃" className={smallIconButtonClass} onClick={onDisconnect} title="로그아웃" type="button">
                 <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
                   <path d="M14 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2" stroke="currentColor" strokeWidth="1.8" />
@@ -90,7 +99,6 @@ export function AccountPanel({
         <section className={rowClass}>
           <div>
             <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">보유 잔액</p>
-            <p className="ui-text-muted mt-1 mb-0 text-xs">현재 스마트월렛 USDT 잔액</p>
           </div>
           <p className="ui-text-strong m-0 pt-0.5 text-sm font-semibold">{usdtBalanceLabel}</p>
         </section>
@@ -105,7 +113,6 @@ export function AccountPanel({
                 <p className="ui-text-strong mt-1 mb-0 text-sm font-semibold">
                   #{rankingViewer.rank} · {rankingViewer.totalScore.toFixed(1)}점
                 </p>
-                <p className="ui-text-muted mt-1 mb-0 text-xs">현재 리더보드 순위와 누적 점수</p>
               </>
             ) : (
               <>
@@ -180,7 +187,6 @@ function NicknameEditor({
           <p className="ui-text-strong mt-1 mb-0 truncate text-sm font-semibold">
             {trimmedProfileNickname || '설정 안 함'}
           </p>
-          {!isEditing && <p className="ui-text-muted mt-1 mb-0 text-xs">필요할 때만 수정해서 쓰는 별칭입니다.</p>}
         </div>
         <div className="shrink-0 pt-0.5">
           {!isEditing ? (
