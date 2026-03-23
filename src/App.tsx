@@ -49,7 +49,6 @@ function App() {
     marketPageMode,
     activeGameId,
     handleOpenGameMarkets,
-    handleBackToGames,
     handleNavigateToExplore,
     handleNavigateToMobileView,
     handleNavigateToGuide,
@@ -141,7 +140,7 @@ function App() {
 
         <section className="min-w-0">
           {shouldShowGuideContent ? (
-            <GuidePage onBack={handleNavigateToExplore} />
+            <GuidePage />
           ) : shouldShowRankingContent ? (
             <RankingPage
               rankings={rankings.rankings}
@@ -162,7 +161,6 @@ function App() {
               market={market}
               betting={betting}
               onOpenGameMarkets={handleOpenGameMarkets}
-              onBackToGames={handleBackToGames}
             />
           )}
 

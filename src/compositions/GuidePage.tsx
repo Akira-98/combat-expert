@@ -19,20 +19,14 @@ const steps = [
   },
 ] as const
 
-export function GuidePage({ onBack }: { onBack: () => void }) {
+export function GuidePage() {
   return (
     <section className="panel section-shell desktop-surface-variant grid gap-3 p-3 md:gap-4 md:p-5">
-      <div className="flex items-center justify-between gap-3">
+      <div>
         <div>
           <p className="ui-text-muted m-0 text-xs font-semibold uppercase tracking-[0.18em]">Guide</p>
           <h2 className="ui-text-strong mt-1 text-xl font-semibold">이용 가이드</h2>
         </div>
-        <button className="ui-btn-secondary inline-flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold" onClick={onBack} type="button">
-          <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
-            <path d="m15 6-6 6 6 6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
-          </svg>
-          뒤로
-        </button>
       </div>
 
       <div className="grid gap-2.5 md:grid-cols-3">

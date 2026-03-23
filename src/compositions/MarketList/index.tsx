@@ -22,7 +22,6 @@ export function MarketList({
   leagueOptions,
   totalGamesCount,
   onSelectGame,
-  onBackToGames,
   onConnectWallet,
   onGameSearchQueryChange,
   onLeagueFilterChange,
@@ -57,16 +56,7 @@ export function MarketList({
 
   return (
     <section className="panel section-shell grid gap-3 p-2 md:gap-4 md:rounded-2xl md:border md:px-4 md:py-4">
-      <div className="flex items-center justify-between gap-2">
-        <button
-          className="ui-btn-secondary rounded-lg border px-3 py-1.5 text-sm font-semibold"
-          onClick={onBackToGames}
-          type="button"
-        >
-          경기 목록으로
-        </button>
-        {selectedGame && <span className="ui-text-muted text-xs">{selectedGame.leagueName}</span>}
-      </div>
+      {selectedGame && <div className="flex justify-end"><span className="ui-text-muted text-xs">{selectedGame.leagueName}</span></div>}
 
       <MarketsPane
         isMarketsLoading={isMarketsLoading}

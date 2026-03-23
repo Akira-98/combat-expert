@@ -21,7 +21,6 @@ export type MarketListProps = {
   leagueOptions: string[]
   totalGamesCount: number
   onSelectGame: (gameId: string) => void
-  onBackToGames?: () => void
   onConnectWallet: () => void
   onGameSearchQueryChange: (value: string) => void
   onLeagueFilterChange: (value: string) => void

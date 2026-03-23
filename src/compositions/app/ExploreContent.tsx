@@ -14,7 +14,6 @@ type ExploreContentProps = {
   market: ReturnType<typeof useMarketData>
   betting: ReturnType<typeof useBetting>
   onOpenGameMarkets: (gameId: string) => void
-  onBackToGames: () => void
 }
 
 export function ExploreContent({
@@ -26,7 +25,6 @@ export function ExploreContent({
   market,
   betting,
   onOpenGameMarkets,
-  onBackToGames,
 }: ExploreContentProps) {
   return (
     <div className={shouldShowExploreContent ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}>
@@ -49,7 +47,6 @@ export function ExploreContent({
         leagueOptions={filters.leagueOptions}
         totalGamesCount={market.games.length}
         onSelectGame={onOpenGameMarkets}
-        onBackToGames={onBackToGames}
         onConnectWallet={wallet.openAuthModal}
         onGameSearchQueryChange={filters.setGameSearchQuery}
         onLeagueFilterChange={filters.setLeagueFilter}
