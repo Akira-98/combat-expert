@@ -16,14 +16,13 @@ export function MarketsPane({
 }: MarketsPaneProps) {
   return (
     <div className="grid min-w-0 content-start gap-2 md:gap-3">
-      <h2 className="ui-text-strong m-0 text-lg font-semibold">마켓</h2>
       {selectedGame && (
-        <div className="card-surface-soft card-shell px-2.5 py-2 md:px-3">
-          <p className="ui-text-strong m-0 text-sm font-semibold">{selectedGame.title}</p>
-          <p className="ui-text-body mt-1 text-xs">
-            {selectedGame.leagueName} · {formatGameStartTime(selectedGame.startsAt)}
-          </p>
-          <p className="ui-text-muted mt-1 text-xs">{selectedGame.participants.join(' vs ')}</p>
+        <div className="border-y border-white/8 px-1 py-3 md:py-4">
+          <div className="grid gap-1 text-center">
+            <p className="ui-text-strong m-0 text-sm font-semibold md:text-base">{formatGameStartTime(selectedGame.startsAt)}</p>
+            <p className="ui-text-strong m-0 text-lg font-semibold tracking-tight md:text-[1.7rem]">{selectedGame.title}</p>
+            <p className="ui-text-muted m-0 text-xs md:text-sm">{selectedGame.participants.join(' vs ')}</p>
+          </div>
         </div>
       )}
       {isMarketsLoading && <MarketsSkeleton />}

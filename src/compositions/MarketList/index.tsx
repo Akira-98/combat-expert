@@ -56,8 +56,6 @@ export function MarketList({
 
   return (
     <section className="panel section-shell grid gap-3 p-2 md:gap-4 md:rounded-2xl md:border md:px-4 md:py-4">
-      {selectedGame && <div className="flex justify-end"><span className="ui-text-muted text-xs">{selectedGame.leagueName}</span></div>}
-
       <MarketsPane
         isMarketsLoading={isMarketsLoading}
         marketsErrorMessage={marketsErrorMessage}
