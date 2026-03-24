@@ -21,7 +21,7 @@ const steps = [
 
 export function GuidePage() {
   return (
-    <section className="panel section-shell desktop-surface-variant grid gap-3 p-3 md:gap-4 md:p-5">
+    <section className="mt-2 grid gap-3 md:mt-3 md:gap-4">
       <div>
         <div>
           <p className="ui-text-muted m-0 text-xs font-semibold uppercase tracking-[0.18em]">Guide</p>

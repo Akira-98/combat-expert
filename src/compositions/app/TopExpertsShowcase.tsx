@@ -13,7 +13,7 @@ export function TopExpertsShowcase({ rankings, isLoading, errorMessage }: TopExp
   if (!isLoading && !errorMessage && podium.length === 0) return null
 
   return (
-    <section className="grid gap-3 md:gap-4">
+    <section className="grid gap-3 md:mt-2 md:gap-4">
       <p className="ui-text-strong m-0 px-1 text-lg font-semibold">Top Expert</p>
 
       {isLoading ? (

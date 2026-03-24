@@ -25,7 +25,7 @@ function formatUpdatedAt(value: string | null) {
 export function RankingPage({ rankings, viewer, updatedAt, isLoading, errorMessage, onRetry, isConnected }: RankingPageProps) {
   return (
     <section className="grid gap-4">
-      <div className="bg-[linear-gradient(135deg,rgba(255,107,0,0.22),rgba(11,15,20,0.4)_42%,rgba(255,255,255,0.03))] px-4 py-5 md:px-6 md:py-6">
+      <div className="px-4 py-5 md:px-4 md:py-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="ui-text-strong m-0 text-[28px] font-semibold tracking-tight md:text-[36px]">Top 격잘알 랭킹</h2>
