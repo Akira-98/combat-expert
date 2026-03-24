@@ -7,6 +7,7 @@ import { GuidePage } from './compositions/GuidePage'
 import { RankingPage } from './compositions/RankingPage'
 import { MobileBetslipSheet } from './compositions/MobileBetslipSheet'
 import { LiveChatPanel } from './compositions/LiveChatPanel'
+import { DesktopChatRail } from './compositions/app/DesktopChatRail'
 import { DesktopSidebar } from './compositions/app/DesktopSidebar'
 import { ExploreContent } from './compositions/app/ExploreContent'
 import { MobileMenuSheet } from './compositions/app/MobileMenuSheet'
@@ -132,18 +133,9 @@ function App() {
       )}
 
       <main
-        className={`mt-0 grid items-start gap-2 px-0 md:mt-3 md:gap-4 md:px-4 ${shouldUseDesktopThreePanelLayout ? 'xl:mt-0 xl:grid-cols-[240px_minmax(0,1fr)_316px] xl:gap-4 xl:px-0' : ''}`}
+        className={`mt-0 grid items-start gap-2 px-0 ${shouldUseDesktopThreePanelLayout ? 'md:grid-cols-[240px_minmax(0,1fr)_316px] md:gap-4 md:px-0' : 'md:gap-4 md:px-4'}`}
       >
-        {shouldShowDesktopChat && (
-          <aside className="hidden xl:sticky xl:top-[69px] xl:block xl:h-[calc(100dvh-69px)] xl:border-r xl:border-[color:var(--app-border)] xl:bg-[color:var(--app-surface)]">
-            <LiveChatPanel
-              address={wallet.address}
-              profile={profile}
-              className="h-[calc(100dvh-69px)]"
-              isEmbedded
-            />
-          </aside>
-        )}
+        {shouldShowDesktopChat && <DesktopChatRail address={wallet.address} profile={profile} />}
 
         <section className="min-w-0">
           {shouldShowGuideContent ? (
@@ -172,11 +164,11 @@ function App() {
             />
           )}
 
-          <div className={`${shouldShowMobileBetsPanel ? 'xl:hidden' : 'hidden'}`}>
+          <div className={`${shouldShowMobileBetsPanel ? 'md:hidden' : 'hidden'}`}>
             <BetsAndTransferPanel wallet={wallet} betting={betting} />
           </div>
 
-          <div className={`${shouldShowMobileChatPanel ? 'xl:hidden' : 'hidden'}`}>
+          <div className={`${shouldShowMobileChatPanel ? 'md:hidden' : 'hidden'}`}>
             <LiveChatPanel address={wallet.address} profile={profile} className="h-[calc(100dvh-13rem)]" />
           </div>
         </section>
