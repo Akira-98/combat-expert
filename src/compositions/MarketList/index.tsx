@@ -55,33 +55,27 @@ export function MarketList({
   }
 
   return (
-    <section className="panel section-shell overflow-hidden md:rounded-2xl md:border">
-      {selectedGame ? (
-        <header className="bg-white/[0.045] px-3 pb-3 pt-2 shadow-[inset_0_-1px_0_rgba(255,255,255,0.08)] md:px-4 md:pb-4 md:pt-3">
-          <MatchupHero selectedGame={selectedGame} />
-        </header>
-      ) : null}
+    <section className="grid gap-3 px-2 pb-2 pt-3 md:gap-4 md:px-0 md:pb-0 md:pt-2">
+      {selectedGame ? <MatchupHero selectedGame={selectedGame} /> : null}
 
-      <div className="grid gap-3 p-2 md:gap-4 md:px-4 md:py-4">
-        <MarketsPane
-          isMarketsLoading={isMarketsLoading}
-          marketsErrorMessage={marketsErrorMessage}
-          selectedGame={selectedGame}
-          marketSections={marketSections}
-          selectedOutcomes={selectedOutcomes}
-          selectedOutcomePriceChanges={selectedOutcomePriceChanges}
-          onSelectOutcome={onSelectOutcome}
-          onRetryMarkets={onRetryMarkets}
-        />
+      <MarketsPane
+        isMarketsLoading={isMarketsLoading}
+        marketsErrorMessage={marketsErrorMessage}
+        selectedGame={selectedGame}
+        marketSections={marketSections}
+        selectedOutcomes={selectedOutcomes}
+        selectedOutcomePriceChanges={selectedOutcomePriceChanges}
+        onSelectOutcome={onSelectOutcome}
+        onRetryMarkets={onRetryMarkets}
+      />
 
-        <MarketCommentsPanel
-          selectedGame={selectedGame}
-          address={address}
-          isConnected={isConnected}
-          isAAWallet={isAAWallet}
-          onConnectWallet={onConnectWallet}
-        />
-      </div>
+      <MarketCommentsPanel
+        selectedGame={selectedGame}
+        address={address}
+        isConnected={isConnected}
+        isAAWallet={isAAWallet}
+        onConnectWallet={onConnectWallet}
+      />
     </section>
   )
 }

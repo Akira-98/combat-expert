@@ -25,40 +25,36 @@ function formatUpdatedAt(value: string | null) {
 export function RankingPage({ rankings, viewer, updatedAt, isLoading, errorMessage, onRetry, isConnected }: RankingPageProps) {
   return (
     <section className="grid gap-4">
-      <div className="card-surface card-shell-xl overflow-hidden">
-        <div className="border-b border-white/8 bg-[linear-gradient(135deg,rgba(255,107,0,0.22),rgba(11,15,20,0.4)_42%,rgba(255,255,255,0.03))] px-4 py-5 md:px-6 md:py-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 className="ui-text-strong m-0 text-[28px] font-semibold tracking-tight md:text-[36px]">Top 격잘알 랭킹</h2>
-              <p className="ui-text-muted mt-2 mb-0 text-xs md:text-sm">{formatUpdatedAt(updatedAt)}</p>
-            </div>
+      <div className="bg-[linear-gradient(135deg,rgba(255,107,0,0.22),rgba(11,15,20,0.4)_42%,rgba(255,255,255,0.03))] px-4 py-5 md:px-6 md:py-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 className="ui-text-strong m-0 text-[28px] font-semibold tracking-tight md:text-[36px]">Top 격잘알 랭킹</h2>
+            <p className="ui-text-muted mt-2 mb-0 text-xs md:text-sm">{formatUpdatedAt(updatedAt)}</p>
           </div>
         </div>
-
-        <RankingViewerCard viewer={viewer} isConnected={isConnected} />
-
-        <div className="px-4 py-5 md:px-6 md:py-6">
-          {isLoading ? (
-            <RankingLoadingState />
-          ) : errorMessage ? (
-            <RankingErrorState errorMessage={errorMessage} onRetry={onRetry} />
-          ) : (
-            <div className="card-surface-soft card-shell-xl overflow-hidden">
-              <div className="grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b border-white/8 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 md:grid-cols-[84px_minmax(0,1fr)_112px_280px]">
-                <span>Rank</span>
-                <span>Player</span>
-                <span className="text-right">Score</span>
-                <span className="hidden md:block">Stats</span>
-              </div>
-              <div className="divide-y divide-white/6">
-                {rankings.map((entry, index) => (
-                  <RankingLeaderboardRow key={entry.address} entry={entry} rank={index + 1} isViewer={viewer?.address === entry.address} />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
       </div>
+
+      <RankingViewerCard viewer={viewer} isConnected={isConnected} />
+
+      {isLoading ? (
+        <RankingLoadingState />
+      ) : errorMessage ? (
+        <RankingErrorState errorMessage={errorMessage} onRetry={onRetry} />
+      ) : (
+        <div className="card-surface-soft card-shell-xl overflow-hidden">
+          <div className="grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b border-white/8 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 md:grid-cols-[84px_minmax(0,1fr)_112px_280px]">
+            <span>Rank</span>
+            <span>Player</span>
+            <span className="text-right">Score</span>
+            <span className="hidden md:block">Stats</span>
+          </div>
+          <div className="divide-y divide-white/6">
+            {rankings.map((entry, index) => (
+              <RankingLeaderboardRow key={entry.address} entry={entry} rank={index + 1} isViewer={viewer?.address === entry.address} />
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   )
 }

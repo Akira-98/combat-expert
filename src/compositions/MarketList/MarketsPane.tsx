@@ -26,7 +26,7 @@ export function MarketsPane({
           {marketSections.map((section) => (
             <article
               key={section.id}
-              className="card-shell-lg border border-[color:var(--app-border)] bg-white/[0.03] p-3 shadow-[0_8px_18px_-14px_rgba(0,0,0,0.65)] md:p-3.5"
+              className="card-shell-lg border border-[color:var(--app-border)] bg-white/[0.06] p-3 shadow-[0_8px_18px_-14px_rgba(0,0,0,0.65)] md:p-3.5"
             >
               <div className="mb-2.5 flex items-center justify-between gap-2 md:mb-3">
                 <h3 className="ui-text-strong m-0 text-sm font-semibold tracking-tight">{section.title}</h3>
@@ -34,7 +34,7 @@ export function MarketsPane({
                   {section.outcomes.length}
                 </span>
               </div>
-              <div className="grid grid-cols-[repeat(auto-fit,minmax(min(152px,100%),1fr))] gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {section.outcomes.map((outcome) => {
                   const key = selectionKey(outcome.conditionId, outcome.outcomeId)
                   return (

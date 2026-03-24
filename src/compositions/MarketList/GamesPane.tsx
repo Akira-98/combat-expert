@@ -24,7 +24,6 @@ export function GamesPane({
   const searchTriggerButtonClass = 'ui-btn-secondary btn-shell inline-flex h-8 w-8 shrink-0 items-center justify-center'
   const modalActionButtonClass = 'shrink-0 px-3 py-2 text-sm font-semibold'
   const gameCardBaseClass = 'group grid gap-1.5 rounded-md border border-transparent px-2 py-2 text-left transition md:px-2.5 md:py-2.5 md:rounded-lg'
-  const gameCardActiveClass = 'select-card select-card-active'
   const gameCardIdleClass =
     'border-white/6 bg-transparent shadow-none hover:text-inherit hover:border-white/10 hover:bg-white/[0.01]'
   const searchDialogClass =
@@ -121,11 +120,7 @@ export function GamesPane({
           <div key={game.gameId} className="py-1 first:pt-0 last:pb-0">
             <div
               aria-pressed={isActive}
-              className={`${gameCardBaseClass} ${
-                isActive
-                  ? gameCardActiveClass
-                  : gameCardIdleClass
-              }`}
+              className={`${gameCardBaseClass} ${gameCardIdleClass}`}
               onClick={() => onSelectGame(game.gameId)}
               onKeyDown={(event) => {
                 if (event.target !== event.currentTarget) return
@@ -138,13 +133,8 @@ export function GamesPane({
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <span className={`block font-semibold ${isActive ? 'text-orange-100' : 'ui-text-strong'}`}>{game.title}</span>
+                  <span className="ui-text-strong block font-semibold">{game.title}</span>
                 </div>
-                {isActive && (
-                  <span className="shrink-0 rounded-full border border-orange-300/50 bg-orange-500 px-2 py-0.5 text-[11px] font-semibold text-white">
-                    선택됨
-                  </span>
-                )}
               </div>
 
               <div className="grid gap-1.5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">

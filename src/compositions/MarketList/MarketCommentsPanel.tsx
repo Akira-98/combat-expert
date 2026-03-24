@@ -29,7 +29,7 @@ export function MarketCommentsPanel({
   if (!selectedGame) return null
 
   return (
-    <section className="card-surface card-shell-lg grid gap-3 p-3 md:p-4">
+    <section className="grid gap-3">
       <div className="flex items-center justify-between gap-2">
         <div>
           <h3 className="ui-text-strong m-0 text-sm font-semibold">댓글</h3>

@@ -84,15 +84,16 @@
   }
 
   .select-card-active {
-    border-color: color-mix(in oklab, var(--app-accent) 62%, transparent);
-    background-color: color-mix(in oklab, var(--app-surface) 92%, var(--app-accent-soft));
+    border-color: color-mix(in oklab, var(--app-accent) 82%, white 8%);
+    background-color: color-mix(in oklab, var(--app-accent-soft) 78%, var(--app-surface) 22%);
     box-shadow:
-      0 8px 18px -14px rgba(0, 0, 0, 0.7),
-      0 0 0 1px color-mix(in oklab, var(--app-accent) 25%, transparent);
+      0 14px 28px -18px rgba(0, 0, 0, 0.82),
+      0 0 0 1px color-mix(in oklab, var(--app-accent) 55%, transparent),
+      0 0 0 3px color-mix(in oklab, var(--app-accent) 18%, transparent);
   }
 
   .select-card-idle {
-    background-color: var(--app-surface);
+    background-color: color-mix(in oklab, var(--app-surface) 90%, white);
     border-color: color-mix(in oklab, var(--app-border) 82%, transparent);
   }
 

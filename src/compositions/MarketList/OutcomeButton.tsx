@@ -39,18 +39,13 @@ export function OutcomeButton({
       type="button"
     >
       <div className="flex items-start justify-between gap-2">
-        <span className={`min-w-0 truncate pr-2 font-medium ${isSelected ? 'text-orange-100' : 'ui-text-strong'}`}>{outcomeLabel}</span>
-        <strong className={`shrink-0 text-xs md:text-sm ${isDisabled ? 'ui-text-muted' : isSelected ? 'text-orange-100' : 'ui-text-strong'}`}>
+        <span className={`min-w-0 truncate pr-2 font-medium ${isSelected ? 'text-white' : 'ui-text-strong'}`}>{outcomeLabel}</span>
+        <strong className={`shrink-0 text-xs md:text-sm ${isDisabled ? 'ui-text-muted' : isSelected ? 'text-white' : 'ui-text-strong'}`}>
           {Number.isFinite(outcome.odds) ? outcome.odds.toFixed(2) : '-'}
         </strong>
       </div>
 
       <div className="flex flex-wrap items-center gap-1">
-        {isSelected && (
-          <span className="ui-state-success chip-pill px-2 py-0.5 text-[10px] font-semibold">
-            선택
-          </span>
-        )}
         {isDisabled && (
           <span className="ui-pill chip-pill px-2 py-0.5 text-[10px] font-semibold">
             {isConditionInactive ? '마켓 비활성' : '배당 없음'}
