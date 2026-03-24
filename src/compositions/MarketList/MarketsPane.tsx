@@ -16,11 +16,6 @@ export function MarketsPane({
 }: MarketsPaneProps) {
   return (
     <div className="grid min-w-0 content-start gap-2 md:gap-3">
-      {selectedGame && (
-        <div className="border-y border-white/8 px-1 py-3 md:py-4">
-          <MatchupHero selectedGame={selectedGame} />
-        </div>
-      )}
       {isMarketsLoading && <MarketsSkeleton />}
       {!isMarketsLoading && marketsErrorMessage && selectedGame && (
         <ErrorState title="마켓을 불러오지 못했습니다" message={marketsErrorMessage} onRetry={onRetryMarkets} />
@@ -31,7 +26,7 @@ export function MarketsPane({
           {marketSections.map((section) => (
             <article
               key={section.id}
-              className="card-surface card-shell-lg p-3 shadow-[0_8px_18px_-14px_rgba(0,0,0,0.65)] md:p-3.5"
+              className="card-shell-lg border border-[color:var(--app-border)] bg-white/[0.03] p-3 shadow-[0_8px_18px_-14px_rgba(0,0,0,0.65)] md:p-3.5"
             >
               <div className="mb-2.5 flex items-center justify-between gap-2 md:mb-3">
                 <h3 className="ui-text-strong m-0 text-sm font-semibold tracking-tight">{section.title}</h3>
@@ -70,7 +65,7 @@ export function MarketsPane({
   )
 }
 
-function MatchupHero({ selectedGame }: { selectedGame: NonNullable<MarketsPaneProps['selectedGame']> }) {
+export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<MarketsPaneProps['selectedGame']> }) {
   const [leftName = 'Fighter A', rightName = 'Fighter B'] = selectedGame.participants
   const matchupLabel = [leftName, rightName].filter(Boolean).join(' - ')
 

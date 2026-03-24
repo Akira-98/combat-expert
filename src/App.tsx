@@ -101,10 +101,10 @@ function App() {
     handleNavigateToRanking()
   }
   return (
-    <div className="app-theme mx-auto w-full max-w-[1440px] px-0 pb-36 pt-0 lg:pb-10">
+    <div className="app-theme w-full max-w-[1440px] px-0 pb-36 pt-0 lg:pb-10 xl:max-w-none">
       <div
         ref={mobileHeaderRef}
-        className="sticky top-0 z-30 border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:px-4 md:pb-0"
+        className="sticky top-0 z-30 border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:px-4 md:pb-0 xl:px-0"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
         <AppHeaderContainer
@@ -121,7 +121,7 @@ function App() {
           onGuideClick={handleNavigateToGuide}
         />
       </div>
-      <div className="hidden px-3 md:block md:px-4">
+      <div className="hidden px-3 md:block md:px-4 xl:px-0">
         <div className="h-px bg-white/10" />
       </div>
 
@@ -131,10 +131,17 @@ function App() {
         </div>
       )}
 
-      <main className={`mt-0 grid items-start gap-2 px-0 md:mt-3 md:gap-4 md:px-4 ${shouldUseDesktopThreePanelLayout ? 'xl:grid-cols-[240px_minmax(0,1fr)_316px]' : ''}`}>
+      <main
+        className={`mt-0 grid items-start gap-2 px-0 md:mt-3 md:gap-4 md:px-4 ${shouldUseDesktopThreePanelLayout ? 'xl:mt-0 xl:grid-cols-[240px_minmax(0,1fr)_316px] xl:gap-4 xl:px-0' : ''}`}
+      >
         {shouldShowDesktopChat && (
-          <aside className="hidden xl:sticky xl:top-4 xl:block">
-            <LiveChatPanel address={wallet.address} profile={profile} />
+          <aside className="hidden xl:sticky xl:top-[69px] xl:block xl:h-[calc(100dvh-69px)] xl:border-r xl:border-[color:var(--app-border)] xl:bg-[color:var(--app-surface)]">
+            <LiveChatPanel
+              address={wallet.address}
+              profile={profile}
+              className="h-[calc(100dvh-69px)]"
+              isEmbedded
+            />
           </aside>
         )}
 

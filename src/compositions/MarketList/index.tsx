@@ -1,6 +1,6 @@
 import { GamesPane } from './GamesPane'
 import { MarketCommentsPanel } from './MarketCommentsPanel'
-import { MarketsPane } from './MarketsPane'
+import { MatchupHero, MarketsPane } from './MarketsPane'
 import type { MarketListProps } from './types'
 
 export function MarketList({
@@ -55,25 +55,33 @@ export function MarketList({
   }
 
   return (
-    <section className="panel section-shell grid gap-3 p-2 md:gap-4 md:rounded-2xl md:border md:px-4 md:py-4">
-      <MarketsPane
-        isMarketsLoading={isMarketsLoading}
-        marketsErrorMessage={marketsErrorMessage}
-        selectedGame={selectedGame}
-        marketSections={marketSections}
-        selectedOutcomes={selectedOutcomes}
-        selectedOutcomePriceChanges={selectedOutcomePriceChanges}
-        onSelectOutcome={onSelectOutcome}
-        onRetryMarkets={onRetryMarkets}
-      />
+    <section className="panel section-shell overflow-hidden md:rounded-2xl md:border">
+      {selectedGame ? (
+        <header className="bg-white/[0.045] px-3 pb-3 pt-2 shadow-[inset_0_-1px_0_rgba(255,255,255,0.08)] md:px-4 md:pb-4 md:pt-3">
+          <MatchupHero selectedGame={selectedGame} />
+        </header>
+      ) : null}
 
-      <MarketCommentsPanel
-        selectedGame={selectedGame}
-        address={address}
-        isConnected={isConnected}
-        isAAWallet={isAAWallet}
-        onConnectWallet={onConnectWallet}
-      />
+      <div className="grid gap-3 p-2 md:gap-4 md:px-4 md:py-4">
+        <MarketsPane
+          isMarketsLoading={isMarketsLoading}
+          marketsErrorMessage={marketsErrorMessage}
+          selectedGame={selectedGame}
+          marketSections={marketSections}
+          selectedOutcomes={selectedOutcomes}
+          selectedOutcomePriceChanges={selectedOutcomePriceChanges}
+          onSelectOutcome={onSelectOutcome}
+          onRetryMarkets={onRetryMarkets}
+        />
+
+        <MarketCommentsPanel
+          selectedGame={selectedGame}
+          address={address}
+          isConnected={isConnected}
+          isAAWallet={isAAWallet}
+          onConnectWallet={onConnectWallet}
+        />
+      </div>
     </section>
   )
 }

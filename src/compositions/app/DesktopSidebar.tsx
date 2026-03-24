@@ -24,8 +24,8 @@ export function DesktopSidebar({
   const tabButtonBaseClass = 'btn-shell-lg px-3 py-2 text-sm font-semibold transition'
 
   return (
-    <aside className="hidden xl:sticky xl:top-4 xl:block xl:max-h-[calc(100dvh-2rem)] xl:overflow-y-auto">
-      <section className="card-surface card-shell-lg overflow-hidden">
+    <aside className="hidden xl:block">
+      <section className="card-surface xl:sticky xl:top-[69px] xl:ml-auto xl:w-full xl:max-w-[316px] xl:overflow-hidden xl:border xl:border-[color:var(--app-border)]">
         <div className="border-b border-[color:var(--app-border)] p-2">
           <div className="grid grid-cols-2 gap-1">
             <button
@@ -45,7 +45,7 @@ export function DesktopSidebar({
           </div>
         </div>
 
-        <div className="p-3">
+        <div className="max-h-[calc(100dvh-69px)] overflow-y-auto p-3">
           {desktopSidePanelTab === 'myBets' ? (
             <BetsAndTransferPanel wallet={wallet} betting={betting} isEmbedded />
           ) : (

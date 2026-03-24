@@ -13,6 +13,7 @@ type LiveChatPanelProps = {
   address?: Address
   profile: ReturnType<typeof useProfile>
   className?: string
+  isEmbedded?: boolean
 }
 
 type ChatMessage = {
@@ -100,7 +101,7 @@ function isExpectedConnectionClosure(error: unknown) {
   return message.includes('connection closed') || message.includes('connection unavailable')
 }
 
-export function LiveChatPanel({ address, profile, className }: LiveChatPanelProps) {
+export function LiveChatPanel({ address, profile, className, isEmbedded = false }: LiveChatPanelProps) {
   const { ablyChannel } = useAppConfig()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [draft, setDraft] = useState('')
@@ -216,9 +217,11 @@ export function LiveChatPanel({ address, profile, className }: LiveChatPanelProp
     }
   }
 
-  const rootClassName = className
-    ? `panel section-shell grid w-full min-w-0 ${className} grid-rows-[auto_1fr_auto] gap-2.5 p-2.5 md:rounded-2xl md:border md:gap-3 md:p-4`
-    : 'panel section-shell grid w-full min-w-0 h-[calc(100dvh-8rem)] grid-rows-[auto_1fr_auto] gap-2.5 p-2.5 md:rounded-2xl md:border md:gap-3 md:p-4'
+  const rootClassName = isEmbedded
+    ? `grid h-full w-full min-w-0 grid-rows-[auto_1fr_auto] gap-2.5 p-3 md:gap-3 md:p-4 ${className ?? ''}`.trim()
+    : className
+      ? `panel section-shell grid w-full min-w-0 ${className} grid-rows-[auto_1fr_auto] gap-2.5 p-2.5 md:rounded-2xl md:border md:gap-3 md:p-4`
+      : 'panel section-shell grid w-full min-w-0 h-[calc(100dvh-8rem)] grid-rows-[auto_1fr_auto] gap-2.5 p-2.5 md:rounded-2xl md:border md:gap-3 md:p-4'
 
   return (
     <div className={rootClassName}>
