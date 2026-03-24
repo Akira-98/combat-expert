@@ -118,6 +118,7 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
     balance,
     isBalanceLoading,
     isSupportedChain,
+    refetchBalance,
     recipient,
     amountInput,
     isSending,

@@ -108,6 +108,17 @@ export function Header({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isAccountModalOpen, isTransferModalOpen])
 
+  useEffect(() => {
+    if (!isAccountModalOpen && !isTransferModalOpen) return
+
+    void usdtTransfer.refetchBalance()
+    const intervalId = window.setInterval(() => {
+      void usdtTransfer.refetchBalance()
+    }, 15000)
+
+    return () => window.clearInterval(intervalId)
+  }, [isAccountModalOpen, isTransferModalOpen, usdtTransfer])
+
   const handleCopyAddress = async () => {
     if (!address) return
     try {

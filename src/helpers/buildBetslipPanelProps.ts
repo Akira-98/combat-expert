@@ -31,8 +31,6 @@ export function buildBetslipPanelProps({
       submitLabel: betting.submitLabel,
       minBet: betting.minBet,
       maxBet: betting.maxBet,
-      tokenBalance: betting.tokenBalance,
-      isBalanceLoading: betting.isBalanceLoading,
       isLimitsLoading: betting.isLimitsLoading,
       amountValidationMessage: betting.amountValidationMessage,
       transactionSteps: betting.transactionSteps,

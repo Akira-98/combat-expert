@@ -4,10 +4,8 @@ import { getTxExplorerUrl } from '../../helpers/walletUi'
 type BetslipSummarySectionProps = {
   totalOdds: number
   possibleWin: number
-  tokenBalance?: number
   minBet?: number
   maxBet?: number
-  isBalanceLoading?: boolean
   isLimitsLoading?: boolean
   amountValidationMessage?: string
   isApproveRequired: boolean
@@ -26,10 +24,8 @@ const formatAmount = (value?: number, digits = 4) =>
 export function BetslipSummarySection({
   totalOdds,
   possibleWin,
-  tokenBalance,
   minBet,
   maxBet,
-  isBalanceLoading,
   isLimitsLoading,
   amountValidationMessage,
   isApproveRequired,
@@ -57,11 +53,7 @@ export function BetslipSummarySection({
       </div>
 
       <div className="card-surface card-shell p-3">
-        <div className="grid grid-cols-3 gap-2">
-          <div className="grid gap-1">
-            <span className="ui-text-muted text-xs">잔액</span>
-            <strong className="ui-text-strong text-sm">{isBalanceLoading ? '불러오는 중...' : formatAmount(tokenBalance)}</strong>
-          </div>
+        <div className="grid grid-cols-2 gap-2">
           <div className="grid gap-1">
             <span className="ui-text-muted text-xs">최소 베팅</span>
             <strong className="ui-text-strong text-sm">{isLimitsLoading ? '확인 중...' : formatAmount(minBet)}</strong>

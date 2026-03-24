@@ -97,10 +97,6 @@ function App() {
     setIsMobileMenuOpen(false)
     handleNavigateToGuide()
   }
-  const handleOpenRankingFromMenu = () => {
-    setIsMobileMenuOpen(false)
-    handleNavigateToRanking()
-  }
   return (
     <div className="app-theme w-full max-w-[1440px] px-0 pb-36 pt-0 lg:pb-10 xl:max-w-none">
       <div
@@ -209,7 +205,6 @@ function App() {
       <MobileMenuSheet
         isOpen={isMobileMenuOpen}
         onClose={handleCloseMobileMenu}
-        onOpenRanking={handleOpenRankingFromMenu}
         onOpenGuide={handleOpenGuideFromMenu}
       />
     </div>

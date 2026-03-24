@@ -29,8 +29,6 @@ export type BetslipPanelBetState = {
   submitLabel: string
   minBet?: number
   maxBet?: number
-  tokenBalance?: number
-  isBalanceLoading?: boolean
   isLimitsLoading?: boolean
   amountValidationMessage?: string
   transactionSteps: TransactionStep[]
@@ -182,10 +180,8 @@ export function BetslipPanel({
           <BetslipSummarySection
             totalOdds={bet.totalOdds}
             possibleWin={bet.possibleWin}
-            tokenBalance={bet.tokenBalance}
             minBet={bet.minBet}
             maxBet={bet.maxBet}
-            isBalanceLoading={bet.isBalanceLoading}
             isLimitsLoading={bet.isLimitsLoading}
             amountValidationMessage={bet.amountValidationMessage}
             isApproveRequired={bet.isApproveRequired}

@@ -3,14 +3,12 @@ import { createPortal } from 'react-dom'
 type MobileMenuSheetProps = {
   isOpen: boolean
   onClose: () => void
-  onOpenRanking: () => void
   onOpenGuide: () => void
 }
 
 export function MobileMenuSheet({
   isOpen,
   onClose,
-  onOpenRanking,
   onOpenGuide,
 }: MobileMenuSheetProps) {
   if (!isOpen || typeof document === 'undefined') return null
@@ -38,9 +36,6 @@ export function MobileMenuSheet({
           </button>
         </div>
         <div className="mt-5 grid gap-2">
-          <button className={menuButtonClass} onClick={onOpenRanking} type="button">
-            랭킹
-          </button>
           <button className={menuButtonClass} onClick={onOpenGuide} type="button">
             가이드
           </button>
