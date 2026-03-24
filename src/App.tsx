@@ -66,6 +66,7 @@ function App() {
   const betting = useBetting({
     address: wallet.address,
     isConnected: wallet.isConnected,
+    games,
     marketSections,
     isBetHistoryPollingEnabled: isMyBetsViewActive,
     refreshMarkets: market.retryMarkets,
@@ -140,7 +141,6 @@ function App() {
             <RankingPage
               rankings={rankings.rankings}
               viewer={rankings.viewer}
-              updatedAt={rankings.updatedAt}
               isLoading={rankings.isLoading}
               errorMessage={rankings.errorMessage}
               onRetry={() => void rankings.refetch()}

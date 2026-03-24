@@ -26,6 +26,7 @@ export type MarketSection = {
 export type SelectionItem = {
   conditionId: string
   outcomeId: string
+  gameTitle: string
   label: string
   odds: number
 }

@@ -96,7 +96,6 @@ export function BetslipPanel({
   }, [delayedDisableReasonKey, TOTAL_ODDS_WARNING_DELAY_MS])
 
   const selectionLabel = bet.selections.length <= 1 ? '싱글' : `콤보 (${bet.selections.length})`
-  const formatOdds = (value: number) => (Number.isFinite(value) ? value.toFixed(3) : '0.000')
   const isPrimaryDisabled = wallet.isConnected
     ? !bet.canBet || bet.approvePending || bet.betPending
     : !wallet.canConnectWallet || wallet.isConnectingWallet
@@ -146,21 +145,15 @@ export function BetslipPanel({
             {bet.selections.map((selection) => (
               <li
                 key={selectionKey(selection.conditionId, selection.outcomeId)}
-                className="card-surface-soft card-shell grid gap-2 p-3"
+                className="card-surface-soft card-shell flex items-center justify-between gap-3 p-3"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <strong className="ui-text-strong block text-[13px]">{selection.label}</strong>
-                    <p className="ui-text-muted m-0 text-xs">선택한 아웃컴</p>
-                  </div>
-                  <button className={secondaryButtonClass} onClick={() => actions.onRemoveSelection(selection)}>
-                    x
-                  </button>
+                <div className="min-w-0 flex-1">
+                  <strong className="ui-text-strong block truncate text-[13px] leading-5">{selection.gameTitle}</strong>
+                  <p className="ui-text-muted mt-0.5 mb-0 truncate text-xs">{selection.label}</p>
                 </div>
-                <div className="card-surface card-shell flex items-center justify-between px-2 py-1.5">
-                  <span className="ui-text-muted text-xs">배당</span>
-                  <strong className="ui-text-strong text-sm">{formatOdds(selection.odds)}</strong>
-                </div>
+                <button className={secondaryButtonClass} onClick={() => actions.onRemoveSelection(selection)}>
+                  x
+                </button>
               </li>
             ))}
           </ul>
@@ -184,9 +177,6 @@ export function BetslipPanel({
             maxBet={bet.maxBet}
             isLimitsLoading={bet.isLimitsLoading}
             amountValidationMessage={bet.amountValidationMessage}
-            isApproveRequired={bet.isApproveRequired}
-            approvePending={bet.approvePending}
-            betPending={bet.betPending}
             transactionSteps={bet.transactionSteps}
             transactionNotice={bet.transactionNotice}
             chainId={wallet.chainId}
@@ -197,11 +187,6 @@ export function BetslipPanel({
           {visibleDisableReasonText && (
             <p className={`ui-state-warning-surface ui-text-body ${noticeClass}`}>
               {visibleDisableReasonText}
-            </p>
-          )}
-          {!visibleDisableReasonText && bet.uiBlockHint && (
-            <p className={`ui-surface ui-text-body ${noticeClass}`}>
-              {bet.uiBlockHint}
             </p>
           )}
 

@@ -13,9 +13,19 @@ const MESSAGE_MAX_LENGTH = 220
 
 export function LiveChatPanel({ address, profile, className, isEmbedded = false }: LiveChatPanelProps) {
   const chat = useLiveChat({ address, nickname: profile.nickname })
+  const {
+    scrollContainerRef,
+    messages,
+    connectionState,
+    draft,
+    setDraft,
+    canSend,
+    errorMessage,
+    handleSubmit: submitChat,
+  } = chat
 
   const handleSubmit = (event: FormEvent) => {
-    void chat.handleSubmit(event)
+    void submitChat(event)
   }
 
   const rootClassName = isEmbedded
@@ -32,14 +42,14 @@ export function LiveChatPanel({ address, profile, className, isEmbedded = false 
 
       <div>
         <div
-          ref={chat.scrollContainerRef}
+          ref={scrollContainerRef}
           className="card-surface-soft card-shell min-h-0 h-full w-full overflow-y-auto p-1.5 md:p-2"
         >
-          {chat.messages.length === 0 ? (
+          {messages.length === 0 ? (
             <p className="ui-text-muted m-0 px-1 py-2 text-xs">아직 메시지가 없습니다. 첫 메시지를 남겨보세요.</p>
           ) : (
             <div className="grid w-full content-start gap-1.5 justify-items-stretch md:gap-2">
-              {chat.messages.map((message) => (
+              {messages.map((message) => (
                 <article key={message.id} className="card-surface card-shell w-full justify-self-stretch px-2 py-1 md:py-1.5">
                   <div className="flex items-center justify-between gap-2">
                     <span className="ui-text-body text-xs font-semibold">{message.senderName}</span>
@@ -57,21 +67,21 @@ export function LiveChatPanel({ address, profile, className, isEmbedded = false 
         <div className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-2">
           <input
             className="ui-input h-9 rounded-md border px-3 text-sm outline-none md:rounded-lg"
-            placeholder={chat.connectionState === 'connected' ? '메시지를 입력하세요' : '연결 후 입력 가능합니다'}
-            value={chat.draft}
+            placeholder={connectionState === 'connected' ? '메시지를 입력하세요' : '연결 후 입력 가능합니다'}
+            value={draft}
             maxLength={MESSAGE_MAX_LENGTH}
-            onChange={(event) => chat.setDraft(event.target.value)}
-            disabled={chat.connectionState !== 'connected'}
+            onChange={(event) => setDraft(event.target.value)}
+            disabled={connectionState !== 'connected'}
           />
           <button
             className="ui-btn-primary shrink-0 whitespace-nowrap rounded-md border px-3 py-2 text-xs font-semibold md:rounded-lg disabled:opacity-50"
             type="submit"
-            disabled={!chat.canSend}
+            disabled={!canSend}
           >
             전송
           </button>
         </div>
-        {chat.errorMessage && <p className="ui-state-danger m-0 rounded-md border px-2 py-1 text-[11px]">{chat.errorMessage}</p>}
+        {errorMessage && <p className="ui-state-danger m-0 rounded-md border px-2 py-1 text-[11px]">{errorMessage}</p>}
       </form>
     </div>
   )

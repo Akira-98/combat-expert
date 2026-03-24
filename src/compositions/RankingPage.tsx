@@ -5,31 +5,19 @@ import { RankingViewerCard } from './ranking/RankingViewerCard'
 type RankingPageProps = {
   rankings: RankingEntry[]
   viewer: RankingViewer | null
-  updatedAt: string | null
   isLoading: boolean
   errorMessage?: string
   onRetry: () => void
   isConnected: boolean
 }
 
-function formatUpdatedAt(value: string | null) {
-  if (!value) return '집계 시각 없음'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '집계 시각 없음'
-  return new Intl.DateTimeFormat('ko-KR', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(date)
-}
-
-export function RankingPage({ rankings, viewer, updatedAt, isLoading, errorMessage, onRetry, isConnected }: RankingPageProps) {
+export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry, isConnected }: RankingPageProps) {
   return (
-    <section className="grid gap-4">
-      <div className="px-4 py-5 md:px-4 md:py-6">
+    <section className="grid gap-3">
+      <div className="px-4 pt-4 pb-1 md:px-4 md:pt-5 md:pb-1">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="ui-text-strong m-0 text-[28px] font-semibold tracking-tight md:text-[36px]">Top 격잘알 랭킹</h2>
-            <p className="ui-text-muted mt-2 mb-0 text-xs md:text-sm">{formatUpdatedAt(updatedAt)}</p>
           </div>
         </div>
       </div>

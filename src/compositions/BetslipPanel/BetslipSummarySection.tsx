@@ -8,9 +8,6 @@ type BetslipSummarySectionProps = {
   maxBet?: number
   isLimitsLoading?: boolean
   amountValidationMessage?: string
-  isApproveRequired: boolean
-  approvePending: boolean
-  betPending: boolean
   transactionSteps: TransactionStep[]
   transactionNotice?: TransactionNotice
   chainId?: number
@@ -28,9 +25,6 @@ export function BetslipSummarySection({
   maxBet,
   isLimitsLoading,
   amountValidationMessage,
-  isApproveRequired,
-  approvePending,
-  betPending,
   transactionSteps,
   transactionNotice,
   chainId,
@@ -63,9 +57,6 @@ export function BetslipSummarySection({
             <strong className="ui-text-strong text-sm">{isLimitsLoading ? '확인 중...' : formatAmount(maxBet)}</strong>
           </div>
         </div>
-        <p className="ui-text-muted mt-2 m-0 text-xs">
-          다음 단계: {approvePending || betPending ? '트랜잭션 처리 중' : isApproveRequired ? '승인' : '베팅'}
-        </p>
 
         {amountValidationMessage && (
           <p className="ui-state-danger-surface ui-text-body m-0 mt-2 rounded-md border px-2 py-1.5 text-xs">
@@ -73,9 +64,9 @@ export function BetslipSummarySection({
           </p>
         )}
 
-        {transactionSteps.length > 0 && (
+        {transactionSteps.some((step) => step.status !== 'pending') && (
           <div className="mt-2 grid gap-1.5">
-            {transactionSteps.map((step) => (
+            {transactionSteps.filter((step) => step.status !== 'pending').map((step) => (
               <div
                 key={step.id}
                 className={`flex items-center justify-between rounded-md border px-2 py-1.5 text-xs ${

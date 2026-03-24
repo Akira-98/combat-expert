@@ -1,4 +1,4 @@
-import type { MarketSection, SelectionItem, SelectionKey } from '../../types/ui'
+import type { GameItem, MarketSection, SelectionItem, SelectionKey } from '../../types/ui'
 import { selectionKey } from './selection'
 
 type BetslipItemLike = {
@@ -31,14 +31,18 @@ export const buildOutcomeMeta = (
 
 export const mapBetslipToSelectionItems = (
   items: BetslipItemLike[],
-  outcomeMeta: Map<SelectionKey, { label: string; odds: number }>,
+  outcomeMeta: Map<SelectionKey, { label: string; odds: number; gameId: string }>,
+  games: GameItem[],
 ): SelectionItem[] =>
   items.map((item) => {
     const key = selectionKey(item.conditionId, item.outcomeId)
     const meta = outcomeMeta.get(key)
+    const gameTitle = games.find((game) => game.gameId === meta?.gameId)?.title
+
     return {
       conditionId: item.conditionId,
       outcomeId: item.outcomeId,
+      gameTitle: gameTitle ?? '경기',
       label: meta?.label ?? '선택 항목',
       odds: meta?.odds ?? 0,
     }

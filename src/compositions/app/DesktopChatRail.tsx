@@ -11,9 +11,19 @@ type DesktopChatRailProps = {
 
 export function DesktopChatRail({ address, profile }: DesktopChatRailProps) {
   const chat = useLiveChat({ address, nickname: profile.nickname })
+  const {
+    scrollContainerRef,
+    messages,
+    connectionState,
+    draft,
+    setDraft,
+    canSend,
+    errorMessage,
+    handleSubmit: submitChat,
+  } = chat
 
   const handleSubmit = (event: FormEvent) => {
-    void chat.handleSubmit(event)
+    void submitChat(event)
   }
 
   return (
@@ -24,12 +34,12 @@ export function DesktopChatRail({ address, profile }: DesktopChatRailProps) {
         </div>
 
         <div className="min-h-0 px-4 py-4">
-          <div ref={chat.scrollContainerRef} className="card-surface-soft card-shell min-h-0 h-full w-full overflow-y-auto">
-            {chat.messages.length === 0 ? (
+          <div ref={scrollContainerRef} className="card-surface-soft card-shell min-h-0 h-full w-full overflow-y-auto">
+            {messages.length === 0 ? (
               <p className="ui-text-muted m-0 px-3 py-3 text-xs">아직 메시지가 없습니다. 첫 메시지를 남겨보세요.</p>
             ) : (
               <div className="grid w-full content-start gap-0 justify-items-stretch">
-                {chat.messages.map((message) => (
+                {messages.map((message) => (
                   <article
                     key={message.id}
                     className="card-surface w-full justify-self-stretch border-x-0 border-t-0 px-3 py-2 shadow-none last:border-b-0"
@@ -50,21 +60,21 @@ export function DesktopChatRail({ address, profile }: DesktopChatRailProps) {
           <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
             <input
               className="ui-input h-9 rounded-md border px-3 text-sm outline-none md:rounded-lg"
-              placeholder={chat.connectionState === 'connected' ? '메시지를 입력하세요' : '연결 후 입력 가능합니다'}
-              value={chat.draft}
+              placeholder={connectionState === 'connected' ? '메시지를 입력하세요' : '연결 후 입력 가능합니다'}
+              value={draft}
               maxLength={220}
-              onChange={(event) => chat.setDraft(event.target.value)}
-              disabled={chat.connectionState !== 'connected'}
+              onChange={(event) => setDraft(event.target.value)}
+              disabled={connectionState !== 'connected'}
             />
             <button
               className="ui-btn-primary shrink-0 whitespace-nowrap rounded-md border px-3 py-2 text-xs font-semibold md:rounded-lg disabled:opacity-50"
               type="submit"
-              disabled={!chat.canSend}
+              disabled={!canSend}
             >
               전송
             </button>
           </div>
-          {chat.errorMessage ? <p className="ui-state-danger m-0 rounded-md border px-2 py-1 text-[11px]">{chat.errorMessage}</p> : null}
+          {errorMessage ? <p className="ui-state-danger m-0 rounded-md border px-2 py-1 text-[11px]">{errorMessage}</p> : null}
         </form>
       </section>
     </DesktopStickyRail>

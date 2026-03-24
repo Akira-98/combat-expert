@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Address } from 'viem'
 import { useBaseBetslip, useBet, useBetTokenBalance, useDetailedBetslip } from '@azuro-org/sdk'
-import type { MarketSection, OutcomeItem } from '../types/ui'
+import type { GameItem, MarketSection, OutcomeItem } from '../types/ui'
 import { buildSelectedOutcomes, mapBetslipToSelectionItems } from '../helpers/mappers'
 import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
 import { buildBettingDerivedState, clampSlippage } from './useBetting.helpers'
@@ -20,6 +20,7 @@ const DEFAULT_SLIPPAGE = 3
 type UseBettingParams = {
   address?: Address
   isConnected: boolean
+  games: GameItem[]
   marketSections: MarketSection[]
   isBetHistoryPollingEnabled?: boolean
   refreshMarkets?: () => void
@@ -28,6 +29,7 @@ type UseBettingParams = {
 export function useBetting({
   address,
   isConnected,
+  games,
   marketSections,
   isBetHistoryPollingEnabled = false,
   refreshMarkets,
@@ -100,7 +102,7 @@ export function useBetting({
       marketSections,
       selectedOutcomes,
     })
-  const selectionItems = useMemo(() => mapBetslipToSelectionItems(items, mergedOutcomeMeta), [items, mergedOutcomeMeta])
+  const selectionItems = useMemo(() => mapBetslipToSelectionItems(items, mergedOutcomeMeta, games), [games, items, mergedOutcomeMeta])
   const { currentOutcomeStateMap, displayDisableReason, sdkConditionStateMismatch, uiSelectionAllowed } = useBetslipValidation({
     items,
     marketSections,
