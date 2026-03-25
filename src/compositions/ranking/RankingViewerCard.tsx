@@ -34,7 +34,7 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-white/8 pt-4 md:grid-cols-4 md:gap-x-5 md:border-t-0 md:border-l md:pt-0 md:pl-5">
+            <div className="grid grid-cols-4 gap-x-3 gap-y-3 border-t border-white/8 pt-4 md:gap-x-5 md:border-t-0 md:border-l md:pt-0 md:pl-5">
               <StatItem
                 label="전적"
                 value={`${viewer.winCount}승 ${viewer.loseCount}패`}
