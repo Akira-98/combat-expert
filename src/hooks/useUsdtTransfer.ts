@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { erc20Abi, encodeFunctionData, isAddress, parseUnits } from 'viem'
 import { polygon } from 'viem/chains'
+import { useWalletClient } from 'wagmi'
 import { useTransactionNotice } from './useTransactionNotice'
 import { DEFAULT_USDT_CONFIG, getErc20TokenConfig } from '../config/tokens'
 import { useAAWalletClient } from '../azuroSocialAaConnector'
@@ -36,6 +37,7 @@ const getTransferErrorMessage = (error: unknown) => {
 
 export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: UseUsdtTransferParams) {
   const aaWalletClient = useAAWalletClient()
+  const { data: walletClient } = useWalletClient()
   const [recipient, setRecipient] = useState('')
   const [amountInput, setAmountInput] = useState('')
   const [isSending, setIsSending] = useState(false)
@@ -59,9 +61,9 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
 
   const validationMessage = useMemo(() => {
     if (!isConnected) return '지갑을 먼저 연결해 주세요.'
-    if (!isAAWallet) return '현재 송금 기능은 스마트월렛 기준으로 안내됩니다.'
-    if (!aaWalletClient) return '스마트월렛 초기화 중입니다. 잠시 후 다시 시도해 주세요.'
     if (!isSupportedChain) return 'USDT 송금은 Polygon Mainnet에서만 지원됩니다.'
+    if (isAAWallet && !aaWalletClient) return '스마트월렛 초기화 중입니다. 잠시 후 다시 시도해 주세요.'
+    if (!isAAWallet && !walletClient) return '지갑 클라이언트 초기화 중입니다. 잠시 후 다시 시도해 주세요.'
     if (!recipientTrimmed) return '수신 주소를 입력해 주세요.'
     if (!isRecipientValid) return '수신 주소 형식이 올바르지 않습니다.'
     if (!amountInput.trim()) return '송금 금액을 입력해 주세요.'
@@ -69,16 +71,16 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
     if (!(amountNum > 0)) return '송금 금액은 0보다 커야 합니다.'
     if (!isAmountWithinBalance) return 'USDT 잔액이 부족합니다.'
     return undefined
-  }, [aaWalletClient, amountInput, amountNum, isAAWallet, isAmountWithinBalance, isConnected, isRecipientValid, isSupportedChain, recipientTrimmed])
+  }, [aaWalletClient, amountInput, amountNum, isAAWallet, isAmountWithinBalance, isConnected, isRecipientValid, isSupportedChain, recipientTrimmed, walletClient])
 
-  const canSend = !isSending && !validationMessage && Boolean(usdtConfig && tokenAddress && address && aaWalletClient)
+  const canSend = !isSending && !validationMessage && Boolean(usdtConfig && tokenAddress && address && (isAAWallet ? aaWalletClient : walletClient))
 
   const setMaxAmount = () => {
     setAmountInput(balance > 0 ? String(balance) : '0')
   }
 
   const sendUsdt = async () => {
-    if (!canSend || !address || !tokenAddress || !usdtConfig || !aaWalletClient) return
+    if (!canSend || !address || !tokenAddress || !usdtConfig) return
 
     setIsSending(true)
     clearTransactionNotice()
@@ -91,13 +93,33 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
         args: [recipientTrimmed as `0x${string}`, value],
       })
 
-      const result = await aaWalletClient.sendTransaction({
-        to: tokenAddress,
-        data,
-        value: 0n,
-        chain: polygon,
-      }, withPrivySendTransactionUi())
-      const txHash = typeof result === 'string' ? result : (result as { hash?: `0x${string}` } | undefined)?.hash
+      let txHash: `0x${string}` | undefined
+
+      if (isAAWallet) {
+        if (!aaWalletClient) throw new Error('AA 지갑 클라이언트를 찾지 못했습니다.')
+
+        const result = await aaWalletClient.sendTransaction(
+          {
+            to: tokenAddress,
+            data,
+            value: 0n,
+            chain: polygon,
+          },
+          withPrivySendTransactionUi(),
+        )
+
+        txHash = typeof result === 'string' ? result : (result as { hash?: `0x${string}` } | undefined)?.hash
+      } else {
+        if (!walletClient) throw new Error('지갑 클라이언트를 찾지 못했습니다.')
+
+        txHash = await walletClient.sendTransaction({
+          account: address,
+          to: tokenAddress,
+          data,
+          value: 0n,
+          chain: polygon,
+        })
+      }
 
       setSuccessNotice({
         title: 'USDT 송금 요청 완료',

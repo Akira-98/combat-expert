@@ -128,7 +128,11 @@ export function useLiveChat({ address, nickname }: UseLiveChatParams) {
       if (canceled) return
       setConnectionState(resolveConnectionState(stateChange.current))
       if (stateChange.reason?.message) {
-        setErrorMessage(String(stateChange.reason.message))
+        console.warn('[live-chat] realtime connection state change', {
+          current: stateChange.current,
+          previous: stateChange.previous,
+          message: String(stateChange.reason.message),
+        })
       }
     }
     client.connection.on(onConnectionState)

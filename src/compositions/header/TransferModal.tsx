@@ -25,7 +25,6 @@ export function TransferModal({ isOpen, isConnected, chainId, usdtTransfer, onCl
         <WalletTransferPanel
           isConnected={isConnected}
           chainId={chainId}
-          tokenAddress={usdtTransfer.tokenAddress}
           balance={usdtTransfer.balance}
           recipient={usdtTransfer.recipient}
           amountInput={usdtTransfer.amountInput}

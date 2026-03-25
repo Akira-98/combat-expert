@@ -66,7 +66,7 @@ export function LiveChatPanel({ address, profile, className, isEmbedded = false 
       <form className="grid w-full gap-2" onSubmit={handleSubmit}>
         <div className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-2">
           <input
-            className="ui-input h-9 rounded-md border px-3 text-sm outline-none md:rounded-lg"
+            className="ui-input h-10 rounded-md border px-3 text-base outline-none md:rounded-lg"
             placeholder={connectionState === 'connected' ? '메시지를 입력하세요' : '연결 후 입력 가능합니다'}
             value={draft}
             maxLength={MESSAGE_MAX_LENGTH}

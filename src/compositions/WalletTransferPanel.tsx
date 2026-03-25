@@ -4,7 +4,6 @@ import type { TransactionNotice } from '../helpers/betslipUi'
 type WalletTransferPanelProps = {
   isConnected: boolean
   chainId?: number
-  tokenAddress?: `0x${string}`
   balance: number
   recipient: string
   amountInput: string
@@ -21,7 +20,6 @@ type WalletTransferPanelProps = {
 export function WalletTransferPanel({
   isConnected,
   chainId,
-  tokenAddress,
   balance,
   recipient,
   amountInput,
@@ -42,16 +40,6 @@ export function WalletTransferPanel({
         <h2 className="ui-text-strong m-0 text-base font-semibold">USDT 송금</h2>
         <span className="ui-text-muted text-xs">Polygon</span>
       </div>
-
-      <p className="ui-text-muted mt-1.5 text-xs">
-        스마트월렛 USDT를 다른 주소(거래소/개인지갑)로 전송합니다.
-      </p>
-
-      {tokenAddress && (
-        <p className="ui-text-muted mt-1 text-xs">
-          USDT 컨트랙트: {tokenAddress}
-        </p>
-      )}
 
       <div className="mt-3 space-y-2.5">
         <label className="grid gap-1">
@@ -107,10 +95,6 @@ export function WalletTransferPanel({
           트랜잭션 확인
         </a>
       )}
-
-      <p className="ui-text-muted mt-3 text-[11px]">
-        거래소 입금은 네트워크/주소 불일치 시 복구가 어렵습니다. 소액 테스트 전송 후 본전송을 권장합니다.
-      </p>
 
       <button
         className="ui-btn-primary mt-3 w-full rounded-md border px-3 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
