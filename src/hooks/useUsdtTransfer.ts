@@ -41,6 +41,7 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
   const [recipient, setRecipient] = useState('')
   const [amountInput, setAmountInput] = useState('')
   const [isSending, setIsSending] = useState(false)
+  const [hasAttemptedSend, setHasAttemptedSend] = useState(false)
   const { transactionNotice, clearTransactionNotice, setSuccessNotice, setErrorNotice } = useTransactionNotice({
     mapErrorMessage: getTransferErrorMessage,
   })
@@ -73,6 +74,7 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
     return undefined
   }, [aaWalletClient, amountInput, amountNum, isAAWallet, isAmountWithinBalance, isConnected, isRecipientValid, isSupportedChain, recipientTrimmed, walletClient])
 
+  const visibleValidationMessage = hasAttemptedSend ? validationMessage : undefined
   const canSend = !isSending && !validationMessage && Boolean(usdtConfig && tokenAddress && address && (isAAWallet ? aaWalletClient : walletClient))
 
   const setMaxAmount = () => {
@@ -80,6 +82,7 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
   }
 
   const sendUsdt = async () => {
+    setHasAttemptedSend(true)
     if (!canSend || !address || !tokenAddress || !usdtConfig) return
 
     setIsSending(true)
@@ -126,6 +129,7 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
         message: 'USDT 송금 트랜잭션이 전송되었습니다.',
         txHash,
       })
+      setHasAttemptedSend(false)
       setAmountInput('')
       void refetchBalance()
     } catch (error) {
@@ -144,7 +148,7 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
     recipient,
     amountInput,
     isSending,
-    validationMessage,
+    validationMessage: visibleValidationMessage,
     canSend,
     transactionNotice,
     setRecipient,

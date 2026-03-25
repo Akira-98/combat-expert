@@ -9,7 +9,6 @@ type GameFiltersPanelProps = {
   filteredGamesCount: number
   totalGamesCount: number
   hasActiveFilters: boolean
-  mobileStickyTop?: number
   onGameSearchQueryChange: (value: string) => void
   onGameStatusFilterChange: (value: GameStatusFilter) => void
   onLeagueFilterChange: (value: string) => void
@@ -24,14 +23,13 @@ export function GameFiltersPanel({
   filteredGamesCount,
   totalGamesCount,
   hasActiveFilters,
-  mobileStickyTop = 72,
   onGameSearchQueryChange,
   onGameStatusFilterChange,
   onLeagueFilterChange,
   onResetFilters,
 }: GameFiltersPanelProps) {
   const mobileFilterButtonClass = 'btn-pill shrink-0 px-2.5 py-1 text-[11px] font-semibold transition'
-  const filterPanelClass = 'sticky z-20 ui-bg-solid-soft section-shell px-2.5 py-1.5 md:hidden'
+  const filterPanelClass = 'ui-bg-solid-soft section-shell border-b border-slate-900/70 px-2.5 py-1.5 md:hidden'
   const searchTriggerButtonClass = 'ui-btn-secondary btn-shell inline-flex h-8 w-8 shrink-0 items-center justify-center'
   const mobileSearchDialogClass = 'mx-auto mt-[calc(env(safe-area-inset-top)+16px)] w-[calc(100%-20px)] max-w-xl rounded-xl border border-slate-300 ui-surface p-3'
   const modalActionButtonClass = 'shrink-0 px-3 py-2 text-sm font-semibold'
@@ -62,7 +60,7 @@ export function GameFiltersPanel({
 
   return (
     <>
-      <section className={filterPanelClass} style={{ top: `${mobileStickyTop}px` }}>
+      <section className={filterPanelClass}>
         <div className="flex items-center gap-2">
           <button
             aria-label="검색 열기"

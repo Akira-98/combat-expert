@@ -30,7 +30,6 @@ export function TransferModal({ isOpen, isConnected, chainId, usdtTransfer, onCl
           amountInput={usdtTransfer.amountInput}
           isSending={usdtTransfer.isSending}
           validationMessage={usdtTransfer.validationMessage}
-          canSend={usdtTransfer.canSend}
           transactionNotice={usdtTransfer.transactionNotice}
           onRecipientChange={usdtTransfer.setRecipient}
           onAmountChange={usdtTransfer.setAmountInput}

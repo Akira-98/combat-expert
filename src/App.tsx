@@ -40,7 +40,7 @@ function App() {
     marketSections,
   } = market
   const filters = useGameFilters(games)
-  const { mobileHeaderRef, mobileHeaderHeight } = useAppLayout({ isBodyScrollLocked: isMobileBetslipOpen || isMobileMenuOpen })
+  useAppLayout({ isBodyScrollLocked: isMobileBetslipOpen || isMobileMenuOpen })
   const {
     mobileView,
     desktopSidePanelTab,
@@ -100,34 +100,35 @@ function App() {
   }
   return (
     <div className="app-theme w-full max-w-[1440px] px-0 pb-36 pt-0 lg:pb-10 xl:max-w-none">
-      <div
-        ref={mobileHeaderRef}
-        className="sticky top-0 z-30 border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:px-4 md:pb-0 xl:px-0"
-        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
-      >
-        <AppHeaderContainer
-          wallet={wallet}
-          profile={profile}
-          usdtTransfer={usdtTransfer}
-          usdtBalance={usdtTransfer.balance}
-          isUsdtBalanceLoading={usdtTransfer.isBalanceLoading}
-          isUsdtSupportedChain={usdtTransfer.isSupportedChain}
-          rankingViewer={rankings.viewer}
-          isRankingLoading={rankings.isLoading}
-          onTitleClick={handleNavigateToExplore}
-          onRankingClick={handleNavigateToRanking}
-          onGuideClick={handleNavigateToGuide}
-        />
+      <div className="sticky top-0 z-30 md:contents">
+        <div
+          className="border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:px-4 md:pb-0 xl:px-0"
+          style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
+        >
+          <AppHeaderContainer
+            wallet={wallet}
+            profile={profile}
+            usdtTransfer={usdtTransfer}
+            usdtBalance={usdtTransfer.balance}
+            isUsdtBalanceLoading={usdtTransfer.isBalanceLoading}
+            isUsdtSupportedChain={usdtTransfer.isSupportedChain}
+            rankingViewer={rankings.viewer}
+            isRankingLoading={rankings.isLoading}
+            onTitleClick={handleNavigateToExplore}
+            onRankingClick={handleNavigateToRanking}
+            onGuideClick={handleNavigateToGuide}
+          />
+        </div>
+
+        {shouldShowFilters && (
+          <div className="md:hidden">
+            <AppGameFiltersContainer filters={filters} games={games} />
+          </div>
+        )}
       </div>
       <div className="hidden px-3 md:block md:px-4 xl:px-0">
         <div className="h-px bg-white/10" />
       </div>
-
-      {shouldShowFilters && (
-        <div className="md:hidden">
-          <AppGameFiltersContainer filters={filters} games={games} mobileStickyTop={mobileHeaderHeight} />
-        </div>
-      )}
 
       <main
         className={`mt-0 grid items-start gap-2 px-0 ${shouldUseDesktopThreePanelLayout ? 'md:grid-cols-[240px_minmax(0,1fr)_316px] md:gap-4 md:px-0' : 'md:gap-4 md:px-4'}`}

@@ -9,7 +9,6 @@ type WalletTransferPanelProps = {
   amountInput: string
   isSending: boolean
   validationMessage?: string
-  canSend: boolean
   transactionNotice?: TransactionNotice
   onRecipientChange: (value: string) => void
   onAmountChange: (value: string) => void
@@ -25,7 +24,6 @@ export function WalletTransferPanel({
   amountInput,
   isSending,
   validationMessage,
-  canSend,
   transactionNotice,
   onRecipientChange,
   onAmountChange,
@@ -98,7 +96,7 @@ export function WalletTransferPanel({
 
       <button
         className="ui-btn-primary mt-3 w-full rounded-md border px-3 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
-        disabled={!canSend}
+        disabled={isSending}
         onClick={onSend}
         type="button"
       >
