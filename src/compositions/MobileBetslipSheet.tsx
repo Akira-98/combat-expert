@@ -1,3 +1,4 @@
+import { useRef, useState, type TouchEvent } from 'react'
 import { BetslipPanel, type BetslipPanelProps } from './BetslipPanel'
 
 type MobileBetslipSheetProps = {
@@ -17,6 +18,44 @@ export function MobileBetslipSheet({
   panelProps,
   showLauncher = true,
 }: MobileBetslipSheetProps) {
+  const DRAG_CLOSE_THRESHOLD_PX = 96
+  const touchStartYRef = useRef<number | null>(null)
+  const [dragOffsetY, setDragOffsetY] = useState(0)
+  const isDragging = dragOffsetY > 0
+
+  const resetDrag = () => {
+    touchStartYRef.current = null
+    setDragOffsetY(0)
+  }
+
+  const handleSheetTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    touchStartYRef.current = event.touches[0]?.clientY ?? null
+  }
+
+  const handleSheetTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+    if (touchStartYRef.current == null) return
+
+    const currentY = event.touches[0]?.clientY
+    if (currentY == null) return
+
+    const nextOffset = Math.max(0, currentY - touchStartYRef.current)
+    setDragOffsetY(nextOffset)
+
+    if (nextOffset > 0) {
+      event.preventDefault()
+    }
+  }
+
+  const handleSheetTouchEnd = () => {
+    if (dragOffsetY >= DRAG_CLOSE_THRESHOLD_PX) {
+      resetDrag()
+      onClose()
+      return
+    }
+
+    resetDrag()
+  }
+
   return (
     <div className="xl:hidden">
       {showLauncher && (
@@ -40,16 +79,17 @@ export function MobileBetslipSheet({
             onClick={onClose}
             type="button"
           />
-          <div className="ui-surface-soft absolute inset-x-0 bottom-0 flex max-h-[min(92dvh,760px)] flex-col rounded-t-2xl border p-4 pb-[calc(env(safe-area-inset-bottom)+16px)] shadow-2xl">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="ui-text-strong m-0 text-base font-semibold">베팅슬립</h2>
-              <button
-                className="ui-btn-secondary rounded-lg border px-3 py-1.5 text-sm font-semibold"
-                onClick={onClose}
-                type="button"
-              >
-                닫기
-              </button>
+          <div
+            className={`ui-surface-soft absolute inset-x-0 bottom-0 flex max-h-[min(92dvh,760px)] flex-col rounded-t-2xl border p-4 pb-[calc(env(safe-area-inset-bottom)+16px)] shadow-2xl ${
+              isDragging ? '' : 'transition-transform duration-200 ease-out'
+            }`}
+            onTouchEnd={handleSheetTouchEnd}
+            onTouchMove={handleSheetTouchMove}
+            onTouchStart={handleSheetTouchStart}
+            style={{ transform: `translateY(${dragOffsetY}px)` }}
+          >
+            <div className="flex justify-center pb-3">
+              <div className="h-1.5 w-12 rounded-full bg-slate-400/55" />
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto pr-1">

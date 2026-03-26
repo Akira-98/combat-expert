@@ -17,11 +17,18 @@ export function TopExpertsShowcase({ rankings, isLoading, errorMessage }: TopExp
       <p className="ui-text-strong m-0 px-1 text-lg font-semibold">Top Expert</p>
 
       {isLoading ? (
-        <div className="grid gap-3 md:grid-cols-3">
-          <div className="card-surface-soft card-shell-xl h-48 md:h-56" />
-          <div className="card-surface-soft card-shell-xl h-48 md:h-56" />
-          <div className="card-surface-soft card-shell-xl h-48 md:h-56" />
-        </div>
+        <>
+          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1 md:hidden">
+            <div className="card-surface-soft card-shell-xl h-48 w-[calc(100vw-2rem)] max-w-[360px] shrink-0 snap-center" />
+            <div className="card-surface-soft card-shell-xl h-48 w-[calc(100vw-2rem)] max-w-[360px] shrink-0 snap-center" />
+            <div className="card-surface-soft card-shell-xl h-48 w-[calc(100vw-2rem)] max-w-[360px] shrink-0 snap-center" />
+          </div>
+          <div className="hidden gap-3 md:grid md:grid-cols-3">
+            <div className="card-surface-soft card-shell-xl h-56" />
+            <div className="card-surface-soft card-shell-xl h-56" />
+            <div className="card-surface-soft card-shell-xl h-56" />
+          </div>
+        </>
       ) : errorMessage ? (
         <div className="ui-state-danger rounded-2xl border p-4">
           <p className="m-0 text-sm font-semibold">{errorMessage}</p>
