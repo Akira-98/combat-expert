@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { getGameTimingMeta } from '../../helpers/gameTiming'
+import { useI18n } from '../../i18n'
 import { GameOddsPreview } from './GameOddsPreview'
 import { EmptyState, ErrorState, GamesSkeletonList } from './PaneStates'
 import type { GamesPaneProps } from './types'
@@ -20,6 +21,7 @@ export function GamesPane({
   onSelectOutcome,
   onRetryGames,
 }: GamesPaneProps) {
+  const { t } = useI18n()
   const mobileFilterButtonClass = 'btn-pill shrink-0 px-2.5 py-1 text-[11px] font-semibold transition'
   const searchTriggerButtonClass = 'ui-btn-secondary btn-shell inline-flex h-8 w-8 shrink-0 items-center justify-center'
   const modalActionButtonClass = 'shrink-0 px-3 py-2 text-sm font-semibold'
@@ -58,7 +60,7 @@ export function GamesPane({
               onClick={() => onLeagueFilterChange('all')}
               type="button"
             >
-              전체
+              {t('games.all')}
             </button>
             {mobileLeagueOptions.map((leagueName) => (
               <button
@@ -76,7 +78,7 @@ export function GamesPane({
                 onClick={() => setIsLeagueExpanded((value) => !value)}
                 type="button"
               >
-                {isLeagueExpanded ? '접기' : '더보기'}
+                {isLeagueExpanded ? t('common.collapse') : t('common.more')}
               </button>
             )}
           </div>
@@ -87,7 +89,7 @@ export function GamesPane({
         </div>
 
         <button
-          aria-label="경기 검색 열기"
+          aria-label={t('games.openSearch')}
           className={searchTriggerButtonClass}
           onClick={() => setIsSearchModalOpen(true)}
           type="button"
@@ -100,10 +102,10 @@ export function GamesPane({
       </div>
       {isGamesLoading && <GamesSkeletonList />}
       {!isGamesLoading && gamesErrorMessage && (
-        <ErrorState title="게임 목록을 불러오지 못했습니다" message={gamesErrorMessage} onRetry={onRetryGames} />
+        <ErrorState title={t('games.listError')} message={gamesErrorMessage} onRetry={onRetryGames} />
       )}
       {!isGamesLoading && !gamesErrorMessage && games.length === 0 && (
-        <EmptyState title="조회 가능한 게임이 없습니다" description="필터/네트워크 상태를 확인한 뒤 다시 시도해 주세요." />
+        <EmptyState title={t('games.emptyTitle')} description={t('games.emptyDesc')} />
       )}
       <div>
         {games.map((game) => {
@@ -176,20 +178,20 @@ export function GamesPane({
               <input
                 autoFocus
                 className="ui-input h-10 min-w-0 flex-1 rounded-lg border px-3 text-sm outline-none placeholder:text-slate-400"
-                placeholder="팀명, 리그명으로 검색"
+                placeholder={t('games.searchPlaceholder')}
                 type="search"
                 value={gameSearchQuery}
                 onChange={(event) => onGameSearchQueryChange(event.target.value)}
               />
               <button className={`ui-btn-primary btn-shell-lg ${modalActionButtonClass}`} type="submit">
-                검색
+                {t('common.search')}
               </button>
               <button
                 className={`ui-btn-secondary btn-shell-lg ${modalActionButtonClass}`}
                 onClick={() => setIsSearchModalOpen(false)}
                 type="button"
               >
-                닫기
+                {t('common.close')}
               </button>
             </form>
           </div>

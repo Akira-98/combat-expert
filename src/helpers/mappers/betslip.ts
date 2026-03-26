@@ -1,4 +1,5 @@
 import type { GameItem, MarketSection, SelectionItem, SelectionKey } from '../../types/ui'
+import { translate } from '../../i18n'
 import { selectionKey } from './selection'
 
 type BetslipItemLike = {
@@ -42,8 +43,8 @@ export const mapBetslipToSelectionItems = (
     return {
       conditionId: item.conditionId,
       outcomeId: item.outcomeId,
-      gameTitle: gameTitle ?? '경기',
-      label: meta?.label ?? '선택 항목',
+      gameTitle: gameTitle ?? translate('games.game'),
+      label: meta?.label ?? translate('betslip.selectionItem'),
       odds: meta?.odds ?? 0,
     }
   })

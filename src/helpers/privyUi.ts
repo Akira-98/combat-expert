@@ -1,53 +1,54 @@
 import type { PrivyClientConfig, SendTransactionModalUIOptions, SignMessageModalUIOptions } from '@privy-io/react-auth'
+import { type Locale, translate } from '../i18n'
 
-export const privyIntlConfig: NonNullable<PrivyClientConfig['intl']> = {
-  defaultCountry: 'KR',
+export const getPrivyIntlConfig = (locale: Locale): NonNullable<PrivyClientConfig['intl']> => ({
+  defaultCountry: locale === 'ko' ? 'KR' : 'US',
   textLocalization: {
-    'connectionStatus.successfullyConnected': '{walletName} 연결 완료',
-    'connectionStatus.errorTitle': '연결 오류',
-    'connectionStatus.connecting': '연결 중',
-    'connectionStatus.connectOneWallet': '지갑 하나를 연결해 주세요',
-    'connectionStatus.checkOtherWindows': '다른 창이나 지갑 앱을 확인해 주세요',
-    'connectionStatus.stillHere': '계속 이 화면에 계신가요?',
-    'connectionStatus.tryConnectingAgain': '다시 연결해 보세요',
-    'connectionStatus.or': '또는',
-    'connectionStatus.useDifferentLink': '다른 연결 방식을 사용하세요',
-    'connectWallet.connectYourWallet': '지갑 연결',
-    'connectWallet.waitingForWallet': '지갑 응답 대기 중',
-    'connectWallet.connectToAccount': '계정에 지갑 연결',
-    'connectWallet.installAndConnect': '지갑 설치 후 연결',
-    'connectWallet.tryConnectingAgain': '다시 연결',
-    'connectWallet.openInApp': '앱에서 열기',
-    'connectWallet.copyLink': '링크 복사',
-    'connectWallet.retry': '다시 시도',
-    'connectWallet.searchPlaceholder': '지갑 검색',
-    'connectWallet.noWalletsFound': '지갑을 찾을 수 없습니다',
-    'connectWallet.lastUsed': '최근 사용',
-    'connectWallet.selectYourWallet': '지갑 선택',
-    'connectWallet.selectNetwork': '네트워크 선택',
-    'connectWallet.goToWallet': '지갑으로 이동',
-    'connectWallet.scanToConnect': 'QR을 스캔해 연결',
-    'connectWallet.openOrInstall': '열기 또는 설치',
+    'connectionStatus.successfullyConnected': translate('privy.connected', undefined, locale),
+    'connectionStatus.errorTitle': translate('privy.errorTitle', undefined, locale),
+    'connectionStatus.connecting': translate('privy.connecting', undefined, locale),
+    'connectionStatus.connectOneWallet': translate('privy.connectOneWallet', undefined, locale),
+    'connectionStatus.checkOtherWindows': translate('privy.checkOtherWindows', undefined, locale),
+    'connectionStatus.stillHere': translate('privy.stillHere', undefined, locale),
+    'connectionStatus.tryConnectingAgain': translate('privy.tryAgain', undefined, locale),
+    'connectionStatus.or': translate('privy.or', undefined, locale),
+    'connectionStatus.useDifferentLink': translate('privy.useDifferentLink', undefined, locale),
+    'connectWallet.connectYourWallet': translate('privy.connectWallet', undefined, locale),
+    'connectWallet.waitingForWallet': translate('privy.waitingForWallet', undefined, locale),
+    'connectWallet.connectToAccount': translate('privy.connectToAccount', undefined, locale),
+    'connectWallet.installAndConnect': translate('privy.installAndConnect', undefined, locale),
+    'connectWallet.tryConnectingAgain': translate('privy.tryConnectingAgain', undefined, locale),
+    'connectWallet.openInApp': translate('privy.openInApp', undefined, locale),
+    'connectWallet.copyLink': translate('privy.copyLink', undefined, locale),
+    'connectWallet.retry': translate('privy.retry', undefined, locale),
+    'connectWallet.searchPlaceholder': translate('privy.searchWallet', undefined, locale),
+    'connectWallet.noWalletsFound': translate('privy.noWalletsFound', undefined, locale),
+    'connectWallet.lastUsed': translate('privy.lastUsed', undefined, locale),
+    'connectWallet.selectYourWallet': translate('privy.selectWallet', undefined, locale),
+    'connectWallet.selectNetwork': translate('privy.selectNetwork', undefined, locale),
+    'connectWallet.goToWallet': translate('privy.goToWallet', undefined, locale),
+    'connectWallet.scanToConnect': translate('privy.scanToConnect', undefined, locale),
+    'connectWallet.openOrInstall': translate('privy.openOrInstall', undefined, locale),
   },
-}
+})
 
-const defaultSendTransactionUiOptions: SendTransactionModalUIOptions = {
-  description: '거래 내용을 확인한 뒤 진행해 주세요.',
-  buttonText: '확인',
-  successHeader: '처리 완료',
-  successDescription: '거래가 완료되었습니다.',
-}
+const getDefaultSendTransactionUiOptions = (locale: Locale): SendTransactionModalUIOptions => ({
+  description: translate('privy.txDescription', undefined, locale),
+  buttonText: translate('privy.confirm', undefined, locale),
+  successHeader: translate('privy.successHeader', undefined, locale),
+  successDescription: translate('privy.successDescription', undefined, locale),
+})
 
-const defaultSignMessageUiOptions: SignMessageModalUIOptions = {
-  title: '서명',
-  description: '계속하려면 서명해 주세요.',
-  buttonText: '서명하고 계속',
-}
+const getDefaultSignMessageUiOptions = (locale: Locale): SignMessageModalUIOptions => ({
+  title: translate('privy.signTitle', undefined, locale),
+  description: translate('privy.signDescription', undefined, locale),
+  buttonText: translate('privy.signButton', undefined, locale),
+})
 
 export const withPrivySendTransactionUi = <T extends { uiOptions?: SendTransactionModalUIOptions } | undefined>(options?: T) => ({
   ...options,
   uiOptions: {
-    ...defaultSendTransactionUiOptions,
+    ...getDefaultSendTransactionUiOptions((localStorage.getItem('combat-expert:locale') as Locale) || 'ko'),
     ...options?.uiOptions,
   },
 })
@@ -55,7 +56,7 @@ export const withPrivySendTransactionUi = <T extends { uiOptions?: SendTransacti
 export const withPrivySignMessageUi = <T extends { uiOptions?: SignMessageModalUIOptions } | undefined>(options?: T) => ({
   ...options,
   uiOptions: {
-    ...defaultSignMessageUiOptions,
+    ...getDefaultSignMessageUiOptions((localStorage.getItem('combat-expert:locale') as Locale) || 'ko'),
     ...options?.uiOptions,
   },
 })

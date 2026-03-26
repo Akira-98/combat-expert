@@ -1,4 +1,5 @@
 import type { MobileView } from '../hooks/useAppNavigation'
+import { useI18n } from '../i18n'
 
 type AppBottomNavProps = {
   mobileView: MobileView
@@ -23,6 +24,7 @@ export function AppBottomNav({
   onOpenBets,
   onOpenMenu,
 }: AppBottomNavProps) {
+  const { t } = useI18n()
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 xl:hidden">
       <div className="relative mx-auto w-full max-w-[560px]">
@@ -45,7 +47,7 @@ export function AppBottomNav({
               <path d="M12 4.75 18.25 7.3v4.02c0 3.77-2.33 7.21-5.9 8.72l-.35.15-.35-.15c-3.57-1.51-5.9-4.95-5.9-8.72V7.3z" stroke="currentColor" strokeWidth="1.8" />
               <path d="m9.75 12 1.5 1.5 3-3" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
             </svg>
-            <span className="mt-1">경기</span>
+            <span className="mt-1">{t('bottomNav.explore')}</span>
           </button>
           <button
             className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
@@ -64,10 +66,10 @@ export function AppBottomNav({
               <path d="M7.5 17.25H5.75A1.75 1.75 0 0 1 4 15.5v-7A1.75 1.75 0 0 1 5.75 6.75h12.5A1.75 1.75 0 0 1 20 8.5v7a1.75 1.75 0 0 1-1.75 1.75H11l-3.5 2.25z" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
               <path d="M8 11.25h8M8 14.25h5" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
             </svg>
-            <span className="mt-1">채팅</span>
+            <span className="mt-1">{t('bottomNav.chat')}</span>
           </button>
           <button
-            aria-label="베팅슬립 열기"
+            aria-label={t('bottomNav.openBetslip')}
             className={`relative -mt-3 inline-flex h-12 w-[5.75rem] flex-col items-center justify-center self-center rounded-[20px] border px-3 text-[11px] font-semibold leading-none shadow-lg shadow-slate-950/30 transition ${
               isMobileBetslipOpen
                 ? 'ui-btn-primary text-white'
@@ -85,7 +87,7 @@ export function AppBottomNav({
               <circle cx="8" cy="12" fill="currentColor" r="1" />
               <circle cx="16" cy="12" fill="currentColor" r="1" />
             </svg>
-            <span className="mt-1">베팅</span>
+            <span className="mt-1">{t('bottomNav.betslip')}</span>
           </button>
           <button
             className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
@@ -105,7 +107,7 @@ export function AppBottomNav({
               <path d="M8.5 11.25h7M8.5 14.25h4.5" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
               <circle cx="16.25" cy="11.25" fill="currentColor" r="1" />
             </svg>
-            <span className="mt-1">내 베팅</span>
+            <span className="mt-1">{t('bottomNav.myBets')}</span>
           </button>
           <button
             className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
@@ -123,7 +125,7 @@ export function AppBottomNav({
             <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
               <path d="M5.5 7.5h13M5.5 12h13M5.5 16.5h13" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
             </svg>
-            <span className="mt-1">메뉴</span>
+            <span className="mt-1">{t('bottomNav.menu')}</span>
           </button>
         </div>
       </div>

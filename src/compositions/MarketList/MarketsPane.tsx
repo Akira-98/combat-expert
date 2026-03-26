@@ -1,4 +1,5 @@
 import { formatGameStartTime } from '../../helpers/formatters'
+import { useI18n } from '../../i18n'
 import { selectionKey } from '../../helpers/mappers'
 import { EmptyState, ErrorState, MarketsSkeleton } from './PaneStates'
 import { OutcomeButton } from './OutcomeButton'
@@ -14,11 +15,12 @@ export function MarketsPane({
   onSelectOutcome,
   onRetryMarkets,
 }: MarketsPaneProps) {
+  const { t } = useI18n()
   return (
     <div className="grid min-w-0 content-start gap-2 md:gap-3">
       {isMarketsLoading && <MarketsSkeleton />}
       {!isMarketsLoading && marketsErrorMessage && selectedGame && (
-        <ErrorState title="마켓을 불러오지 못했습니다" message={marketsErrorMessage} onRetry={onRetryMarkets} />
+        <ErrorState title={t('markets.error')} message={marketsErrorMessage} onRetry={onRetryMarkets} />
       )}
 
       {marketSections.length > 0 ? (
@@ -55,11 +57,11 @@ export function MarketsPane({
       ) : null}
 
       {!isMarketsLoading && !marketsErrorMessage && !selectedGame && (
-        <EmptyState title="경기를 선택해 주세요" description="왼쪽 목록에서 경기를 선택하면 마켓이 표시됩니다." />
+        <EmptyState title={t('markets.selectGame')} description={t('markets.selectGameDesc')} />
       )}
 
       {!isMarketsLoading && !marketsErrorMessage && selectedGame && marketSections.length === 0 && (
-        <EmptyState title="활성 아웃컴이 없습니다" description="선택한 경기의 마켓이 아직 열리지 않았거나 일시적으로 비어 있습니다." />
+        <EmptyState title={t('markets.noOutcomes')} description={t('markets.noOutcomesDesc')} />
       )}
     </div>
   )

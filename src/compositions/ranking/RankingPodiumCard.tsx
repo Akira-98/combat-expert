@@ -1,5 +1,6 @@
 import { shortenAddress } from '../../helpers/walletUi'
 import type { RankingEntry } from '../../hooks/useRankings'
+import { useI18n } from '../../i18n'
 
 const podiumCardTones: Record<number, string> = {
   1: 'border-amber-300/45 bg-[linear-gradient(180deg,rgba(245,196,81,0.22)_0%,rgba(61,39,12,0.88)_58%,rgba(10,12,16,0.98)_100%)] shadow-[0_0_0_1px_rgba(245,196,81,0.18),0_18px_40px_-28px_rgba(245,196,81,0.45)]',
@@ -8,6 +9,7 @@ const podiumCardTones: Record<number, string> = {
 }
 
 export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: number }) {
+  const { t } = useI18n()
   const podiumCardTone =
     podiumCardTones[rank] ??
     'border-[color:var(--app-border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.04)_0%,rgba(255,255,255,0.015)_100%)] shadow-[0_0_0_1px_color-mix(in_oklab,var(--app-border)_24%,transparent)]'
@@ -31,9 +33,10 @@ export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: 
       </div>
       <div className="mt-5 border-t border-white/6 pt-3">
         <div>
-          <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">Record</p>
+          <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">{t('ranking.record')}</p>
           <p className="ui-text-strong mt-1 mb-0 text-sm font-medium">
-            {entry.winCount}승 {entry.loseCount}패{entry.voidCount > 0 ? ` · 무효 ${entry.voidCount}` : ''}
+            {t('ranking.winsLosses', { wins: entry.winCount, losses: entry.loseCount })}
+            {entry.voidCount > 0 ? ` · ${t('ranking.void', { count: entry.voidCount })}` : ''}
           </p>
         </div>
       </div>
@@ -45,12 +48,13 @@ export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: 
 }
 
 function EntryMetrics({ entry }: { entry: RankingEntry }) {
+  const { t } = useI18n()
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-300">
-      <span>적중 {entry.winCount}</span>
-      <span>미적중 {entry.loseCount}</span>
-      <span>언더독 {entry.underdogHitCount}</span>
-      <span>총 {entry.eventCount}건</span>
+      <span>{t('ranking.hit', { count: entry.winCount })}</span>
+      <span>{t('ranking.miss', { count: entry.loseCount })}</span>
+      <span>{t('ranking.underdogCount', { count: entry.underdogHitCount })}</span>
+      <span>{t('ranking.totalCount', { count: entry.eventCount })}</span>
     </div>
   )
 }

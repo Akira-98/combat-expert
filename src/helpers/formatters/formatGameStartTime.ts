@@ -1,9 +1,4 @@
 import { parseGameStartTimeMs } from '../parseGameStartTime'
+import { formatCompactDateTime } from './formatCompactDateTime'
 
-export const formatGameStartTime = (value: string) =>
-  new Date(parseGameStartTimeMs(value)).toLocaleString('ko-KR', {
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+export const formatGameStartTime = (value: string) => formatCompactDateTime(parseGameStartTimeMs(value))

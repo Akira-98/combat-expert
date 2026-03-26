@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { normalizeProfileNickname } from '../../helpers/profile'
 import { shortenAddress } from '../../helpers/walletUi'
 import type { RankingViewer } from '../../hooks/useRankings'
+import { useI18n } from '../../i18n'
 
 type AccountPanelProps = {
   address?: `0x${string}`
@@ -42,6 +43,7 @@ export function AccountPanel({
   onClose,
   onOpenRanking,
 }: AccountPanelProps) {
+  const { t } = useI18n()
   void onOpenRanking
   const smallIconButtonClass = `${iconButtonClass} h-7 w-7 rounded-full border`
   const rowClass = 'flex items-start justify-between gap-3 border-b border-white/8 py-3 last:border-b-0 last:pb-0'
@@ -70,10 +72,10 @@ export function AccountPanel({
               <p className="ui-text-muted truncate text-xs">{shortenAddress(address, 6, 4)}</p>
               <div className="relative">
                 <button
-                  aria-label={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
+                  aria-label={copyLabel === 'idle' ? t('account.copyAddress') : copyLabel === 'copied' ? t('account.copiedAddress') : t('account.copyAddressFailed')}
                   className={smallIconButtonClass}
                   onClick={onCopyAddress}
-                  title={copyLabel === 'idle' ? '주소 복사' : copyLabel === 'copied' ? '주소 복사됨' : '주소 복사 실패'}
+                  title={copyLabel === 'idle' ? t('account.copyAddress') : copyLabel === 'copied' ? t('account.copiedAddress') : t('account.copyAddressFailed')}
                   type="button"
                 >
                   <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
@@ -81,9 +83,11 @@ export function AccountPanel({
                     <path d="M7 15H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1" stroke="currentColor" strokeWidth="1.8" />
                   </svg>
                 </button>
-                {copyLabel !== 'idle' && <span className={copyToastClass}>{copyLabel === 'copied' ? 'Copy' : 'Fail'}</span>}
+                {copyLabel !== 'idle' && (
+                  <span className={copyToastClass}>{copyLabel === 'copied' ? t('account.copiedAddress') : t('account.copyAddressFailed')}</span>
+                )}
               </div>
-              <button aria-label="로그아웃" className={smallIconButtonClass} onClick={onDisconnect} title="로그아웃" type="button">
+              <button aria-label={t('header.logout')} className={smallIconButtonClass} onClick={onDisconnect} title={t('header.logout')} type="button">
                 <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
                   <path d="M14 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2" stroke="currentColor" strokeWidth="1.8" />
                   <path d="M10 12h10" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
@@ -93,7 +97,7 @@ export function AccountPanel({
             </div>
           </div>
         </div>
-        <button className={`${iconButtonClass} shrink-0 md:hidden`} onClick={onClose} title="닫기" type="button">
+        <button className={`${iconButtonClass} shrink-0 md:hidden`} onClick={onClose} title={t('account.close')} type="button">
           <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
             <path d="M6 6L18 18" stroke="currentColor" strokeWidth="1.8" />
             <path d="M18 6L6 18" stroke="currentColor" strokeWidth="1.8" />
@@ -104,36 +108,36 @@ export function AccountPanel({
       <div className="border-t border-white/8 pt-1">
         <section className={`${rowClass} items-center`}>
           <div>
-            <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">보유 잔액</p>
+            <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('account.balance')}</p>
           </div>
           <p className="ui-text-strong m-0 text-sm font-semibold">{usdtBalanceLabel}</p>
         </section>
 
         <section className={rowClass}>
           <div className="min-w-0">
-            <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">내 랭킹</p>
+            <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('account.myRanking')}</p>
             {isRankingLoading ? (
-              <p className="ui-text-muted mt-1 mb-0 text-xs">랭킹을 불러오는 중...</p>
+              <p className="ui-text-muted mt-1 mb-0 text-xs">{t('ranking.loading')}</p>
             ) : rankingViewer ? (
               <p className="ui-text-strong mt-2 mb-0 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold">
                 <span>{`#${rankingViewer.rank}`}</span>
                 <span aria-hidden="true" className="ui-text-muted text-xs font-medium">
                   |
                 </span>
-                <span>{`${formatRankingScore(rankingViewer.totalScore)} 총점`}</span>
+                <span>{`${formatRankingScore(rankingViewer.totalScore)} ${t('ranking.totalScore')}`}</span>
                 <span aria-hidden="true" className="ui-text-muted text-xs font-medium">
                   |
                 </span>
-                <span>{`${rankingViewer.winCount}승 ${rankingViewer.loseCount}패`}</span>
+                <span>{t('ranking.winsLosses', { wins: rankingViewer.winCount, losses: rankingViewer.loseCount })}</span>
                 <span aria-hidden="true" className="ui-text-muted text-xs font-medium">
                   |
                 </span>
-                <span>{`${rankingViewer.eventCount}경기 예측`}</span>
+                <span>{t('ranking.predictions', { count: rankingViewer.eventCount })}</span>
               </p>
             ) : (
               <>
-                <p className="ui-text-strong mt-1 mb-0 text-sm font-semibold">아직 랭킹 데이터가 없습니다.</p>
-                <p className="ui-text-muted mt-1 mb-0 text-xs">예측 정산 후 점수와 순위를 여기서 확인할 수 있습니다.</p>
+                <p className="ui-text-strong mt-1 mb-0 text-sm font-semibold">{t('ranking.noData')}</p>
+                <p className="ui-text-muted mt-1 mb-0 text-xs">{t('ranking.noDataDesc')}</p>
               </>
             )}
           </div>
@@ -162,6 +166,7 @@ function InlineNicknameEditor({
   profileErrorMessage,
   profileNickname,
 }: InlineNicknameEditorProps) {
+  const { t } = useI18n()
   const nicknameInputClass = 'ui-input h-8 rounded-md border px-2.5 text-xs'
   const iconActionClass =
     'ui-text-body inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/10 transition hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60'
@@ -176,7 +181,7 @@ function InlineNicknameEditor({
 
     try {
       await onSaveNickname(nextNickname)
-      setNicknameNotice(nextNickname ? '닉네임이 저장되었습니다.' : '닉네임이 초기화되었습니다.')
+      setNicknameNotice(nextNickname ? t('account.nicknameSaved') : t('account.nicknameReset'))
       setIsEditing(false)
     } catch {
       // Surface the API error below instead of duplicating it here.
@@ -187,14 +192,14 @@ function InlineNicknameEditor({
     <>
       {!isEditing ? (
         <button
-          aria-label={trimmedProfileNickname ? '닉네임 수정' : '닉네임 추가'}
+          aria-label={trimmedProfileNickname ? t('account.editNickname') : t('account.addNickname')}
           className={`${iconActionClass} shrink-0`}
           onClick={() => {
             setNicknameDraft(profileNickname || '')
             setNicknameNotice(undefined)
             setIsEditing(true)
           }}
-          title={trimmedProfileNickname ? '닉네임 수정' : '닉네임 추가'}
+          title={trimmedProfileNickname ? t('account.editNickname') : t('account.addNickname')}
           type="button"
         >
           <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
@@ -209,7 +214,7 @@ function InlineNicknameEditor({
               autoFocus
               className={nicknameInputClass}
               maxLength={24}
-              placeholder="닉네임 입력"
+              placeholder={t('account.nicknamePlaceholder')}
               value={nicknameDraft}
               onChange={(event) => {
                 setNicknameDraft(event.target.value)
@@ -228,16 +233,16 @@ function InlineNicknameEditor({
               }}
             />
             <button
-              aria-label="닉네임 저장"
+              aria-label={t('account.saveNickname')}
               className={primaryButtonClass}
               disabled={isProfileSaving}
               onClick={() => void handleSaveNickname()}
               type="button"
             >
-              {isProfileSaving ? '저장 중...' : '저장'}
+              {isProfileSaving ? t('common.saving') : t('common.save')}
             </button>
             <button
-              aria-label="닉네임 편집 취소"
+              aria-label={t('account.cancelNicknameEdit')}
               className={iconActionClass}
               onClick={() => {
                 setNicknameDraft(profileNickname || '')
@@ -251,7 +256,7 @@ function InlineNicknameEditor({
               </svg>
             </button>
           </div>
-          <p className="ui-text-muted m-0 text-[11px]">엔터로 저장, ESC로 취소할 수 있습니다.</p>
+          <p className="ui-text-muted m-0 text-[11px]">{t('account.nicknameHint')}</p>
         </div>
       )}
 

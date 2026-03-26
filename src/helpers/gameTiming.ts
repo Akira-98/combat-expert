@@ -1,4 +1,5 @@
 import { formatGameStartTime } from './formatters'
+import { translate } from '../i18n'
 import { parseGameStartTimeMs } from './parseGameStartTime'
 
 export type GameStatusFilter = 'all' | 'live' | 'upcoming'
@@ -53,9 +54,9 @@ export function getGameTimingMeta(startsAt: string, gameState?: string, now = Da
 
   if (gameState === 'Stopped') {
     return {
-      label: '중단',
+      label: translate('gameStatus.stopped'),
       tone: 'slate',
-      detail: `${formatGameStartTime(startsAt)} 시작`,
+      detail: translate('gameStatus.startsAt', { time: formatGameStartTime(startsAt) }),
     }
   }
 
@@ -63,7 +64,7 @@ export function getGameTimingMeta(startsAt: string, gameState?: string, now = Da
     return {
       label: 'LIVE',
       tone: 'rose',
-      detail: `${formatGameStartTime(startsAt)} 시작`,
+      detail: translate('gameStatus.startsAt', { time: formatGameStartTime(startsAt) }),
     }
   }
 
@@ -71,28 +72,28 @@ export function getGameTimingMeta(startsAt: string, gameState?: string, now = Da
     const minutes = Math.floor(diffMs / (60 * 1000))
     if (minutes < 60) {
       return {
-        label: '예정',
+        label: translate('gameStatus.upcoming'),
         tone: 'amber',
-        detail: `${minutes}분 후`,
+        detail: translate('gameStatus.inMinutes', { count: minutes }),
       }
     }
     const hours = Math.floor(minutes / 60)
     if (hours < 24) {
       return {
-        label: '예정',
+        label: translate('gameStatus.upcoming'),
         tone: 'amber',
-        detail: `${hours}시간 후`,
+        detail: translate('gameStatus.inHours', { count: hours }),
       }
     }
     return {
-      label: '예정',
+      label: translate('gameStatus.upcoming'),
       tone: 'slate',
       detail: formatGameStartTime(startsAt),
     }
   }
 
   return {
-    label: gameState === 'Finished' ? '종료' : '종료 추정',
+    label: gameState === 'Finished' ? translate('gameStatus.finished') : translate('gameStatus.estimatedFinished'),
     tone: 'slate',
     detail: formatGameStartTime(startsAt),
   }

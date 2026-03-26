@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { translate } from '../i18n'
 
 export type RankingEntry = {
   address: string
@@ -37,7 +38,7 @@ async function fetchRankings(address?: string): Promise<RankingsPayload> {
 
   const payload = await response.json().catch(() => ({}))
   if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : '랭킹을 불러오지 못했습니다.')
+    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('ranking.loadingFailed'))
   }
 
   const rankings = Array.isArray(payload?.rankings) ? payload.rankings : []

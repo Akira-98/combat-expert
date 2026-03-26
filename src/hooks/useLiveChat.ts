@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import * as Ably from 'ably'
 import type { Address } from 'viem'
 import { useAppConfig } from '../config/useAppConfig'
+import { formatCompactDateTime } from '../helpers/formatters'
 import { getProfileDisplayName } from '../helpers/profile'
+import { translate } from '../i18n'
 
 const CHAT_CLIENT_ID_KEY = 'ufc-live-chat-client-id'
 const MESSAGE_LIMIT = 180
@@ -42,11 +44,7 @@ function resolveConnectionState(state: string): ConnectionUiState {
 }
 
 export function formatLiveChatMessageTime(timestamp: number) {
-  return new Intl.DateTimeFormat('ko-KR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }).format(timestamp)
+  return formatCompactDateTime(timestamp)
 }
 
 type InboundChatMessage = Pick<Ably.InboundMessage, 'id' | 'clientId' | 'timestamp' | 'data'>
@@ -158,7 +156,7 @@ export function useLiveChat({ address, nickname }: UseLiveChatParams) {
       })
       .catch((error: unknown) => {
         if (canceled) return
-        const message = error instanceof Error ? error.message : '메시지 기록을 불러오지 못했습니다.'
+        const message = error instanceof Error ? error.message : translate('liveChat.historyFailed')
         setErrorMessage(message)
       })
 
@@ -166,7 +164,7 @@ export function useLiveChat({ address, nickname }: UseLiveChatParams) {
       if (canceled && isExpectedConnectionClosure(error)) return
       if (canceled) return
 
-      const message = error instanceof Error ? error.message : '채팅 구독을 시작하지 못했습니다.'
+      const message = error instanceof Error ? error.message : translate('liveChat.subscribeFailed')
       setErrorMessage(message)
       setConnectionState('failed')
     })
@@ -209,7 +207,7 @@ export function useLiveChat({ address, nickname }: UseLiveChatParams) {
       })
       setDraft('')
     } catch (error) {
-      const message = error instanceof Error ? error.message : '메시지 전송에 실패했습니다.'
+      const message = error instanceof Error ? error.message : translate('liveChat.sendFailed')
       setErrorMessage(message)
     } finally {
       setSendPending(false)

@@ -1,4 +1,5 @@
 import type { RankingEntry, RankingViewer } from '../hooks/useRankings'
+import { useI18n } from '../i18n'
 import { RankingLeaderboardRow } from './ranking/RankingLeaderboardRow'
 import { RankingViewerCard } from './ranking/RankingViewerCard'
 
@@ -12,12 +13,13 @@ type RankingPageProps = {
 }
 
 export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry, isConnected }: RankingPageProps) {
+  const { t } = useI18n()
   return (
     <section className="grid gap-3">
       <div className="px-4 pt-4 pb-1 md:px-4 md:pt-5 md:pb-1">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="ui-text-strong m-0 text-[28px] font-semibold tracking-tight md:text-[36px]">Top 격잘알 랭킹</h2>
+            <h2 className="ui-text-strong m-0 text-[28px] font-semibold tracking-tight md:text-[36px]">{t('ranking.pageTitle')}</h2>
           </div>
         </div>
       </div>
@@ -58,11 +60,12 @@ function RankingLoadingState() {
 }
 
 function RankingErrorState({ errorMessage, onRetry }: { errorMessage: string; onRetry: () => void }) {
+  const { t } = useI18n()
   return (
     <div className="ui-state-danger rounded-2xl border p-4">
       <p className="m-0 text-sm font-semibold">{errorMessage}</p>
       <button className="ui-btn-secondary mt-3 rounded-lg border px-3 py-2 text-sm font-semibold" onClick={onRetry} type="button">
-        다시 불러오기
+        {t('common.retry')}
       </button>
     </div>
   )

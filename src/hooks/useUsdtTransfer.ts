@@ -7,6 +7,7 @@ import { DEFAULT_USDT_CONFIG, getErc20TokenConfig } from '../config/tokens'
 import { useAAWalletClient } from '../azuroSocialAaConnector'
 import { withPrivySendTransactionUi } from '../helpers/privyUi'
 import { useUsdtBalance } from './useUsdtBalance'
+import { translate } from '../i18n'
 
 type UseUsdtTransferParams = {
   address?: `0x${string}`
@@ -20,19 +21,19 @@ const getTransferErrorMessage = (error: unknown) => {
   const lower = message.toLowerCase()
 
   if (lower.includes('user rejected') || lower.includes('rejected') || lower.includes('denied')) {
-    return '지갑에서 전송 요청이 거부되었습니다.'
+    return translate('usdtTransfer.rejected')
   }
   if (lower.includes('insufficient')) {
-    return '잔액 또는 가스비가 부족합니다.'
+    return translate('usdtTransfer.insufficient')
   }
   if (lower.includes('network') || lower.includes('chain')) {
-    return '네트워크가 올바르지 않거나 RPC 상태가 불안정합니다.'
+    return translate('usdtTransfer.network')
   }
   if (lower.includes('sponsor') || lower.includes('paymaster')) {
-    return '가스비 대납 조건을 충족하지 못했습니다. 정책/한도를 확인해 주세요.'
+    return translate('usdtTransfer.paymaster')
   }
 
-  return '송금 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+  return translate('usdtTransfer.failed')
 }
 
 export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: UseUsdtTransferParams) {
@@ -61,16 +62,16 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
   const isAmountWithinBalance = hasValidAmount && amountNum <= balance
 
   const validationMessage = useMemo(() => {
-    if (!isConnected) return '지갑을 먼저 연결해 주세요.'
-    if (!isSupportedChain) return 'USDT 송금은 Polygon Mainnet에서만 지원됩니다.'
-    if (isAAWallet && !aaWalletClient) return '스마트월렛 초기화 중입니다. 잠시 후 다시 시도해 주세요.'
-    if (!isAAWallet && !walletClient) return '지갑 클라이언트 초기화 중입니다. 잠시 후 다시 시도해 주세요.'
-    if (!recipientTrimmed) return '수신 주소를 입력해 주세요.'
-    if (!isRecipientValid) return '수신 주소 형식이 올바르지 않습니다.'
-    if (!amountInput.trim()) return '송금 금액을 입력해 주세요.'
-    if (!Number.isFinite(amountNum)) return '송금 금액은 숫자로 입력해 주세요.'
-    if (!(amountNum > 0)) return '송금 금액은 0보다 커야 합니다.'
-    if (!isAmountWithinBalance) return 'USDT 잔액이 부족합니다.'
+    if (!isConnected) return translate('usdtTransfer.connectWallet')
+    if (!isSupportedChain) return translate('usdtTransfer.onlyPolygon')
+    if (isAAWallet && !aaWalletClient) return translate('usdtTransfer.initializingSmartWallet')
+    if (!isAAWallet && !walletClient) return translate('usdtTransfer.initializingWallet')
+    if (!recipientTrimmed) return translate('usdtTransfer.enterRecipient')
+    if (!isRecipientValid) return translate('usdtTransfer.invalidRecipient')
+    if (!amountInput.trim()) return translate('usdtTransfer.enterAmount')
+    if (!Number.isFinite(amountNum)) return translate('usdtTransfer.amountNumber')
+    if (!(amountNum > 0)) return translate('usdtTransfer.amountPositive')
+    if (!isAmountWithinBalance) return translate('usdtTransfer.insufficientUsdt')
     return undefined
   }, [aaWalletClient, amountInput, amountNum, isAAWallet, isAmountWithinBalance, isConnected, isRecipientValid, isSupportedChain, recipientTrimmed, walletClient])
 
@@ -99,7 +100,7 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
       let txHash: `0x${string}` | undefined
 
       if (isAAWallet) {
-        if (!aaWalletClient) throw new Error('AA 지갑 클라이언트를 찾지 못했습니다.')
+        if (!aaWalletClient) throw new Error(translate('profile.noAaWalletClient'))
 
         const result = await aaWalletClient.sendTransaction(
           {
@@ -113,7 +114,7 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
 
         txHash = typeof result === 'string' ? result : (result as { hash?: `0x${string}` } | undefined)?.hash
       } else {
-        if (!walletClient) throw new Error('지갑 클라이언트를 찾지 못했습니다.')
+        if (!walletClient) throw new Error(translate('profile.noSignWalletClient'))
 
         txHash = await walletClient.sendTransaction({
           account: address,
@@ -125,15 +126,15 @@ export function useUsdtTransfer({ address, chainId, isConnected, isAAWallet }: U
       }
 
       setSuccessNotice({
-        title: 'USDT 송금 요청 완료',
-        message: 'USDT 송금 트랜잭션이 전송되었습니다.',
+        title: translate('usdtTransfer.requestComplete'),
+        message: translate('usdtTransfer.requestSent'),
         txHash,
       })
       setHasAttemptedSend(false)
       setAmountInput('')
       void refetchBalance()
     } catch (error) {
-      setErrorNotice({ title: 'USDT 송금 실패', error })
+      setErrorNotice({ title: translate('usdtTransfer.requestFailed'), error })
     } finally {
       setIsSending(false)
     }

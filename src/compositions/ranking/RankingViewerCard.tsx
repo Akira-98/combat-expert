@@ -1,5 +1,6 @@
 import type { RankingViewer } from '../../hooks/useRankings'
 import { shortenAddress } from '../../helpers/walletUi'
+import { useI18n } from '../../i18n'
 
 type RankingViewerCardProps = {
   viewer: RankingViewer | null
@@ -7,6 +8,7 @@ type RankingViewerCardProps = {
 }
 
 export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProps) {
+  const { t } = useI18n()
   if (!isConnected) return null
 
   return (
@@ -36,19 +38,19 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
 
             <div className="grid grid-cols-4 gap-x-3 gap-y-3 border-t border-white/8 pt-4 md:gap-x-5 md:border-t-0 md:border-l md:pt-0 md:pl-5">
               <StatItem
-                label="전적"
-                value={`${viewer.winCount}승 ${viewer.loseCount}패`}
-                secondaryValue={viewer.voidCount > 0 ? `무효 ${viewer.voidCount}` : null}
+                label={t('ranking.record')}
+                value={t('ranking.winsLosses', { wins: viewer.winCount, losses: viewer.loseCount })}
+                secondaryValue={viewer.voidCount > 0 ? t('ranking.void', { count: viewer.voidCount }) : null}
               />
-              <StatItem label="적중률" value={formatHitRate(viewer.winCount, viewer.loseCount)} />
-              <StatItem label="언더독" value={String(viewer.underdogHitCount)} />
-              <StatItem label="경기수" value={String(viewer.eventCount)} />
+              <StatItem label={t('ranking.hitRate')} value={formatHitRate(viewer.winCount, viewer.loseCount)} />
+              <StatItem label={t('ranking.underdog')} value={String(viewer.underdogHitCount)} />
+              <StatItem label={t('ranking.events')} value={String(viewer.eventCount)} />
             </div>
           </div>
         ) : (
           <div className="mt-4 border-t border-white/8 pt-4">
-            <p className="ui-text-strong m-0 text-sm font-semibold">내 랭킹 데이터가 아직 없습니다.</p>
-            <p className="ui-text-muted mt-1 mb-0 text-sm">정산된 예측이 누적되면 여기서 내 순위와 점수를 바로 볼 수 있습니다.</p>
+            <p className="ui-text-strong m-0 text-sm font-semibold">{t('ranking.noViewerData')}</p>
+            <p className="ui-text-muted mt-1 mb-0 text-sm">{t('ranking.noViewerDataDesc')}</p>
           </div>
         )}
       </div>

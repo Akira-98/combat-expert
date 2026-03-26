@@ -2,19 +2,20 @@ import { useState } from 'react'
 import { useConnectOrCreateWallet, usePrivy } from '@privy-io/react-auth'
 import { useDisconnect } from 'wagmi'
 import { useAccount } from '../azuroSocialAaConnector'
+import { translate } from '../i18n'
 
 const getWalletConnectErrorMessage = (error: unknown) => {
   const value = String(error ?? '')
   const lower = value.toLowerCase()
 
   if (lower.includes('cancel') || lower.includes('close') || lower.includes('dismiss')) {
-    return '지갑 연결이 취소되었습니다.'
+    return translate('walletConnection.cancelled')
   }
   if (lower.includes('reject') || lower.includes('denied')) {
-    return '지갑에서 연결 요청이 거부되었습니다.'
+    return translate('walletConnection.denied')
   }
 
-  return '지갑 연결에 실패했습니다. 다시 시도해 주세요.'
+  return translate('walletConnection.failed')
 }
 
 export function useWalletConnection() {

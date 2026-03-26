@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import type { GameStatusFilter } from '../helpers/gameTiming'
+import { useI18n } from '../i18n'
 
 type GameFiltersPanelProps = {
   gameSearchQuery: string
@@ -28,6 +29,7 @@ export function GameFiltersPanel({
   onLeagueFilterChange,
   onResetFilters,
 }: GameFiltersPanelProps) {
+  const { t } = useI18n()
   const mobileFilterButtonClass = 'btn-pill shrink-0 px-2.5 py-1 text-[11px] font-semibold transition'
   const filterPanelClass = 'ui-bg-solid-soft section-shell border-b border-slate-900/70 px-2.5 py-1.5 md:hidden'
   const searchTriggerButtonClass = 'ui-btn-secondary btn-shell inline-flex h-8 w-8 shrink-0 items-center justify-center'
@@ -63,7 +65,7 @@ export function GameFiltersPanel({
       <section className={filterPanelClass}>
         <div className="flex items-center gap-2">
           <button
-            aria-label="검색 열기"
+            aria-label={t('games.openSearch')}
             className={searchTriggerButtonClass}
             onClick={() => setIsSearchModalOpen(true)}
             type="button"
@@ -80,7 +82,7 @@ export function GameFiltersPanel({
               onClick={() => onLeagueFilterChange('all')}
               type="button"
             >
-              전체
+              {t('games.all')}
             </button>
             {mobileLeagueOptions.map((leagueName) => (
               <button
@@ -98,7 +100,7 @@ export function GameFiltersPanel({
                 onClick={() => setIsLeagueExpanded((value) => !value)}
                 type="button"
               >
-                {isLeagueExpanded ? '접기' : '더보기'}
+                {isLeagueExpanded ? t('common.collapse') : t('common.more')}
               </button>
             )}
           </div>
@@ -125,20 +127,20 @@ export function GameFiltersPanel({
               <input
                 autoFocus
                 className="ui-input h-10 min-w-0 flex-1 rounded-lg border px-3 text-sm outline-none placeholder:text-slate-400"
-                placeholder="팀명, 리그명으로 검색"
+                placeholder={t('games.searchPlaceholder')}
                 type="search"
                 value={gameSearchQuery}
                 onChange={(event) => onGameSearchQueryChange(event.target.value)}
               />
               <button className={`ui-btn-primary btn-shell-lg ${modalActionButtonClass}`} type="submit">
-                검색
+                {t('common.search')}
               </button>
               <button
                 className={`ui-btn-secondary btn-shell-lg ${modalActionButtonClass}`}
                 onClick={() => setIsSearchModalOpen(false)}
                 type="button"
               >
-                닫기
+                {t('common.close')}
               </button>
             </form>
           </div>

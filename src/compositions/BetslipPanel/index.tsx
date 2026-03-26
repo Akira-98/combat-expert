@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import type { SelectionItem } from '../../types/ui'
 import type { TransactionNotice, TransactionStep } from '../../helpers/betslipUi'
+import { useI18n } from '../../i18n'
 import { selectionKey } from '../../helpers/mappers'
-import { DISABLE_REASON_LABEL } from './constants'
+import { getDisableReasonLabel } from './constants'
 import { BetslipAmountSection } from './BetslipAmountSection'
 import { BetslipSlippageSettings } from './BetslipSlippageSettings'
 import { BetslipSummarySection } from './BetslipSummarySection'
@@ -58,6 +59,7 @@ export function BetslipPanel({
   actions,
   isEmbedded = false,
 }: BetslipPanelProps) {
+  const { t } = useI18n()
   const TOTAL_ODDS_WARNING_DELAY_MS = 900
   const actionButtonBaseClass =
     'px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60'
@@ -71,7 +73,7 @@ export function BetslipPanel({
   const noticeClass = 'm-0 rounded-md border p-2 text-sm md:rounded-lg'
   const primarySubmitButtonClass =
     'ui-btn-primary btn-shell md:btn-shell-lg w-full px-3 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50'
-  const disableReasonText = bet.disableReason ? (DISABLE_REASON_LABEL[bet.disableReason] ?? bet.disableReason) : undefined
+  const disableReasonText = bet.disableReason ? getDisableReasonLabel(bet.disableReason) : undefined
   const shouldDelayDisableReason = bet.disableReason === 'TotalOddsTooLow'
   const delayedDisableReasonKey = shouldDelayDisableReason && disableReasonText ? `${bet.disableReason}:${bet.selections.length}` : undefined
   const scheduledDisableReasonKeyRef = useRef<string | undefined>(undefined)
@@ -95,11 +97,11 @@ export function BetslipPanel({
     return () => window.clearTimeout(timeoutId)
   }, [delayedDisableReasonKey, TOTAL_ODDS_WARNING_DELAY_MS])
 
-  const selectionLabel = bet.selections.length <= 1 ? '싱글' : `콤보 (${bet.selections.length})`
+  const selectionLabel = bet.selections.length <= 1 ? t('betslip.single') : t('betslip.combo', { count: bet.selections.length })
   const isPrimaryDisabled = wallet.isConnected
     ? !bet.canBet || bet.approvePending || bet.betPending
     : !wallet.canConnectWallet || wallet.isConnectingWallet
-  const primaryButtonLabel = !wallet.isConnected && wallet.isConnectingWallet ? '지갑 연결 중...' : bet.submitLabel
+  const primaryButtonLabel = !wallet.isConnected && wallet.isConnectingWallet ? t('betslip.connectingWallet') : bet.submitLabel
   const rootClassName = isEmbedded
     ? 'section-shell border-0 bg-transparent shadow-none'
     : 'panel section-shell desktop-surface-variant'
@@ -114,11 +116,11 @@ export function BetslipPanel({
     <div>
       <div className={headerClassName}>
         <div>
-          <h2 className="ui-text-strong m-0 text-base font-semibold">베팅슬립</h2>
+          <h2 className="ui-text-strong m-0 text-base font-semibold">{t('betslip.title')}</h2>
           <p className="ui-text-muted mt-0.5 text-xs">{selectionLabel}</p>
         </div>
         <div className="flex items-center gap-2">
-          <button aria-label="설정" className={iconButtonClass} onClick={() => setIsSettingsOpen((open) => !open)} type="button">
+          <button aria-label={t('betslip.settings')} className={iconButtonClass} onClick={() => setIsSettingsOpen((open) => !open)} type="button">
             <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
               <path d="M4 7h10" strokeLinecap="round" />
               <path d="M18 7h2" strokeLinecap="round" />
@@ -128,7 +130,7 @@ export function BetslipPanel({
               <circle cx="16" cy="17" r="2" />
             </svg>
           </button>
-          <button aria-label="비우기" className={dangerIconButtonClass} onClick={actions.onClear} type="button">
+          <button aria-label={t('betslip.clear')} className={dangerIconButtonClass} onClick={actions.onClear} type="button">
             <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
               <path d="M3 6h18" strokeLinecap="round" />
               <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" strokeLinecap="round" />

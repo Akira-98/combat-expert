@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react'
 import type { Address } from 'viem'
 import type { useProfile } from '../hooks/useProfile'
+import { useI18n } from '../i18n'
 import { formatLiveChatMessageTime, useLiveChat } from '../hooks/useLiveChat'
 
 type LiveChatPanelProps = {
@@ -12,6 +13,7 @@ type LiveChatPanelProps = {
 const MESSAGE_MAX_LENGTH = 220
 
 export function LiveChatPanel({ address, profile, className, isEmbedded = false }: LiveChatPanelProps) {
+  const { t } = useI18n()
   const chat = useLiveChat({ address, nickname: profile.nickname })
   const {
     scrollContainerRef,
@@ -46,7 +48,7 @@ export function LiveChatPanel({ address, profile, className, isEmbedded = false 
           className="card-surface-soft card-shell min-h-0 h-full w-full overflow-y-auto p-1.5 md:p-2"
         >
           {messages.length === 0 ? (
-            <p className="ui-text-muted m-0 px-1 py-2 text-xs">아직 메시지가 없습니다. 첫 메시지를 남겨보세요.</p>
+            <p className="ui-text-muted m-0 px-1 py-2 text-xs">{t('chat.empty')}</p>
           ) : (
             <div className="grid w-full content-start gap-1.5 justify-items-stretch md:gap-2">
               {messages.map((message) => (
@@ -67,7 +69,7 @@ export function LiveChatPanel({ address, profile, className, isEmbedded = false 
         <div className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-2">
           <input
             className="ui-input h-10 rounded-md border px-3 text-base outline-none md:rounded-lg"
-            placeholder={connectionState === 'connected' ? '메시지를 입력하세요' : '연결 후 입력 가능합니다'}
+            placeholder={connectionState === 'connected' ? t('chat.placeholder.connected') : t('chat.placeholder.disconnected')}
             value={draft}
             maxLength={MESSAGE_MAX_LENGTH}
             onChange={(event) => setDraft(event.target.value)}
@@ -78,7 +80,7 @@ export function LiveChatPanel({ address, profile, className, isEmbedded = false 
             type="submit"
             disabled={!canSend}
           >
-            전송
+            {t('common.send')}
           </button>
         </div>
         {errorMessage && <p className="ui-state-danger m-0 rounded-md border px-2 py-1 text-[11px]">{errorMessage}</p>}

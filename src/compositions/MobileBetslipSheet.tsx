@@ -1,4 +1,5 @@
 import { useRef, useState, type TouchEvent } from 'react'
+import { useI18n } from '../i18n'
 import { BetslipPanel, type BetslipPanelProps } from './BetslipPanel'
 
 type MobileBetslipSheetProps = {
@@ -18,6 +19,7 @@ export function MobileBetslipSheet({
   panelProps,
   showLauncher = true,
 }: MobileBetslipSheetProps) {
+  const { t } = useI18n()
   const DRAG_CLOSE_THRESHOLD_PX = 96
   const touchStartYRef = useRef<number | null>(null)
   const [dragOffsetY, setDragOffsetY] = useState(0)
@@ -66,7 +68,7 @@ export function MobileBetslipSheet({
           onClick={onOpen}
           type="button"
         >
-          <span className="ui-text-strong text-sm font-semibold">베팅슬립</span>
+          <span className="ui-text-strong text-sm font-semibold">{t('betslip.title')}</span>
           <span className="ui-btn-primary rounded-full border px-2.5 py-1 text-xs font-semibold">{selectionCount}</span>
         </button>
       )}
@@ -74,7 +76,7 @@ export function MobileBetslipSheet({
       {isOpen && (
         <div className="fixed inset-0 z-50">
           <button
-            aria-label="베팅슬립 닫기"
+            aria-label={t('common.close')}
             className="absolute inset-0 bg-slate-900/40"
             onClick={onClose}
             type="button"

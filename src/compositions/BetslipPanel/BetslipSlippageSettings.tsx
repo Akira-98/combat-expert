@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useI18n } from '../../i18n'
 
 type BetslipSlippageSettingsProps = {
   isOpen: boolean
@@ -7,6 +8,7 @@ type BetslipSlippageSettingsProps = {
 }
 
 export function BetslipSlippageSettings({ isOpen, slippage, onSlippageChange }: BetslipSlippageSettingsProps) {
+  const { t } = useI18n()
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false)
 
   if (!isOpen) return null
@@ -14,7 +16,7 @@ export function BetslipSlippageSettings({ isOpen, slippage, onSlippageChange }: 
   return (
     <div className="space-y-2 rounded-md border border-slate-200 bg-white p-3 md:rounded-lg">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-slate-900">슬리피지</span>
+        <span className="text-sm font-semibold text-slate-900">{t('betslip.slippage')}</span>
         <span className="text-xs text-slate-500">{slippage}%</span>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -39,12 +41,12 @@ export function BetslipSlippageSettings({ isOpen, slippage, onSlippageChange }: 
           onClick={() => setIsAdvancedOpen((open) => !open)}
           type="button"
         >
-          {isAdvancedOpen ? '고급 입력 닫기' : '고급 입력 열기'}
+          {isAdvancedOpen ? t('betslip.slippageAdvancedClose') : t('betslip.slippageAdvancedOpen')}
         </button>
 
         {isAdvancedOpen && (
           <div className="mt-2 grid gap-1">
-            <span className="text-xs text-slate-500">직접 입력 슬리피지 (%)</span>
+            <span className="text-xs text-slate-500">{t('betslip.slippageCustom')}</span>
             <input
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm md:rounded-lg"
               type="number"

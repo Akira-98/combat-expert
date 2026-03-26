@@ -13,6 +13,7 @@ import { useBetHistory } from './useBetHistory'
 import { useBetRedeem } from './useBetRedeem'
 import { useTransactionNotice } from './useTransactionNotice'
 import { useBetSettlementSync } from './useBetSettlementSync'
+import { translate } from '../i18n'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const DEFAULT_SLIPPAGE = 3
@@ -71,12 +72,12 @@ export function useBetting({
       resetSelectionMeta()
       void refetchBetTokenBalance()
       setSuccessNotice({
-        title: '베팅 완료',
-        message: '트랜잭션이 성공적으로 처리되었습니다.',
+        title: translate('betting.betSuccessTitle'),
+        message: translate('betting.betSuccessMessage'),
         txHash: receipt?.transactionHash,
       })
     },
-    onError: (err) => setErrorNotice({ title: '베팅 실패', error: err }),
+    onError: (err) => setErrorNotice({ title: translate('betting.betErrorTitle'), error: err }),
   })
   const { bets } = useBetHistory({ address, isPollingEnabled: isBetHistoryPollingEnabled })
   const { betSettlementSyncStateByTokenId } = useBetSettlementSync({
@@ -88,12 +89,12 @@ export function useBetting({
     onSuccess: (txHash) => {
       void refetchBetTokenBalance()
       setSuccessNotice({
-        title: '수익 수령 완료',
-        message: '수익 수령 트랜잭션이 성공적으로 처리되었습니다.',
+        title: translate('betting.redeemSuccessTitle'),
+        message: translate('betting.redeemSuccessMessage'),
         txHash,
       })
     },
-    onError: (err) => setErrorNotice({ title: '수익 수령 실패', error: err }),
+    onError: (err) => setErrorNotice({ title: translate('betting.redeemErrorTitle'), error: err }),
   })
 
   const selectedOutcomes = useMemo(() => buildSelectedOutcomes(items), [items])

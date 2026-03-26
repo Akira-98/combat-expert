@@ -16,7 +16,7 @@ export const getTxExplorerUrl = (chainId: number | undefined, txHash: string) =>
 }
 
 export const getChainName = (chainId: number | undefined) => {
-  if (!chainId) return '알 수 없는 네트워크'
+  if (!chainId) return translate('errors.unknownNetwork')
   return CHAIN_NAME_BY_ID[chainId] ?? `Chain ${chainId}`
 }
 
@@ -30,3 +30,4 @@ export const shortenAddress = (address?: string, head = 6, tail = 4) => {
   if (address.length <= head + tail) return address
   return `${address.slice(0, head)}...${address.slice(-tail)}`
 }
+import { translate } from '../i18n'

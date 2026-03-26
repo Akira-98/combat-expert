@@ -51,17 +51,17 @@ export const getAmountValidationMessage = ({
   if (!hasAmountInput) return undefined
 
   const parsedAmount = Number(betAmount)
-  if (!Number.isFinite(parsedAmount)) return '베팅 금액은 숫자로 입력해 주세요.'
-  if (!(parsedAmount > 0)) return '베팅 금액은 0보다 커야 합니다.'
+  if (!Number.isFinite(parsedAmount)) return translate('betslip.error.amountNumber')
+  if (!(parsedAmount > 0)) return translate('betslip.error.amountPositive')
 
   if (typeof minBet === 'number' && parsedAmount < minBet) {
-    return `최소 베팅 금액은 ${minBet.toFixed(4)} 입니다.`
+    return translate('betslip.error.minBet', { amount: minBet.toFixed(4) })
   }
   if (typeof maxBet === 'number' && parsedAmount > maxBet) {
-    return `최대 베팅 금액은 ${maxBet.toFixed(4)} 입니다.`
+    return translate('betslip.error.maxBet', { amount: maxBet.toFixed(4) })
   }
   if (isConnected && typeof balance === 'number' && Number.isFinite(balance) && balance > 0 && parsedAmount > balance) {
-    return `잔액이 부족합니다. 현재 사용 가능 잔액은 ${balance.toFixed(4)} 입니다.`
+    return translate('betslip.error.insufficientBalance', { amount: balance.toFixed(4) })
   }
 
   return undefined
@@ -75,11 +75,11 @@ export const getUiBlockHint = ({
   isBetAllowed,
   disableReason,
 }: UiBlockHintParams) => {
-  if (isProcessing) return '트랜잭션 처리 중입니다. 지갑에서 요청을 확인해 주세요.'
-  if (!isConnected) return '지갑을 연결해 주세요.'
-  if (selectionCount === 0) return '마켓에서 아웃컴을 선택해 주세요.'
-  if (!(amountNum > 0)) return '베팅 금액을 입력해 주세요.'
-  if (!isBetAllowed && !disableReason) return '현재 선택은 지금 베팅할 수 없습니다.'
+  if (isProcessing) return translate('betslip.hint.processing')
+  if (!isConnected) return translate('betslip.hint.connectWallet')
+  if (selectionCount === 0) return translate('betslip.hint.selectOutcome')
+  if (!(amountNum > 0)) return translate('betslip.hint.enterAmount')
+  if (!isBetAllowed && !disableReason) return translate('betslip.hint.unavailable')
   return undefined
 }
 
@@ -90,12 +90,12 @@ export const getSubmitLabel = ({
   amountNum,
   isApproveRequired,
 }: SubmitLabelParams) => {
-  if (isProcessing) return '처리 중'
-  if (!isConnected) return '지갑 연결'
-  if (selectionCount === 0) return '베팅'
-  if (!(amountNum > 0)) return '금액 입력'
-  if (isApproveRequired) return '승인'
-  return '베팅'
+  if (isProcessing) return translate('common.processing')
+  if (!isConnected) return translate('header.connectWallet')
+  if (selectionCount === 0) return translate('betslip.submit.bet')
+  if (!(amountNum > 0)) return translate('betslip.submit.enterAmount')
+  if (isApproveRequired) return translate('betslip.submit.approve')
+  return translate('betslip.submit.bet')
 }
 
 export const getTransactionSteps = ({
@@ -114,14 +114,14 @@ export const getTransactionSteps = ({
   if (isApproveRequired) {
     steps.push({
       id: 'approve',
-      label: '승인',
+      label: translate('betslip.transaction.approve'),
       status: approvePending ? 'active' : betPending || betReceiptReady ? 'done' : 'pending',
     })
   }
 
   steps.push({
     id: 'bet',
-    label: '베팅',
+    label: translate('betslip.transaction.bet'),
     status: betPending ? 'active' : betReceiptReady ? 'done' : 'pending',
   })
 
@@ -132,19 +132,20 @@ export const getFriendlyTransactionErrorMessage = (error: unknown) => {
   const message = error instanceof Error ? error.message : typeof error === 'string' ? error : ''
   const lower = message.toLowerCase()
 
-  if (!message) return '요청 처리에 실패했습니다. 잠시 후 다시 시도해 주세요.'
+  if (!message) return translate('betslip.txError.default')
   if (lower.includes('user rejected') || lower.includes('rejected') || lower.includes('denied')) {
-    return '지갑에서 요청이 취소되었습니다.'
+    return translate('betslip.txError.rejected')
   }
   if (lower.includes('insufficient')) {
-    return '잔액 또는 가스비가 부족해 트랜잭션을 진행할 수 없습니다.'
+    return translate('betslip.txError.insufficient')
   }
   if (lower.includes('network') || lower.includes('rpc')) {
-    return '네트워크 상태가 불안정합니다. 잠시 후 다시 시도해 주세요.'
+    return translate('betslip.txError.network')
   }
   if (lower.includes('allowance') || lower.includes('approve')) {
-    return '토큰 승인 단계에서 문제가 발생했습니다. 다시 시도해 주세요.'
+    return translate('betslip.txError.allowance')
   }
 
-  return '트랜잭션 처리 중 오류가 발생했습니다. 다시 시도해 주세요.'
+  return translate('betslip.txError.fallback')
 }
+import { translate } from '../i18n'

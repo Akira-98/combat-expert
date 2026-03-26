@@ -1,5 +1,6 @@
 import type { useBetting } from '../../hooks/useBetting'
 import type { useWalletConnection } from '../../hooks/useWalletConnection'
+import { useI18n } from '../../i18n'
 import type { BetslipPanelProps } from '../BetslipPanel'
 import { BetslipPanel } from '../BetslipPanel'
 import { BetsAndTransferPanel } from '../BetsAndTransferPanel'
@@ -25,6 +26,7 @@ export function DesktopSidebar({
   betslipPanelProps,
   onChangeTab,
 }: DesktopSidebarProps) {
+  const { t } = useI18n()
   const tabButtonBaseClass = 'btn-shell-lg px-3 py-2 text-sm font-semibold transition'
 
   return (
@@ -36,14 +38,14 @@ export function DesktopSidebar({
             onClick={() => onChangeTab('myBets')}
             type="button"
           >
-            내 베팅
+            {t('sidebar.myBets')}
           </button>
           <button
             className={`${tabButtonBaseClass} ${desktopSidePanelTab === 'betslip' ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'}`}
             onClick={() => onChangeTab('betslip')}
             type="button"
           >
-            베팅슬립 {selectionCount > 0 ? `(${selectionCount})` : ''}
+            {t('betslip.title')} {selectionCount > 0 ? `(${selectionCount})` : ''}
           </button>
         </div>
       </div>

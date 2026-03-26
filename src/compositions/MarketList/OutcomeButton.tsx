@@ -1,4 +1,5 @@
 import type { OutcomeItem } from '../../types/ui'
+import { useI18n } from '../../i18n'
 import { normalizeOutcomeLabel } from './helpers'
 import type { OutcomePriceChange } from './types'
 
@@ -17,6 +18,7 @@ export function OutcomeButton({
   priceChange,
   onSelectOutcome,
 }: OutcomeButtonProps) {
+  const { t } = useI18n()
   const isConditionInactive = outcome.conditionState !== 'Active'
   const isOddsUnavailable = !Number.isFinite(outcome.odds) || outcome.odds <= 1
   const isDisabled = isConditionInactive || isOddsUnavailable
@@ -48,17 +50,17 @@ export function OutcomeButton({
       <div className="flex flex-wrap items-center gap-1">
         {isDisabled && (
           <span className="ui-pill chip-pill px-2 py-0.5 text-[10px] font-semibold">
-            {isConditionInactive ? '마켓 비활성' : '배당 없음'}
+            {isConditionInactive ? t('market.outcomeInactive') : t('market.noOdds')}
           </span>
         )}
         {isSelected && priceChange && !isDisabled && (
           <span className="ui-state-warning chip-pill hidden px-2 py-0.5 text-[10px] font-semibold md:inline-flex">
-            변경 {priceChange.previousOdds.toFixed(2)}→{priceChange.currentOdds.toFixed(2)}
+            {t('market.oddsChanged', { prev: priceChange.previousOdds.toFixed(2), next: priceChange.currentOdds.toFixed(2) })}
           </span>
         )}
         {outcome.isExpressForbidden && (
           <span className="ui-pill chip-pill hidden px-2 py-0.5 text-[10px] font-medium md:inline-flex">
-            싱글 전용
+            {t('market.singleOnly')}
           </span>
         )}
       </div>

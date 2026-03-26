@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useI18n } from '../../i18n'
 import { selectionKey } from '../../helpers/mappers'
 import { mapMarketsToSections } from '../../helpers/mappers'
 import type { OutcomeItem, SelectionKey } from '../../types/ui'
@@ -50,6 +51,7 @@ export function GameOddsPreview({
   selectedOutcomes,
   onSelectOutcome,
 }: GameOddsPreviewProps) {
+  const { t } = useI18n()
   const { anchorRef, hasEnteredViewport } = usePrefetchOnVisible(priority)
   const shouldFetchPreview = Boolean(gameId) && hasEnteredViewport
   const { data: markets, isLoading, isError } = useMarketManagerConditions({
@@ -91,7 +93,7 @@ export function GameOddsPreview({
   if (isLoading) {
     return (
       <div ref={anchorRef} className={`${className} text-xs text-slate-400`}>
-        배당 불러오는 중...
+        {t('market.previewLoading')}
       </div>
     )
   }
@@ -99,7 +101,7 @@ export function GameOddsPreview({
   if (isError) {
     return (
       <div ref={anchorRef} className={`${className} text-xs text-rose-500`}>
-        배당 로드 실패
+        {t('market.previewError')}
       </div>
     )
   }
@@ -107,7 +109,7 @@ export function GameOddsPreview({
   if (previewItems.length === 0) {
     return (
       <div ref={anchorRef} className={`${className} text-xs text-slate-400`}>
-        배당 정보 없음
+        {t('market.previewEmpty')}
       </div>
     )
   }

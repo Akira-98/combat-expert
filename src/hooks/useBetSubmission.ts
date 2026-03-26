@@ -1,3 +1,5 @@
+import { translate } from '../i18n'
+
 type BetslipItemLike = {
   conditionId: string
   outcomeId: string
@@ -41,8 +43,8 @@ export function useBetSubmission({
 
     if (sdkConditionStateMismatch) {
       setErrorNotice({
-        title: '상태 재확인 필요',
-        message: '선택한 마켓 상태가 방금 변경되었습니다. 목록을 다시 확인한 뒤 다시 시도해 주세요.',
+        title: translate('betSubmission.stateReviewTitle'),
+        message: translate('betSubmission.stateReviewMessage'),
       })
       return
     }
@@ -53,8 +55,8 @@ export function useBetSubmission({
 
       if (!meta) {
         setErrorNotice({
-          title: '선택 재확인 필요',
-          message: '선택한 마켓의 최신 정보를 확인하지 못했습니다. 목록을 다시 확인한 뒤 다시 시도해 주세요.',
+          title: translate('betSubmission.selectionReviewTitle'),
+          message: translate('betSubmission.selectionReviewMessage'),
         })
         return
       }
@@ -62,8 +64,8 @@ export function useBetSubmission({
       if (meta.conditionState !== 'Active' || !Number.isFinite(meta.odds) || meta.odds <= 1) {
         syncSelectionMeta(items)
         setErrorNotice({
-          title: '배당 또는 상태 변경',
-          message: '선택한 마켓의 상태 또는 배당이 변경되었습니다. 최신 값으로 갱신했으니 다시 확인해 주세요.',
+          title: translate('betSubmission.marketChangedTitle'),
+          message: translate('betSubmission.marketChangedMessage'),
         })
         return
       }
@@ -72,8 +74,8 @@ export function useBetSubmission({
     if (selectedOutcomePriceChanges.size > 0) {
       syncSelectionMeta(items)
       setErrorNotice({
-        title: '배당 변경',
-        message: '선택한 배당이 방금 변경되었습니다. 최신 값으로 갱신했으니 다시 한 번 확인해 주세요.',
+        title: translate('betSubmission.oddsChangedTitle'),
+        message: translate('betSubmission.oddsChangedMessage'),
       })
       return
     }

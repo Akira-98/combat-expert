@@ -3,6 +3,7 @@ import type { WalletClient } from 'viem'
 import { useWalletClient } from 'wagmi'
 import { useAAWalletClient } from '../azuroSocialAaConnector'
 import { buildCommentAuthMessage, getCommentAuthorLabel, normalizeCommentContent } from '../helpers/comments'
+import { translate } from '../i18n'
 
 type UseMarketCommentsParams = {
   marketId?: string
@@ -28,7 +29,7 @@ async function fetchComments(marketId: string): Promise<MarketComment[]> {
 
   const payload = await response.json().catch(() => ({}))
   if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : '댓글을 불러오지 못했습니다.')
+    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('marketComments.fetchFailed'))
   }
 
   return Array.isArray(payload?.comments) ? payload.comments : []
@@ -55,7 +56,7 @@ async function postComment({
 
   const payload = await response.json().catch(() => ({}))
   if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : '댓글을 저장하지 못했습니다.')
+    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('marketComments.saveFailed'))
   }
 
   return payload.comment as MarketComment
@@ -78,7 +79,7 @@ async function fetchCommentSession(): Promise<CommentSessionPayload> {
   const payload = await response.json().catch(() => ({}))
 
   if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : '댓글 세션 상태를 확인하지 못했습니다.')
+    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('marketComments.sessionFailed'))
   }
 
   return {
@@ -109,13 +110,13 @@ async function createCommentSession({
 
   const noncePayload = await nonceResponse.json().catch(() => ({}))
   if (!nonceResponse.ok) {
-    throw new Error(typeof noncePayload?.error === 'string' ? noncePayload.error : '댓글 로그인 요청을 시작하지 못했습니다.')
+    throw new Error(typeof noncePayload?.error === 'string' ? noncePayload.error : translate('marketComments.startLoginFailed'))
   }
 
   const nonce = typeof noncePayload?.nonce === 'string' ? noncePayload.nonce : ''
   const issuedAt = typeof noncePayload?.issuedAt === 'string' ? noncePayload.issuedAt : ''
   if (!nonce || !issuedAt) {
-    throw new Error('댓글 로그인 요청이 올바르지 않습니다.')
+    throw new Error(translate('marketComments.invalidLoginRequest'))
   }
 
   const message = buildCommentAuthMessage({
@@ -127,7 +128,7 @@ async function createCommentSession({
   let signature = ''
 
   if (isAAWallet) {
-    if (!aaWalletClient) throw new Error('AA 지갑 클라이언트를 찾지 못했습니다.')
+    if (!aaWalletClient) throw new Error(translate('profile.noAaWalletClient'))
     signature = await aaWalletClient.signMessage({ message })
   } else if (walletClient) {
     signature = await walletClient.signMessage({
@@ -135,7 +136,7 @@ async function createCommentSession({
       message,
     })
   } else {
-    throw new Error('서명 가능한 지갑 클라이언트를 찾지 못했습니다.')
+    throw new Error(translate('profile.noSignWalletClient'))
   }
 
   const verifyResponse = await fetch('/api/comment-auth/verify', {
@@ -154,7 +155,7 @@ async function createCommentSession({
 
   const verifyPayload = await verifyResponse.json().catch(() => ({}))
   if (!verifyResponse.ok) {
-    throw new Error(typeof verifyPayload?.error === 'string' ? verifyPayload.error : '댓글 로그인에 실패했습니다.')
+    throw new Error(typeof verifyPayload?.error === 'string' ? verifyPayload.error : translate('marketComments.verifyLoginFailed'))
   }
 }
 
@@ -178,10 +179,10 @@ export function useMarketComments({ marketId, address, isConnected, isAAWallet }
 
   const createCommentMutation = useMutation({
     mutationFn: async (draft: string) => {
-      if (!marketId) throw new Error('마켓을 선택해 주세요.')
+      if (!marketId) throw new Error(translate('marketComments.selectMarket'))
 
       const content = normalizeCommentContent(draft)
-      if (!content) throw new Error('댓글 내용을 입력해 주세요.')
+      if (!content) throw new Error(translate('marketComments.enterContent'))
 
       const currentSession = sessionQuery.data
       const hasMatchingSession =
@@ -189,7 +190,7 @@ export function useMarketComments({ marketId, address, isConnected, isAAWallet }
         (!normalizedAddress || currentSession.address?.toLowerCase() === normalizedAddress)
 
       if (!hasMatchingSession) {
-        if (!normalizedAddress || !isConnected) throw new Error('댓글 로그인을 위해 지갑 연결이 필요합니다.')
+        if (!normalizedAddress || !isConnected) throw new Error(translate('marketComments.connectForLogin'))
 
         await createCommentSession({
           address: normalizedAddress,

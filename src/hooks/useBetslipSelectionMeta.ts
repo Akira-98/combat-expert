@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { MarketSection, OutcomeItem, SelectionKey } from '../types/ui'
 import { buildOutcomeMeta, selectionKey } from '../helpers/mappers'
+import { translate } from '../i18n'
 
 type SelectionMeta = {
   label: string
@@ -57,7 +58,7 @@ export function useBetslipSelectionMeta(params: { marketSections: MarketSection[
           odds: outcome.odds,
           conditionState: outcome.conditionState,
           gameId: outcome.gameId,
-          marketTitle: '선택 항목',
+          marketTitle: translate('betslip.selectionItem'),
         },
       )
       return next

@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import type { TransactionNotice } from '../helpers/betslipUi'
+import { translate } from '../i18n'
 
 type UseTransactionNoticeParams = {
   mapErrorMessage?: (error: unknown) => string
 }
 
-const DEFAULT_ERROR_MESSAGE = '요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+const DEFAULT_ERROR_MESSAGE = translate('notice.defaultError')
 
 export function useTransactionNotice({ mapErrorMessage }: UseTransactionNoticeParams = {}) {
   const [transactionNotice, setTransactionNotice] = useState<TransactionNotice | undefined>()

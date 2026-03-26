@@ -1,5 +1,6 @@
 import { shortenAddress } from '../../helpers/walletUi'
 import type { RankingEntry, RankingViewer } from '../../hooks/useRankings'
+import { useI18n } from '../../i18n'
 
 type RankingLeaderboardRowProps = {
   entry: RankingEntry
@@ -45,12 +46,13 @@ export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderbo
 }
 
 function EntryMetrics({ entry }: { entry: RankingEntry | RankingViewer }) {
+  const { t } = useI18n()
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-300">
-      <span>적중 {entry.winCount}</span>
-      <span>미적중 {entry.loseCount}</span>
-      <span>언더독 {entry.underdogHitCount}</span>
-      <span>총 {entry.eventCount}건</span>
+      <span>{t('ranking.hit', { count: entry.winCount })}</span>
+      <span>{t('ranking.miss', { count: entry.loseCount })}</span>
+      <span>{t('ranking.underdogCount', { count: entry.underdogHitCount })}</span>
+      <span>{t('ranking.totalCount', { count: entry.eventCount })}</span>
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { getWalletAvatarUrl } from '../helpers/walletUi'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 import type { RankingViewer } from '../hooks/useRankings'
 import type { useUsdtTransfer } from '../hooks/useUsdtTransfer'
+import { useI18n } from '../i18n'
 import { AccountPanel } from './header/AccountPanel'
 import { HeaderNavButtons } from './header/HeaderNavButtons'
 import { TransferModal } from './header/TransferModal'
@@ -65,6 +66,7 @@ export function Header({
   onOpenAuthModal,
   onDisconnect,
 }: HeaderProps) {
+  const { locale, setLocale, t } = useI18n()
   const buttonBaseClass =
     'inline-flex items-center justify-center text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 md:h-auto md:px-4 md:py-2 md:text-sm'
   const actionButtonClass = `btn-shell h-8 px-2.5 md:btn-shell-lg ${buttonBaseClass}`
@@ -87,9 +89,9 @@ export function Header({
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false)
   const avatarUrl = getWalletAvatarUrl(address)
   const usdtBalanceLabel = !isUsdtSupportedChain
-    ? '지원되지 않는 네트워크'
+    ? t('header.unsupportedNetwork')
     : isUsdtBalanceLoading
-      ? '불러오는 중...'
+      ? t('header.balanceLoading')
       : `${(usdtBalance ?? 0).toFixed(4)} USDT`
 
   useBodyScrollLock(isAccountModalOpen || isTransferModalOpen)
@@ -158,6 +160,10 @@ export function Header({
     setIsTransferModalOpen(true)
   }
 
+  const handleToggleLocale = () => {
+    setLocale(locale === 'ko' ? 'en' : 'ko')
+  }
+
   const accountPanel = (
     <AccountPanel
       address={address}
@@ -187,15 +193,15 @@ export function Header({
           <h1 className="m-0">
             {onTitleClick ? (
               <button
-                aria-label="탐색으로 이동"
+                aria-label={t('header.goToExplore')}
                 className={`${titleClass} m-0 cursor-pointer border-0 bg-transparent p-0 text-left`}
                 onClick={onTitleClick}
                 type="button"
               >
-                세기의 격잘알
+                {t('app.title')}
               </button>
             ) : (
-              <span className={titleClass}>세기의 격잘알</span>
+              <span className={titleClass}>{t('app.title')}</span>
             )}
           </h1>
         </div>
@@ -212,10 +218,11 @@ export function Header({
                 onDisconnect={onDisconnect}
                 onGuideClick={handleGuideNavigation}
                 onRankingClick={handleRankingNavigation}
+                onToggleLocale={handleToggleLocale}
               />
               {isAuthenticated && isWalletStatusReady && !isConnecting && !isReconnecting && (
                 <p className="ui-text-muted m-0 text-right text-xs">
-                  로그인은 완료됐지만 지갑이 아직 연결되지 않았습니다. 지갑 연결을 진행해 주세요.
+                  {t('header.authNeedsWallet')}
                 </p>
               )}
               {connectErrorMessage && <p className={connectErrorClass}>{connectErrorMessage}</p>}
@@ -226,13 +233,14 @@ export function Header({
                 onGuideClick={handleGuideNavigation}
                 onRankingClick={handleRankingNavigation}
                 onWalletClick={handleWalletAction}
+                onToggleLocale={handleToggleLocale}
                 showRankingOnMobile
                 showWalletOnMobile
               />
               <button
                 aria-expanded={isAccountModalOpen}
                 aria-haspopup="dialog"
-                aria-label="계정 메뉴 열기"
+                aria-label={t('header.accountMenuOpen')}
                 className={accountTriggerClass}
                 onClick={() => setIsAccountModalOpen((current) => !current)}
                 type="button"
@@ -254,7 +262,7 @@ export function Header({
       {isConnected && isAccountModalOpen && (
         <>
           <button
-            aria-label="계정 메뉴 닫기"
+            aria-label={t('header.accountMenuClose')}
             className="fixed inset-0 z-40 hidden bg-transparent md:block"
             onClick={() => setIsAccountModalOpen(false)}
             type="button"
@@ -263,7 +271,7 @@ export function Header({
             createPortal(
               <div aria-modal="true" className="fixed inset-0 z-[70] flex items-end md:hidden" role="dialog">
                 <button
-                  aria-label="계정 시트 닫기"
+                  aria-label={t('header.accountSheetClose')}
                   className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
                   onClick={() => setIsAccountModalOpen(false)}
                   type="button"
@@ -292,6 +300,7 @@ function HeaderActions({
   onDisconnect,
   onGuideClick,
   onRankingClick,
+  onToggleLocale,
 }: {
   secondaryButtonClass: string
   isConnecting: boolean
@@ -302,7 +311,9 @@ function HeaderActions({
   onDisconnect: () => void
   onGuideClick: () => void
   onRankingClick: () => void
+  onToggleLocale: () => void
 }) {
+  const { t } = useI18n()
   const primaryButtonClass =
     'ui-btn-primary btn-shell inline-flex h-8 items-center justify-center px-2.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 md:h-auto md:btn-shell-lg md:px-4 md:py-2 md:text-sm'
 
@@ -312,15 +323,16 @@ function HeaderActions({
         onGuideClick={onGuideClick}
         onRankingClick={onRankingClick}
         onWalletClick={onWalletClick}
+        onToggleLocale={onToggleLocale}
         showRankingOnMobile
         showWalletOnMobile
       />
       <button className={primaryButtonClass} disabled={!canOpenAuthModal || isConnecting} onClick={onOpenAuthModal}>
-        {isConnecting ? '연결 중...' : isAuthenticated ? '지갑 연결' : '로그인'}
+        {isConnecting ? t('header.connecting') : isAuthenticated ? t('header.connectWallet') : t('header.login')}
       </button>
       {isAuthenticated && (
         <button className={secondaryButtonClass} onClick={onDisconnect}>
-          로그아웃
+          {t('header.logout')}
         </button>
       )}
     </div>

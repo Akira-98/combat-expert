@@ -1,3 +1,5 @@
+import { useI18n } from '../../i18n'
+
 export function ErrorState({
   title,
   message,
@@ -7,6 +9,7 @@ export function ErrorState({
   message?: string
   onRetry: () => void
 }) {
+  const { t } = useI18n()
   return (
     <div className="ui-state-danger-surface rounded-md border p-3 md:rounded-lg">
       <p className="ui-text-strong m-0 text-sm font-semibold">{title}</p>
@@ -16,7 +19,7 @@ export function ErrorState({
         onClick={onRetry}
         type="button"
       >
-        다시 시도
+        {t('common.retry')}
       </button>
     </div>
   )

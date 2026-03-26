@@ -1,4 +1,5 @@
 import type { TransactionNotice, TransactionStep } from '../../helpers/betslipUi'
+import { useI18n } from '../../i18n'
 import { getTxExplorerUrl } from '../../helpers/walletUi'
 
 type BetslipSummarySectionProps = {
@@ -31,17 +32,18 @@ export function BetslipSummarySection({
   onDismissTransactionNotice,
   onRetryTransaction,
 }: BetslipSummarySectionProps) {
+  const { t } = useI18n()
   const txExplorerUrl = transactionNotice?.txHash ? getTxExplorerUrl(chainId, transactionNotice.txHash) : undefined
 
   return (
     <>
       <div className="card-surface card-shell grid grid-cols-2 gap-2 p-3">
         <div className="grid gap-1">
-          <span className="ui-text-muted text-xs">총 배당</span>
+          <span className="ui-text-muted text-xs">{t('betslip.totalOdds')}</span>
           <strong className="ui-text-strong text-sm">{Number.isFinite(totalOdds) ? totalOdds.toFixed(3) : '0.000'}</strong>
         </div>
         <div className="grid gap-1">
-          <span className="ui-text-muted text-xs">예상 수익</span>
+          <span className="ui-text-muted text-xs">{t('betslip.possibleWin')}</span>
           <strong className="ui-text-strong text-sm">{Number.isFinite(possibleWin) ? possibleWin.toFixed(4) : '0.0000'}</strong>
         </div>
       </div>
@@ -49,12 +51,12 @@ export function BetslipSummarySection({
       <div className="card-surface card-shell p-3">
         <div className="grid grid-cols-2 gap-2">
           <div className="grid gap-1">
-            <span className="ui-text-muted text-xs">최소 베팅</span>
-            <strong className="ui-text-strong text-sm">{isLimitsLoading ? '확인 중...' : formatAmount(minBet)}</strong>
+            <span className="ui-text-muted text-xs">{t('betslip.minBet')}</span>
+            <strong className="ui-text-strong text-sm">{isLimitsLoading ? t('betslip.checking') : formatAmount(minBet)}</strong>
           </div>
           <div className="grid gap-1">
-            <span className="ui-text-muted text-xs">최대 베팅</span>
-            <strong className="ui-text-strong text-sm">{isLimitsLoading ? '확인 중...' : formatAmount(maxBet)}</strong>
+            <span className="ui-text-muted text-xs">{t('betslip.maxBet')}</span>
+            <strong className="ui-text-strong text-sm">{isLimitsLoading ? t('betslip.checking') : formatAmount(maxBet)}</strong>
           </div>
         </div>
 
@@ -79,7 +81,7 @@ export function BetslipSummarySection({
               >
                 <span>{step.label}</span>
                 <span>
-                  {step.status === 'active' ? '진행 중' : step.status === 'done' ? '완료' : '대기'}
+                  {step.status === 'active' ? t('betslip.step.active') : step.status === 'done' ? t('betslip.step.done') : t('betslip.step.pending')}
                 </span>
               </div>
             ))}
@@ -111,7 +113,7 @@ export function BetslipSummarySection({
                   rel="noreferrer"
                   target="_blank"
                 >
-                  탐색기에서 보기
+                  {t('betslip.viewExplorer')}
                 </a>
               )}
               {transactionNotice.type === 'error' && (
@@ -120,7 +122,7 @@ export function BetslipSummarySection({
                   onClick={onRetryTransaction}
                   type="button"
                 >
-                  다시 시도
+                  {t('common.retry')}
                 </button>
               )}
             </div>
@@ -129,7 +131,7 @@ export function BetslipSummarySection({
               onClick={onDismissTransactionNotice}
               type="button"
             >
-              닫기
+              {t('common.close')}
             </button>
           </div>
         </div>

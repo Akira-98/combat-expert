@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react'
 import type { Address } from 'viem'
 import type { useProfile } from '../../hooks/useProfile'
+import { useI18n } from '../../i18n'
 import { formatLiveChatMessageTime, useLiveChat } from '../../hooks/useLiveChat'
 import { DesktopStickyRail } from './DesktopSidebarLayout'
 
@@ -10,6 +11,7 @@ type DesktopChatRailProps = {
 }
 
 export function DesktopChatRail({ address, profile }: DesktopChatRailProps) {
+  const { t } = useI18n()
   const chat = useLiveChat({ address, nickname: profile.nickname })
   const {
     scrollContainerRef,
@@ -36,7 +38,7 @@ export function DesktopChatRail({ address, profile }: DesktopChatRailProps) {
         <div className="min-h-0 px-4 py-4">
           <div ref={scrollContainerRef} className="card-surface-soft card-shell min-h-0 h-full w-full overflow-y-auto">
             {messages.length === 0 ? (
-              <p className="ui-text-muted m-0 px-3 py-3 text-xs">아직 메시지가 없습니다. 첫 메시지를 남겨보세요.</p>
+              <p className="ui-text-muted m-0 px-3 py-3 text-xs">{t('chat.empty')}</p>
             ) : (
               <div className="grid w-full content-start gap-0 justify-items-stretch">
                 {messages.map((message) => (
@@ -60,7 +62,7 @@ export function DesktopChatRail({ address, profile }: DesktopChatRailProps) {
           <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
             <input
               className="ui-input h-10 rounded-md border px-3 text-base outline-none md:rounded-lg"
-              placeholder={connectionState === 'connected' ? '메시지를 입력하세요' : '연결 후 입력 가능합니다'}
+              placeholder={connectionState === 'connected' ? t('chat.placeholder.connected') : t('chat.placeholder.disconnected')}
               value={draft}
               maxLength={220}
               onChange={(event) => setDraft(event.target.value)}
@@ -71,7 +73,7 @@ export function DesktopChatRail({ address, profile }: DesktopChatRailProps) {
               type="submit"
               disabled={!canSend}
             >
-              전송
+              {t('common.send')}
             </button>
           </div>
           {errorMessage ? <p className="ui-state-danger m-0 rounded-md border px-2 py-1 text-[11px]">{errorMessage}</p> : null}

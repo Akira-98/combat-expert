@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import type { GameItem } from '../../types/ui'
 import { formatCommentTime, COMMENT_MAX_LENGTH } from '../../helpers/comments'
 import { useMarketComments } from '../../hooks/useMarketComments'
+import { useI18n } from '../../i18n'
 
 type MarketCommentsPanelProps = {
   selectedGame?: GameItem
@@ -18,6 +19,7 @@ export function MarketCommentsPanel({
   isAAWallet,
   onConnectWallet,
 }: MarketCommentsPanelProps) {
+  const { t } = useI18n()
   const comments = useMarketComments({
     marketId: selectedGame?.gameId,
     address,
@@ -32,7 +34,7 @@ export function MarketCommentsPanel({
     <section className="grid gap-3">
       <div className="flex items-center justify-between gap-2">
         <div>
-          <h3 className="ui-text-strong m-0 text-sm font-semibold">댓글</h3>
+          <h3 className="ui-text-strong m-0 text-sm font-semibold">{t('comments.title')}</h3>
         </div>
         <span className="ui-pill rounded-full border px-2 py-0.5 text-[11px] font-semibold">{comments.comments.length}</span>
       </div>
@@ -41,9 +43,9 @@ export function MarketCommentsPanel({
 
       <div className="grid gap-0">
         {comments.isLoading ? (
-          <p className="ui-text-muted m-0 text-xs">댓글을 불러오는 중...</p>
+          <p className="ui-text-muted m-0 text-xs">{t('comments.loading')}</p>
         ) : comments.comments.length === 0 ? (
-          <p className="ui-text-muted m-0 text-xs">아직 댓글이 없습니다. 아래에서 첫 댓글을 남겨보세요.</p>
+          <p className="ui-text-muted m-0 text-xs">{t('comments.empty')}</p>
         ) : (
           comments.comments.map((comment) => (
             <article key={comment.id} className="border-b border-white/8 py-3 last:border-b-0 last:pb-0 first:pt-0">
@@ -83,6 +85,7 @@ function CommentComposer({
   onConnectWallet,
   onSubmit,
 }: CommentComposerProps) {
+  const { t } = useI18n()
   const [draft, setDraft] = useState('')
   const canSubmit = Boolean(draft.trim() && !isSubmitting && canInteract)
 
@@ -103,22 +106,22 @@ function CommentComposer({
       <textarea
         className="ui-input min-h-24 rounded-md border px-3 py-2 text-sm"
         maxLength={COMMENT_MAX_LENGTH}
-        placeholder={canInteract ? '이 마켓에 대한 생각을 남겨보세요' : '댓글을 작성하려면 지갑 연결이 필요합니다'}
+        placeholder={canInteract ? t('comments.placeholder.connected') : t('comments.placeholder.disconnected')}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         disabled={!canInteract || isSubmitting}
       />
       <div className="flex items-center justify-between gap-2">
         <p className="ui-text-muted m-0 text-[11px]">
-          {canInteract ? `${draft.trim().length}/${COMMENT_MAX_LENGTH}` : '첫 댓글 로그인 시 지갑 서명이 1회 필요합니다.'}
+          {canInteract ? `${draft.trim().length}/${COMMENT_MAX_LENGTH}` : t('comments.loginHint')}
         </p>
         {canInteract ? (
           <button className="ui-btn-primary rounded-lg border px-3 py-2 text-sm font-semibold" disabled={!canSubmit} type="submit">
-            {isSubmitting ? '등록 중...' : '등록'}
+            {isSubmitting ? t('comments.submitting') : t('comments.submit')}
           </button>
         ) : (
           <button className="ui-btn-secondary rounded-lg border px-3 py-2 text-sm font-semibold" onClick={onConnectWallet} type="button">
-            지갑 연결
+            {t('comments.connectWallet')}
           </button>
         )}
       </div>

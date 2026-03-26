@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useWalletClient } from 'wagmi'
 import { useAAWalletClient } from '../azuroSocialAaConnector'
 import { buildProfileMessage, getProfileDisplayName, normalizeProfileNickname } from '../helpers/profile'
+import { translate } from '../i18n'
 
 type UseProfileParams = {
   address?: `0x${string}`
@@ -22,7 +23,7 @@ async function fetchProfile(address: string): Promise<ProfilePayload> {
 
   const payload = await response.json().catch(() => ({}))
   if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : '프로필을 불러오지 못했습니다.')
+    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('profile.loadFailed'))
   }
 
   return {
@@ -61,7 +62,7 @@ async function saveProfile({
 
   const payload = await response.json().catch(() => ({}))
   if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : '프로필을 저장하지 못했습니다.')
+    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('profile.saveFailed'))
   }
 
   return {
@@ -87,7 +88,7 @@ export function useProfile({ address, isConnected, isAAWallet }: UseProfileParam
     mutationFn: async (nextNickname: string) => {
       const currentAddress = normalizedAddress
       if (!currentAddress) {
-        throw new Error('연결된 지갑이 없습니다.')
+        throw new Error(translate('profile.noWallet'))
       }
 
       const nickname = normalizeProfileNickname(nextNickname)
@@ -102,7 +103,7 @@ export function useProfile({ address, isConnected, isAAWallet }: UseProfileParam
 
       if (isAAWallet) {
         if (!aaWalletClient) {
-          throw new Error('AA 지갑 클라이언트를 찾지 못했습니다.')
+          throw new Error(translate('profile.noAaWalletClient'))
         }
         signature = await aaWalletClient.signMessage({
           message,
@@ -113,7 +114,7 @@ export function useProfile({ address, isConnected, isAAWallet }: UseProfileParam
           message,
         })
       } else {
-        throw new Error('서명 가능한 지갑 클라이언트를 찾지 못했습니다.')
+        throw new Error(translate('profile.noSignWalletClient'))
       }
 
       return saveProfile({
