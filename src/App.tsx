@@ -100,7 +100,7 @@ function App() {
   }
   return (
     <div className="app-theme w-full max-w-[1440px] px-0 pb-36 pt-0 lg:pb-10 xl:max-w-none">
-      <div className="sticky top-0 z-30 md:contents">
+      <div className="sticky top-0 z-30">
         <div
           className="border-b border-slate-900/70 bg-[#070b12]/95 px-3 pb-0 backdrop-blur md:px-4 md:pb-0 xl:px-0"
           style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)' }}
