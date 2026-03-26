@@ -1,4 +1,4 @@
-type LocaleMessages = Record<string, string>
+import type { LocaleMessages } from './types'
 
 export const koMarketMessages: LocaleMessages = {
   'walletTransfer.title': 'USDT 송금',

@@ -1,4 +1,4 @@
-type LocaleMessages = Record<string, string>
+import type { LocaleMessages } from './types'
 
 export const koCommonMessages: LocaleMessages = {
   'app.title': '세기의 격잘알',
