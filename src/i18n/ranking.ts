@@ -23,14 +23,14 @@ export const koRankingMessages: LocaleMessages = {
 }
 
 export const enRankingMessages: LocaleMessages = {
-  'ranking.pageTitle': 'Top Expert Ranking',
+  'ranking.pageTitle': 'Leaderboard',
   'ranking.totalScore': 'Score',
   'ranking.record': 'Record',
   'ranking.hitRate': 'Hit Rate',
   'ranking.underdog': 'Underdog',
   'ranking.events': 'Events',
-  'ranking.noViewerData': 'You do not have ranking data yet.',
-  'ranking.noViewerDataDesc': 'Once settled predictions accumulate, your rank and score will appear here.',
+  'ranking.noViewerData': 'No ranking data yet.',
+  'ranking.noViewerDataDesc': 'Your rank will appear once your predictions are settled.',
   'ranking.noData': 'No ranking data yet.',
   'ranking.noDataDesc': 'Scores and ranks will appear here after predictions are settled.',
   'ranking.loading': 'Loading rankings...',
