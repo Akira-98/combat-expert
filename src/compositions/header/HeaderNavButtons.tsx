@@ -21,7 +21,7 @@ export function HeaderNavButtons({
 }: HeaderNavButtonsProps) {
   const { locale, t } = useI18n()
   const getNavButtonClass = (isVisibleOnMobile: boolean) =>
-    `ui-text-body h-9 w-9 items-center justify-center rounded-full bg-transparent text-sm transition hover:bg-black/5 dark:hover:bg-white/5 ${
+    `ui-ghost-icon h-9 w-9 items-center justify-center rounded-full text-sm transition ${
       isVisibleOnMobile ? 'inline-flex md:inline-flex' : 'hidden md:inline-flex'
     }`
 
@@ -51,7 +51,7 @@ export function HeaderNavButtons({
           <path d="M9.5 7.5h6M9.5 11h6M9.5 14.5h4" strokeLinecap="round" />
         </svg>
       </button>
-      <button aria-label={t('nav.languageToggle')} className="ui-text-body inline-flex h-9 min-w-11 items-center justify-center rounded-full bg-transparent px-2 text-[11px] font-semibold transition hover:bg-black/5 dark:hover:bg-white/5" onClick={onToggleLocale} title={t('common.language')} type="button">
+      <button aria-label={t('nav.languageToggle')} className="ui-ghost-icon inline-flex h-9 min-w-11 items-center justify-center rounded-full px-2 text-[11px] font-semibold transition" onClick={onToggleLocale} title={t('common.language')} type="button">
         {locale.toUpperCase()}
       </button>
     </>

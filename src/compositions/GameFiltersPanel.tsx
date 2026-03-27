@@ -31,9 +31,9 @@ export function GameFiltersPanel({
 }: GameFiltersPanelProps) {
   const { t } = useI18n()
   const mobileFilterButtonClass = 'btn-pill shrink-0 px-2.5 py-1 text-[11px] font-semibold transition'
-  const filterPanelClass = 'ui-bg-solid-soft section-shell border-b border-slate-900/70 px-2.5 py-1.5 md:hidden'
+  const filterPanelClass = 'ui-bg-solid-soft ui-border section-shell border-b px-2.5 py-1.5 md:hidden'
   const searchTriggerButtonClass = 'ui-btn-secondary btn-shell inline-flex h-8 w-8 shrink-0 items-center justify-center'
-  const mobileSearchDialogClass = 'mx-auto mt-[calc(env(safe-area-inset-top)+16px)] w-[calc(100%-20px)] max-w-xl rounded-xl border border-slate-300 ui-surface p-3'
+  const mobileSearchDialogClass = 'ui-surface card-shell-xl mx-auto mt-[calc(env(safe-area-inset-top)+16px)] w-[calc(100%-20px)] max-w-xl p-3'
   const modalActionButtonClass = 'shrink-0 px-3 py-2 text-sm font-semibold'
   const [isLeagueExpanded, setIsLeagueExpanded] = useState(false)
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
@@ -96,7 +96,7 @@ export function GameFiltersPanel({
             ))}
             {leagueOptions.length > 8 && (
               <button
-                className={`${mobileFilterButtonClass} border-slate-300 text-slate-300 hover:border-slate-200 hover:text-slate-200`}
+                className={`${mobileFilterButtonClass} ui-btn-secondary`}
                 onClick={() => setIsLeagueExpanded((value) => !value)}
                 type="button"
               >
@@ -105,7 +105,7 @@ export function GameFiltersPanel({
             )}
           </div>
 
-          <span className="shrink-0 text-[11px] text-slate-500">
+          <span className="ui-text-muted shrink-0 text-[11px]">
             {filteredGamesCount}/{totalGamesCount}
           </span>
         </div>
@@ -114,19 +114,19 @@ export function GameFiltersPanel({
       {isSearchModalOpen && (
         <div
           aria-modal="true"
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm md:hidden"
+          className="ui-overlay-scrim fixed inset-0 z-50 backdrop-blur-sm md:hidden"
           onClick={() => setIsSearchModalOpen(false)}
           role="dialog"
         >
           <div className={mobileSearchDialogClass} onClick={(event) => event.stopPropagation()}>
             <form className="flex items-center gap-2" onSubmit={handleMobileSearchSubmit}>
-              <svg aria-hidden="true" className="h-4 w-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+              <svg aria-hidden="true" className="ui-text-muted h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="6.5" />
                 <path d="M16 16L21 21" />
               </svg>
               <input
                 autoFocus
-                className="ui-input h-10 min-w-0 flex-1 rounded-lg border px-3 text-sm outline-none placeholder:text-slate-400"
+                className="ui-input h-10 min-w-0 flex-1 rounded-lg border px-3 text-sm outline-none"
                 placeholder={t('games.searchPlaceholder')}
                 type="search"
                 value={gameSearchQuery}

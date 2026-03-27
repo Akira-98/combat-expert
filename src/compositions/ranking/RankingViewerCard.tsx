@@ -12,8 +12,8 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
   if (!isConnected) return null
 
   return (
-    <section className="card-surface-soft card-shell-xl relative overflow-hidden border-orange-400/18 bg-[linear-gradient(135deg,rgba(251,146,60,0.12)_0%,rgba(15,23,42,0.96)_34%,rgba(15,23,42,0.98)_100%)] shadow-[0_0_0_1px_rgba(251,146,60,0.08),0_18px_40px_-28px_rgba(251,146,60,0.34)]">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(251,146,60,0.18),transparent_58%)]" />
+    <section className="ui-viewer-card card-shell-xl relative overflow-hidden border">
+      <div aria-hidden="true" className="ui-viewer-card-glow pointer-events-none absolute inset-x-0 top-0 h-24" />
       <div className="relative px-4 py-4 md:px-5">
         <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">My Standing</p>
         {viewer ? (
@@ -21,7 +21,7 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
             <div className="min-w-0">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="inline-flex items-center rounded-full border border-orange-300/30 bg-orange-400/10 px-3 py-1 text-sm font-black text-orange-100">
+                  <div className="ui-viewer-badge inline-flex items-center rounded-full border px-3 py-1 text-sm font-black">
                     #{viewer.rank}
                   </div>
                   <p className="ui-text-strong mt-3 mb-0 truncate text-xl font-semibold md:text-2xl">
@@ -36,7 +36,7 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-x-3 gap-y-3 border-t border-white/8 pt-4 md:gap-x-5 md:border-t-0 md:border-l md:pt-0 md:pl-5">
+            <div className="ui-divider-faint grid grid-cols-4 gap-x-3 gap-y-3 border-t pt-4 md:gap-x-5 md:border-t-0 md:border-l md:pt-0 md:pl-5">
               <StatItem
                 label={t('ranking.record')}
                 value={t('ranking.winsLosses', { wins: viewer.winCount, losses: viewer.loseCount })}
@@ -48,7 +48,7 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
             </div>
           </div>
         ) : (
-          <div className="mt-4 border-t border-white/8 pt-4">
+          <div className="ui-divider-faint mt-4 border-t pt-4">
             <p className="ui-text-strong m-0 text-sm font-semibold">{t('ranking.noViewerData')}</p>
             <p className="ui-text-muted mt-1 mb-0 text-sm">{t('ranking.noViewerDataDesc')}</p>
           </div>

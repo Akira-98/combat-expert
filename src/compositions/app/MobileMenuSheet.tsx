@@ -21,7 +21,7 @@ export function MobileMenuSheet({
     <div aria-modal="true" className="fixed inset-0 z-[72] xl:hidden" role="dialog">
       <button
         aria-label={t('menu.close')}
-        className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
+        className="ui-overlay-scrim absolute inset-0 backdrop-blur-sm"
         onClick={onClose}
         type="button"
       />

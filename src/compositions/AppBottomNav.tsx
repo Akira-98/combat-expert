@@ -25,21 +25,25 @@ export function AppBottomNav({
   onOpenMenu,
 }: AppBottomNavProps) {
   const { t } = useI18n()
+  const navItemClass = 'relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition'
+  const navItemActiveClass = 'ui-bottom-nav-item-active'
+  const navItemIdleClass = 'ui-bottom-nav-item'
+
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 xl:hidden">
       <div className="relative mx-auto w-full max-w-[560px]">
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[calc(100%+env(safe-area-inset-bottom))] border-t border-slate-800/80 bg-[color:color-mix(in_oklab,var(--app-surface)_96%,black)] shadow-[0_-10px_24px_rgba(2,6,23,0.42)] backdrop-blur" />
+        <div className="ui-bottom-nav-shell pointer-events-none absolute inset-x-0 bottom-0 h-[calc(100%+env(safe-area-inset-bottom))] border-t backdrop-blur" />
         <div className="relative grid w-full grid-cols-[1fr_1fr_auto_1fr_1fr] items-end gap-1 px-2 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-2">
           <button
-            className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
-              mobileView === 'explore' ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
+            className={`${navItemClass} ${
+              mobileView === 'explore' ? navItemActiveClass : navItemIdleClass
             }`}
             onClick={onOpenExplore}
             type="button"
           >
             <span
               aria-hidden
-              className={`absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-orange-400 transition ${
+              className={`ui-bottom-nav-indicator absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full transition ${
                 mobileView === 'explore' ? 'opacity-100' : 'opacity-0'
               }`}
             />
@@ -50,15 +54,15 @@ export function AppBottomNav({
             <span className="mt-1">{t('bottomNav.explore')}</span>
           </button>
           <button
-            className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
-              mobileView === 'chat' ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
+            className={`${navItemClass} ${
+              mobileView === 'chat' ? navItemActiveClass : navItemIdleClass
             }`}
             onClick={onOpenChat}
             type="button"
           >
             <span
               aria-hidden
-              className={`absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-orange-400 transition ${
+              className={`ui-bottom-nav-indicator absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full transition ${
                 mobileView === 'chat' ? 'opacity-100' : 'opacity-0'
               }`}
             />
@@ -72,13 +76,13 @@ export function AppBottomNav({
             aria-label={t('bottomNav.openBetslip')}
             className={`relative -mt-3 inline-flex h-12 w-[5.75rem] flex-col items-center justify-center self-center rounded-[20px] border px-3 text-[11px] font-semibold leading-none shadow-lg shadow-slate-950/30 transition ${
               isMobileBetslipOpen
-                ? 'ui-btn-primary text-white'
-                : 'bg-[color:color-mix(in_oklab,var(--app-accent)_88%,black)] text-white hover:brightness-110'
+                ? 'ui-btn-primary'
+                : 'ui-bottom-nav-primary'
             }`}
             onClick={onOpenBetslip}
             type="button"
           >
-            <span className="absolute -right-1.5 -top-1.5 rounded-full bg-orange-300 px-1.5 py-0.5 text-[10px] font-bold leading-none text-slate-950">
+            <span className="ui-bottom-nav-badge absolute -right-1.5 -top-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none">
               {selectionCount}
             </span>
             <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -90,15 +94,15 @@ export function AppBottomNav({
             <span className="mt-1">{t('bottomNav.betslip')}</span>
           </button>
           <button
-            className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
-              mobileView === 'bets' ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
+            className={`${navItemClass} ${
+              mobileView === 'bets' ? navItemActiveClass : navItemIdleClass
             }`}
             onClick={onOpenBets}
             type="button"
           >
             <span
               aria-hidden
-              className={`absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-orange-400 transition ${
+              className={`ui-bottom-nav-indicator absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full transition ${
                 mobileView === 'bets' ? 'opacity-100' : 'opacity-0'
               }`}
             />
@@ -110,15 +114,15 @@ export function AppBottomNav({
             <span className="mt-1">{t('bottomNav.myBets')}</span>
           </button>
           <button
-            className={`relative inline-flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[11px] font-semibold leading-none transition ${
-              isMobileMenuOpen ? 'text-orange-200' : 'text-slate-400 hover:text-slate-200'
+            className={`${navItemClass} ${
+              isMobileMenuOpen ? navItemActiveClass : navItemIdleClass
             }`}
             onClick={onOpenMenu}
             type="button"
           >
             <span
               aria-hidden
-              className={`absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-orange-400 transition ${
+              className={`ui-bottom-nav-indicator absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full transition ${
                 isMobileMenuOpen ? 'opacity-100' : 'opacity-0'
               }`}
             />

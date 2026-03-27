@@ -46,7 +46,7 @@ export function AccountPanel({
   const { t } = useI18n()
   void onOpenRanking
   const smallIconButtonClass = `${iconButtonClass} h-7 w-7 rounded-full border`
-  const rowClass = 'flex items-start justify-between gap-3 border-b border-white/8 py-3 last:border-b-0 last:pb-0'
+  const rowClass = 'ui-divider-faint flex items-start justify-between gap-3 border-b py-3 last:border-b-0 last:pb-0'
   const copyToastClass =
     copyLabel === 'copied'
       ? 'ui-state-success absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border px-2 py-1 text-[10px] font-semibold shadow-lg'
@@ -105,7 +105,7 @@ export function AccountPanel({
         </button>
       </div>
 
-      <div className="border-t border-white/8 pt-1">
+      <div className="ui-divider-faint border-t pt-1">
         <section className={`${rowClass} items-center`}>
           <div>
             <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('account.balance')}</p>
@@ -169,7 +169,7 @@ function InlineNicknameEditor({
   const { t } = useI18n()
   const nicknameInputClass = 'ui-input h-8 rounded-md border px-2.5 text-xs'
   const iconActionClass =
-    'ui-text-body inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/10 transition hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60'
+    'ui-ghost-icon ui-border-contrast-soft inline-flex h-6 w-6 items-center justify-center rounded-full border transition disabled:cursor-not-allowed disabled:opacity-60'
   const noticeClass = 'mt-2 mb-0 rounded-md border px-2 py-1 text-[11px]'
   const trimmedProfileNickname = normalizeProfileNickname(profileNickname || '')
   const [nicknameDraft, setNicknameDraft] = useState(profileNickname || '')

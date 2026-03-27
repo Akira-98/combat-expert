@@ -92,7 +92,7 @@ export function GameOddsPreview({
 
   if (isLoading) {
     return (
-      <div ref={anchorRef} className={`${className} text-xs text-slate-400`}>
+      <div ref={anchorRef} className={`${className} ui-text-muted text-xs`}>
         {t('market.previewLoading')}
       </div>
     )
@@ -100,7 +100,7 @@ export function GameOddsPreview({
 
   if (isError) {
     return (
-      <div ref={anchorRef} className={`${className} text-xs text-rose-500`}>
+      <div ref={anchorRef} className={`${className} ui-text-danger text-xs`}>
         {t('market.previewError')}
       </div>
     )
@@ -108,7 +108,7 @@ export function GameOddsPreview({
 
   if (previewItems.length === 0) {
     return (
-      <div ref={anchorRef} className={`${className} text-xs text-slate-400`}>
+      <div ref={anchorRef} className={`${className} ui-text-muted text-xs`}>
         {t('market.previewEmpty')}
       </div>
     )
@@ -122,10 +122,10 @@ export function GameOddsPreview({
           aria-disabled={item.isDisabled}
           className={`chip-shell inline-flex gap-1 px-2 py-1 text-[11px] transition ${
             item.isDisabled
-              ? 'cursor-not-allowed border-slate-200/40 bg-[color:color-mix(in_oklab,var(--app-surface-soft)_86%,transparent)] text-slate-400'
+              ? 'ui-preview-chip-disabled cursor-not-allowed'
               : item.isSelected
-                ? 'border-emerald-300/70 bg-[color:color-mix(in_oklab,var(--state-success-soft)_70%,var(--app-surface))] text-emerald-200'
-                : 'border-slate-200/40 bg-[color:color-mix(in_oklab,var(--app-surface-soft)_84%,transparent)] text-slate-300 hover:border-slate-300/70 hover:bg-[color:color-mix(in_oklab,var(--app-surface-soft)_95%,transparent)]'
+                ? 'ui-preview-chip-active'
+                : 'ui-preview-chip'
           }`}
           onClick={(event) => {
             event.stopPropagation()
@@ -134,8 +134,8 @@ export function GameOddsPreview({
           }}
           type="button"
         >
-          <span className="text-slate-400">{item.label}</span>
-          <strong className={item.isDisabled ? 'text-slate-400' : item.isSelected ? 'text-emerald-100' : 'text-slate-100'}>
+          <span className={item.isDisabled ? 'ui-text-muted' : 'ui-text-muted'}>{item.label}</span>
+          <strong className={item.isDisabled ? 'ui-text-muted' : item.isSelected ? 'ui-text-success' : 'ui-text-strong'}>
             {item.odds}
           </strong>
         </button>

@@ -6,7 +6,7 @@ type BetslipAmountSectionProps = {
 }
 
 const chipClass =
-  'rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50'
+  'ui-chip-secondary btn-pill px-3 py-1.5 text-xs font-semibold transition'
 
 export function BetslipAmountSection({ betAmount, onBetAmountChange }: BetslipAmountSectionProps) {
   const { t } = useI18n()
@@ -20,9 +20,9 @@ export function BetslipAmountSection({ betAmount, onBetAmountChange }: BetslipAm
   return (
     <>
       <label className="grid gap-1">
-        <span className="text-xs font-semibold text-slate-600">{t('betslip.amount')}</span>
+        <span className="ui-text-body text-xs font-semibold">{t('betslip.amount')}</span>
         <input
-          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm md:rounded-lg"
+          className="ui-input rounded-md border px-3 py-2 text-sm md:rounded-lg"
           value={betAmount}
           onChange={(e) => onBetAmountChange(e.target.value)}
           placeholder={t('betslip.amountPlaceholder')}

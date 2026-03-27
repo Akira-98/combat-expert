@@ -3,16 +3,14 @@ import type { RankingEntry } from '../../hooks/useRankings'
 import { useI18n } from '../../i18n'
 
 const podiumCardTones: Record<number, string> = {
-  1: 'border-amber-300/45 bg-[linear-gradient(180deg,rgba(245,196,81,0.22)_0%,rgba(61,39,12,0.88)_58%,rgba(10,12,16,0.98)_100%)] shadow-[0_0_0_1px_rgba(245,196,81,0.18),0_18px_40px_-28px_rgba(245,196,81,0.45)]',
-  2: 'border-slate-300/40 bg-[linear-gradient(180deg,rgba(203,213,225,0.2)_0%,rgba(51,65,85,0.82)_58%,rgba(10,12,16,0.98)_100%)] shadow-[0_0_0_1px_rgba(203,213,225,0.16),0_18px_40px_-28px_rgba(148,163,184,0.38)]',
-  3: 'border-orange-400/40 bg-[linear-gradient(180deg,rgba(199,123,74,0.24)_0%,rgba(74,38,20,0.84)_58%,rgba(10,12,16,0.98)_100%)] shadow-[0_0_0_1px_rgba(199,123,74,0.18),0_18px_40px_-28px_rgba(180,83,9,0.42)]',
+  1: 'ui-podium-tone-gold',
+  2: 'ui-podium-tone-silver',
+  3: 'ui-podium-tone-bronze',
 }
 
 export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: number }) {
   const { t } = useI18n()
-  const podiumCardTone =
-    podiumCardTones[rank] ??
-    'border-[color:var(--app-border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.04)_0%,rgba(255,255,255,0.015)_100%)] shadow-[0_0_0_1px_color-mix(in_oklab,var(--app-border)_24%,transparent)]'
+  const podiumCardTone = podiumCardTones[rank] ?? 'ui-podium-tone-default'
 
   return (
     <article
@@ -20,7 +18,7 @@ export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: 
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="mb-3 inline-flex rounded-full border border-white/14 bg-black/24 px-2.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-slate-100">
+          <div className="ui-podium-badge ui-text-strong mb-3 inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold tracking-[0.18em]">
             #{rank}
           </div>
           <p className="ui-text-strong m-0 truncate text-lg font-semibold md:text-xl">{entry.nickname || shortenAddress(entry.address, 6, 4)}</p>
@@ -31,7 +29,7 @@ export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: 
           <p className="ui-text-strong mt-1 mb-0 text-3xl font-semibold leading-none md:text-[2rem]">{entry.totalScore.toFixed(1)}</p>
         </div>
       </div>
-      <div className="mt-5 border-t border-white/6 pt-3">
+      <div className="ui-divider-faint mt-5 border-t pt-3">
         <div>
           <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">{t('ranking.record')}</p>
           <p className="ui-text-strong mt-1 mb-0 text-sm font-medium">
@@ -50,7 +48,7 @@ export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: 
 function EntryMetrics({ entry }: { entry: RankingEntry }) {
   const { t } = useI18n()
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-300">
+    <div className="ui-text-body flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
       <span>{t('ranking.hit', { count: entry.winCount })}</span>
       <span>{t('ranking.miss', { count: entry.loseCount })}</span>
       <span>{t('ranking.underdogCount', { count: entry.underdogHitCount })}</span>

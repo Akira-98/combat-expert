@@ -63,7 +63,7 @@ export function BetslipPanel({
     'px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60'
   const secondaryButtonClass = `ui-btn-secondary btn-shell md:btn-shell-lg ${actionButtonBaseClass}`
   const iconButtonClass =
-    'ui-text-body inline-flex h-8 w-8 items-center justify-center rounded-full bg-transparent text-sm transition hover:bg-black/5 disabled:cursor-not-allowed disabled:opacity-60 dark:hover:bg-white/5'
+    'ui-ghost-icon inline-flex h-8 w-8 items-center justify-center rounded-full text-sm transition disabled:cursor-not-allowed disabled:opacity-60'
   const dangerIconButtonClass =
     'inline-flex h-8 w-8 items-center justify-center rounded-full bg-transparent text-sm text-[color:var(--app-danger)] transition hover:bg-[color:color-mix(in_srgb,var(--app-danger)_10%,transparent)] disabled:cursor-not-allowed disabled:opacity-60'
   const noticeClass = 'm-0 rounded-md border p-2 text-sm md:rounded-lg'

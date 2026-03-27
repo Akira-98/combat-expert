@@ -10,6 +10,9 @@
     --app-text-muted: #8090a4;
     --app-accent: #ff6b00;
     --app-accent-soft: #3a2519;
+    --app-glow-cool: rgba(191, 219, 254, 0.08);
+    --app-glow-warm: rgba(245, 158, 11, 0.1);
+    --app-glow-cyan: rgba(34, 211, 238, 0.08);
     --state-success: #3eff8b;
     --state-success-soft: #13251b;
     --state-warning: #efb72a;

@@ -77,7 +77,7 @@ export function MobileBetslipSheet({
         <div className="fixed inset-0 z-50">
           <button
             aria-label={t('common.close')}
-            className="absolute inset-0 bg-slate-900/40"
+            className="ui-overlay-scrim absolute inset-0"
             onClick={onClose}
             type="button"
           />
@@ -91,7 +91,7 @@ export function MobileBetslipSheet({
             style={{ transform: `translateY(${dragOffsetY}px)` }}
           >
             <div className="flex justify-center pb-3">
-              <div className="h-1.5 w-12 rounded-full bg-slate-400/55" />
+              <div className="ui-sheet-handle h-1.5 w-12 rounded-full" />
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto pr-1">

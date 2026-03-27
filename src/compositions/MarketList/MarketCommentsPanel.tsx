@@ -48,7 +48,7 @@ export function MarketCommentsPanel({
           <p className="ui-text-muted m-0 text-xs">{t('comments.empty')}</p>
         ) : (
           comments.comments.map((comment) => (
-            <article key={comment.id} className="border-b border-white/8 py-3 last:border-b-0 last:pb-0 first:pt-0">
+            <article key={comment.id} className="ui-divider-faint border-b py-3 last:border-b-0 last:pb-0 first:pt-0">
               <div className="flex items-center justify-between gap-3">
                 <p className="ui-text-strong m-0 text-xs font-semibold">{comments.getAuthorLabel(comment)}</p>
                 <time className="ui-text-muted text-[11px]">{formatCommentTime(comment.createdAt)}</time>
@@ -59,7 +59,7 @@ export function MarketCommentsPanel({
         )}
       </div>
 
-      <div className="border-t border-white/8 pt-3">
+      <div className="ui-divider-faint border-t pt-3">
         <CommentComposer
           key={selectedGame.gameId}
           canInteract={canInteract}

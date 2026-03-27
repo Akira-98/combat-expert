@@ -43,6 +43,75 @@
     border-color: color-mix(in oklab, var(--state-danger) 65%, var(--app-border));
   }
 
+  .ui-chip-secondary {
+    border-color: var(--app-border);
+    background-color: var(--app-surface);
+    color: var(--app-text-body);
+  }
+
+  .ui-chip-secondary:hover {
+    border-color: color-mix(in oklab, var(--app-accent) 28%, var(--app-border));
+    background-color: color-mix(in oklab, var(--app-accent-soft) 22%, var(--app-surface-soft));
+  }
+
+  .ui-preview-chip {
+    border-color: color-mix(in oklab, var(--app-border) 40%, transparent);
+    background-color: color-mix(in oklab, var(--app-surface-soft) 84%, transparent);
+    color: var(--app-text-body);
+  }
+
+  .ui-preview-chip:hover {
+    border-color: color-mix(in oklab, var(--app-text-strong) 22%, var(--app-border));
+    background-color: color-mix(in oklab, var(--app-surface-soft) 95%, transparent);
+  }
+
+  .ui-preview-chip-active {
+    border-color: color-mix(in oklab, var(--state-success) 70%, transparent);
+    background-color: color-mix(in oklab, var(--state-success-soft) 70%, var(--app-surface));
+    color: color-mix(in oklab, var(--state-success) 76%, #fff);
+  }
+
+  .ui-preview-chip-disabled {
+    border-color: color-mix(in oklab, var(--app-border) 40%, transparent);
+    background-color: color-mix(in oklab, var(--app-surface-soft) 86%, transparent);
+    color: var(--app-text-muted);
+  }
+
+  .ui-bottom-nav-item {
+    color: var(--app-text-muted);
+  }
+
+  .ui-bottom-nav-item:hover {
+    color: color-mix(in oklab, var(--app-text-strong) 86%, transparent);
+  }
+
+  .ui-bottom-nav-item-active {
+    color: color-mix(in oklab, var(--app-accent) 24%, #fff);
+  }
+
+  .ui-bottom-nav-indicator {
+    background-color: color-mix(in oklab, var(--app-accent) 52%, transparent);
+  }
+
+  .ui-bottom-nav-primary {
+    border-color: color-mix(in oklab, var(--app-accent) 55%, #000);
+    background-color: color-mix(in oklab, var(--app-accent) 88%, black);
+    color: #fff;
+  }
+
+  .ui-bottom-nav-primary:hover {
+    filter: brightness(1.1);
+  }
+
+  .ui-ghost-icon {
+    color: var(--app-text-body);
+    background-color: transparent;
+  }
+
+  .ui-ghost-icon:hover {
+    background-color: color-mix(in oklab, var(--app-text-strong) 5%, transparent);
+  }
+
   .btn-shell {
     border-style: solid;
     border-width: 1px;

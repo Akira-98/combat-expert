@@ -32,13 +32,13 @@ export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry
         <RankingErrorState errorMessage={errorMessage} onRetry={onRetry} />
       ) : (
         <div className="card-surface-soft card-shell-xl overflow-hidden">
-          <div className="grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b border-white/8 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 md:grid-cols-[84px_minmax(0,1fr)_112px_280px]">
+          <div className="ui-divider-faint ui-text-muted grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] md:grid-cols-[84px_minmax(0,1fr)_112px_280px]">
             <span>Rank</span>
             <span>Player</span>
             <span className="text-right">Score</span>
             <span className="hidden md:block">Stats</span>
           </div>
-          <div className="divide-y divide-white/6">
+          <div className="ui-divider-faint divide-y">
             {rankings.map((entry, index) => (
               <RankingLeaderboardRow key={entry.address} entry={entry} rank={index + 1} isViewer={viewer?.address === entry.address} />
             ))}

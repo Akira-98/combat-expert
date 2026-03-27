@@ -17,7 +17,7 @@ export function TransferModal({ isOpen, isConnected, chainId, usdtTransfer, onCl
 
   return createPortal(
     <div aria-modal="true" className="fixed inset-0 z-[80] flex items-center justify-center px-2 md:px-4" role="dialog">
-      <button aria-label={t('walletTransfer.modalClose')} className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={onClose} type="button" />
+      <button aria-label={t('walletTransfer.modalClose')} className="ui-overlay-scrim absolute inset-0 backdrop-blur-sm" onClick={onClose} type="button" />
       <div className="relative z-10 w-full max-w-lg">
         <div className="mb-2 flex justify-end">
           <button className="ui-btn-secondary rounded-md border px-3 py-1.5 text-sm font-semibold" onClick={onClose} type="button">

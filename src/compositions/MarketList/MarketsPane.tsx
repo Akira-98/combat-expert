@@ -28,7 +28,7 @@ export function MarketsPane({
           {marketSections.map((section) => (
             <article
               key={section.id}
-              className="card-shell-lg border border-[color:var(--app-border)] bg-white/[0.06] p-3 shadow-[0_8px_18px_-14px_rgba(0,0,0,0.65)] md:p-3.5"
+              className="card-shell-lg ui-elevated-card border border-[color:var(--app-border)] p-3 md:p-3.5"
             >
               <div className="mb-2.5 flex items-center justify-between gap-2 md:mb-3">
                 <h3 className="ui-text-strong m-0 text-sm font-semibold tracking-tight">{section.title}</h3>
@@ -91,8 +91,8 @@ function CompetitorProfile({ initials, align }: { initials: string; align: 'left
 
   return (
     <div className={`grid min-w-0 gap-2 ${layoutClass}`}>
-      <div className="relative h-18 w-18 rounded-full border border-white/12 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.15),rgba(255,255,255,0.03)_58%,rgba(0,0,0,0.25))] p-1.5 shadow-[0_16px_30px_-20px_rgba(0,0,0,0.8)] md:h-24 md:w-24">
-        <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full border border-orange-300/18 bg-[linear-gradient(180deg,rgba(255,138,76,0.22),rgba(17,24,39,0.88))]">
+      <div className="ui-competitor-frame relative h-18 w-18 rounded-full border p-1.5 md:h-24 md:w-24">
+        <div className="ui-competitor-core flex h-full w-full items-center justify-center overflow-hidden rounded-full border">
           <span className="ui-text-strong text-lg font-black tracking-[0.08em] md:text-2xl">{initials}</span>
         </div>
       </div>

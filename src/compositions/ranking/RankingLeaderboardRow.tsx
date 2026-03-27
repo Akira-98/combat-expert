@@ -13,13 +13,13 @@ export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderbo
   const rowClassName = topRankStyle
     ? topRankStyle.row
     : isViewer
-      ? 'bg-orange-500/8'
+      ? 'ui-rank-row-viewer'
       : ''
   const badgeClassName = topRankStyle
     ? topRankStyle.badge
     : isViewer
-      ? 'bg-orange-300 text-slate-950'
-      : 'bg-white/6 text-slate-200'
+      ? 'ui-rank-badge-viewer'
+      : 'ui-rank-badge-mid'
 
   return (
     <div
@@ -48,7 +48,7 @@ export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderbo
 function EntryMetrics({ entry }: { entry: RankingEntry | RankingViewer }) {
   const { t } = useI18n()
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-300">
+    <div className="ui-text-body flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
       <span>{t('ranking.hit', { count: entry.winCount })}</span>
       <span>{t('ranking.miss', { count: entry.loseCount })}</span>
       <span>{t('ranking.underdogCount', { count: entry.underdogHitCount })}</span>
@@ -60,22 +60,22 @@ function EntryMetrics({ entry }: { entry: RankingEntry | RankingViewer }) {
 function getTopRankStyle(rank: number) {
   if (rank === 1) {
     return {
-      row: 'bg-amber-300/8',
-      badge: 'bg-amber-200 text-slate-950',
+      row: 'ui-rank-row-top',
+      badge: 'ui-rank-badge-top',
     }
   }
 
   if (rank === 2) {
     return {
-      row: 'bg-slate-200/8',
-      badge: 'bg-slate-200 text-slate-950',
+      row: 'ui-rank-row-mid',
+      badge: 'ui-rank-badge-mid',
     }
   }
 
   if (rank === 3) {
     return {
-      row: 'bg-orange-300/8',
-      badge: 'bg-orange-200 text-slate-950',
+      row: 'ui-rank-row-viewer',
+      badge: 'ui-rank-badge-viewer',
     }
   }
 

@@ -203,12 +203,12 @@ export function Header({
               <div aria-modal="true" className="fixed inset-0 z-[70] flex items-end md:hidden" role="dialog">
                 <button
                   aria-label={t('header.accountSheetClose')}
-                  className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
+                  className="ui-overlay-scrim absolute inset-0 backdrop-blur-sm"
                   onClick={controller.closeAccountModal}
                   type="button"
                 />
                 <section className={mobileAccountSheetClass}>
-                  <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-white/15" />
+                  <div className="ui-sheet-handle mx-auto mb-4 h-1.5 w-14 rounded-full" />
                   {accountPanel}
                 </section>
               </div>,

@@ -41,8 +41,8 @@ export function OutcomeButton({
       type="button"
     >
       <div className="flex items-start justify-between gap-2">
-        <span className={`min-w-0 truncate pr-2 font-medium ${isSelected ? 'text-white' : 'ui-text-strong'}`}>{outcomeLabel}</span>
-        <strong className={`shrink-0 text-xs md:text-sm ${isDisabled ? 'ui-text-muted' : isSelected ? 'text-white' : 'ui-text-strong'}`}>
+        <span className={`min-w-0 truncate pr-2 font-medium ${isSelected ? 'ui-text-inverse' : 'ui-text-strong'}`}>{outcomeLabel}</span>
+        <strong className={`shrink-0 text-xs md:text-sm ${isDisabled ? 'ui-text-muted' : isSelected ? 'ui-text-inverse' : 'ui-text-strong'}`}>
           {Number.isFinite(outcome.odds) ? outcome.odds.toFixed(2) : '-'}
         </strong>
       </div>

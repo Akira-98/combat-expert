@@ -33,7 +33,7 @@ export function MarketList({
 
   if (pageMode === 'games') {
     return (
-      <section className="panel section-shell bg-[linear-gradient(180deg,rgba(255,255,255,0.035)_0%,rgba(255,255,255,0.012)_100%)] p-2 md:rounded-2xl md:border md:px-4 md:py-4">
+      <section className="panel ui-section-sheen section-shell p-2 md:rounded-2xl md:border md:px-4 md:py-4">
           <GamesPane
             isGamesLoading={isGamesLoading}
             gamesErrorMessage={gamesErrorMessage}
