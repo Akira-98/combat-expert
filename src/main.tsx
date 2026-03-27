@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { Buffer } from 'buffer'
 import './index.css'
 import { AppProviders } from './AppProviders'
+import { BootSplash } from './BootSplash'
 import { loadRuntimeConfig } from './config/runtimeConfig'
 import { translate } from './i18n'
 import { LocaleProvider } from './LocaleProvider'
@@ -18,6 +19,12 @@ if (!rootElement) {
 }
 
 const root = ReactDOM.createRoot(rootElement)
+
+root.render(
+  <React.StrictMode>
+    <BootSplash />
+  </React.StrictMode>,
+)
 
 function renderFatalConfigError(message: string) {
   root.render(

@@ -1,21 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Address } from 'viem'
-import { useBaseBetslip, useBet, useBetTokenBalance, useDetailedBetslip } from '@azuro-org/sdk'
+import { useBaseBetslip, useDetailedBetslip } from '@azuro-org/sdk'
 import type { GameItem, MarketSection, OutcomeItem } from '../types/ui'
-import { buildSelectedOutcomes, mapBetslipToSelectionItems } from '../helpers/mappers'
-import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
 import { buildBettingDerivedState, clampSlippage } from './useBetting.helpers'
-import { useBetslipSelectionMeta } from './useBetslipSelectionMeta'
-import { useBetslipValidation } from './useBetslipValidation'
 import { useBetSubmission } from './useBetSubmission'
-import { useAppConfig } from '../config/useAppConfig'
-import { useBetHistory } from './useBetHistory'
-import { useBetRedeem } from './useBetRedeem'
-import { useTransactionNotice } from './useTransactionNotice'
-import { useBetSettlementSync } from './useBetSettlementSync'
-import { translate } from '../i18n'
+import { useBettingSelectionState } from './useBettingSelectionState'
+import { useBettingTransactions } from './useBettingTransactions'
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const DEFAULT_SLIPPAGE = 3
 
 type UseBettingParams = {
@@ -36,10 +27,6 @@ export function useBetting({
   refreshMarkets,
 }: UseBettingParams) {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
-  const { transactionNotice, clearTransactionNotice, setSuccessNotice, setErrorNotice } = useTransactionNotice({
-    mapErrorMessage: getFriendlyTransactionErrorMessage,
-  })
-  const { affiliateAddress: affiliateAddressFromConfig } = useAppConfig()
   const { items, addItem, clear, removeItem } = useBaseBetslip()
   const {
     betAmount,
@@ -51,101 +38,62 @@ export function useBetting({
     maxBet,
     isMaxBetFetching,
   } = useDetailedBetslip()
-  const { data: betTokenBalanceData, isLoading: isBalanceLoading, refetch: refetchBetTokenBalance } = useBetTokenBalance({
-    query: {
-      enabled: isConnected,
-      refetchOnWindowFocus: true,
-    },
-  })
-
-  const affiliateAddress = (affiliateAddressFromConfig || ZERO_ADDRESS) as Address
-
-  const { submit, isApproveRequired, approveTx, betTx } = useBet({
-    betAmount: betAmount || '1',
-    slippage,
-    affiliate: affiliateAddress,
-    selections: items,
-    odds,
-    totalOdds,
-    onSuccess: (receipt) => {
-      clear()
-      resetSelectionMeta()
-      void refetchBetTokenBalance()
-      setSuccessNotice({
-        title: translate('betting.betSuccessTitle'),
-        message: translate('betting.betSuccessMessage'),
-        txHash: receipt?.transactionHash,
-      })
-    },
-    onError: (err) => setErrorNotice({ title: translate('betting.betErrorTitle'), error: err }),
-  })
-  const { bets } = useBetHistory({ address, isPollingEnabled: isBetHistoryPollingEnabled })
-  const { betSettlementSyncStateByTokenId } = useBetSettlementSync({
-    bets,
-    enabled: Boolean(address),
-  })
-  const { redeemingBetTokenId, redeemPending, redeemBet } = useBetRedeem({
-    onBeforeSubmit: clearTransactionNotice,
-    onSuccess: (txHash) => {
-      void refetchBetTokenBalance()
-      setSuccessNotice({
-        title: translate('betting.redeemSuccessTitle'),
-        message: translate('betting.redeemSuccessMessage'),
-        txHash,
-      })
-    },
-    onError: (err) => setErrorNotice({ title: translate('betting.redeemErrorTitle'), error: err }),
-  })
-
-  const selectedOutcomes = useMemo(() => buildSelectedOutcomes(items), [items])
-  const { mergedOutcomeMeta, selectedOutcomePriceChanges, rememberSelectionMeta, syncSelectionMeta, resetSelectionMeta, removeSelectionMeta } =
-    useBetslipSelectionMeta({
-      marketSections,
-      selectedOutcomes,
-    })
-  const selectionItems = useMemo(() => mapBetslipToSelectionItems(items, mergedOutcomeMeta, games), [games, items, mergedOutcomeMeta])
-  const { currentOutcomeStateMap, displayDisableReason, sdkConditionStateMismatch, uiSelectionAllowed } = useBetslipValidation({
+  const selectionState = useBettingSelectionState({
     items,
+    games,
     marketSections,
-    mergedOutcomeMeta,
     disableReason,
     totalOdds,
+  })
+  const transactions = useBettingTransactions({
+    address,
+    isConnected,
+    isBetHistoryPollingEnabled,
+    items,
+    betAmount,
+    odds,
+    totalOdds,
+    slippage,
+    onBetSuccess: () => {
+      clear()
+      selectionState.resetSelectionMeta()
+    },
   })
   const mismatchHandledRef = useRef(false)
 
   useEffect(() => {
-    if (!sdkConditionStateMismatch) {
+    if (!selectionState.sdkConditionStateMismatch) {
       mismatchHandledRef.current = false
       return
     }
     if (mismatchHandledRef.current) return
     mismatchHandledRef.current = true
     refreshMarkets?.()
-  }, [refreshMarkets, sdkConditionStateMismatch])
+  }, [refreshMarkets, selectionState.sdkConditionStateMismatch])
 
-  const approvePending = approveTx.isPending || approveTx.isProcessing
-  const betPending = betTx.isPending || betTx.isProcessing
+  const approvePending = transactions.approveTx.isPending || transactions.approveTx.isProcessing
+  const betPending = transactions.betTx.isPending || transactions.betTx.isProcessing
   const { tokenBalance, possibleWin, canBet, amountValidationMessage, uiBlockHint, submitLabel, transactionSteps } =
     buildBettingDerivedState({
       betAmount,
       totalOdds,
-      tokenBalanceRaw: betTokenBalanceData?.balance,
+      tokenBalanceRaw: transactions.betTokenBalanceData?.balance,
       minBet,
       maxBet,
       isConnected,
       itemCount: items.length,
-      isBetAllowed: uiSelectionAllowed,
-      disableReason: displayDisableReason,
-      isApproveRequired,
+      isBetAllowed: selectionState.uiSelectionAllowed,
+      disableReason: selectionState.displayDisableReason,
+      isApproveRequired: transactions.isApproveRequired,
       approvePending,
       betPending,
-      approveTxPending: approveTx.isPending,
-      betTxPending: betTx.isPending,
-      betReceiptReady: Boolean(betTx.receipt),
+      approveTxPending: transactions.approveTx.isPending,
+      betTxPending: transactions.betTx.isPending,
+      betReceiptReady: Boolean(transactions.betTx.receipt),
     })
 
   const selectOutcome = (outcome: OutcomeItem) => {
-    rememberSelectionMeta(outcome)
+    selectionState.rememberSelectionMeta(outcome)
     addItem({
       conditionId: outcome.conditionId,
       outcomeId: outcome.outcomeId,
@@ -155,32 +103,32 @@ export function useBetting({
   }
   const submitBet = useBetSubmission({
     items,
-    currentOutcomeStateMap,
-    selectedOutcomePriceChanges,
-    sdkConditionStateMismatch,
-    clearTransactionNotice,
-    setErrorNotice,
-    syncSelectionMeta,
-    submit,
+    currentOutcomeStateMap: selectionState.currentOutcomeStateMap,
+    selectedOutcomePriceChanges: selectionState.selectedOutcomePriceChanges,
+    sdkConditionStateMismatch: selectionState.sdkConditionStateMismatch,
+    clearTransactionNotice: transactions.clearTransactionNotice,
+    setErrorNotice: transactions.setErrorNotice,
+    syncSelectionMeta: selectionState.syncSelectionMeta,
+    submit: transactions.submit,
   })
 
   return {
-    bets,
-    selectedOutcomes,
-    selectedOutcomePriceChanges,
-    selectionItems,
+    bets: transactions.bets,
+    selectedOutcomes: selectionState.selectedOutcomes,
+    selectedOutcomePriceChanges: selectionState.selectedOutcomePriceChanges,
+    selectionItems: selectionState.selectionItems,
     betAmount,
     totalOdds,
     possibleWin,
     canBet,
-    isApproveRequired,
+    isApproveRequired: transactions.isApproveRequired,
     approvePending,
     betPending,
-    disableReason: displayDisableReason,
+    disableReason: selectionState.displayDisableReason,
     minBet,
     maxBet,
     tokenBalance,
-    isBalanceLoading,
+    isBalanceLoading: transactions.isBalanceLoading,
     isLimitsLoading: isMaxBetFetching,
     amountValidationMessage,
     slippage,
@@ -194,20 +142,20 @@ export function useBetting({
       setSlippage(next)
     },
     transactionSteps,
-    transactionNotice,
-    redeemingBetTokenId,
-    redeemPending,
-    clearTransactionNotice,
+    transactionNotice: transactions.transactionNotice,
+    redeemingBetTokenId: transactions.redeemingBetTokenId,
+    redeemPending: transactions.redeemPending,
+    clearTransactionNotice: transactions.clearTransactionNotice,
     submitBet,
-    betSettlementSyncStateByTokenId,
+    betSettlementSyncStateByTokenId: transactions.betSettlementSyncStateByTokenId,
     clearBetslip: () => {
       clear()
-      resetSelectionMeta()
+      selectionState.resetSelectionMeta()
     },
-    redeemBet,
+    redeemBet: transactions.redeemBet,
     removeSelection: ({ conditionId, outcomeId }: { conditionId: string; outcomeId: string }) => {
       removeItem({ conditionId, outcomeId })
-      removeSelectionMeta(conditionId, outcomeId)
+      selectionState.removeSelectionMeta(conditionId, outcomeId)
     },
   }
 }

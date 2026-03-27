@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
 import type { SelectionItem } from '../../types/ui'
 import type { TransactionNotice, TransactionStep } from '../../helpers/betslipUi'
 import { useI18n } from '../../i18n'
 import { selectionKey } from '../../helpers/mappers'
-import { getDisableReasonLabel } from './constants'
+import { useBetslipPanelState } from '../../hooks/useBetslipPanelState'
 import { BetslipAmountSection } from './BetslipAmountSection'
 import { BetslipSlippageSettings } from './BetslipSlippageSettings'
 import { BetslipSummarySection } from './BetslipSummarySection'
@@ -60,11 +59,8 @@ export function BetslipPanel({
   isEmbedded = false,
 }: BetslipPanelProps) {
   const { t } = useI18n()
-  const TOTAL_ODDS_WARNING_DELAY_MS = 900
   const actionButtonBaseClass =
     'px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60'
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [revealedDisableReasonKey, setRevealedDisableReasonKey] = useState<string | undefined>(undefined)
   const secondaryButtonClass = `ui-btn-secondary btn-shell md:btn-shell-lg ${actionButtonBaseClass}`
   const iconButtonClass =
     'ui-text-body inline-flex h-8 w-8 items-center justify-center rounded-full bg-transparent text-sm transition hover:bg-black/5 disabled:cursor-not-allowed disabled:opacity-60 dark:hover:bg-white/5'
@@ -73,35 +69,12 @@ export function BetslipPanel({
   const noticeClass = 'm-0 rounded-md border p-2 text-sm md:rounded-lg'
   const primarySubmitButtonClass =
     'ui-btn-primary btn-shell md:btn-shell-lg w-full px-3 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50'
-  const disableReasonText = bet.disableReason ? getDisableReasonLabel(bet.disableReason) : undefined
-  const shouldDelayDisableReason = bet.disableReason === 'TotalOddsTooLow'
-  const delayedDisableReasonKey = shouldDelayDisableReason && disableReasonText ? `${bet.disableReason}:${bet.selections.length}` : undefined
-  const scheduledDisableReasonKeyRef = useRef<string | undefined>(undefined)
-  const visibleDisableReasonText = bet.selections.length === 0
-    ? undefined
-    : shouldDelayDisableReason
-      ? revealedDisableReasonKey === delayedDisableReasonKey
-        ? disableReasonText
-        : undefined
-      : disableReasonText
-
-  useEffect(() => {
-    if (!delayedDisableReasonKey) return
-
-    scheduledDisableReasonKeyRef.current = delayedDisableReasonKey
-    const timeoutId = window.setTimeout(() => {
-      if (scheduledDisableReasonKeyRef.current !== delayedDisableReasonKey) return
-      setRevealedDisableReasonKey(delayedDisableReasonKey)
-    }, TOTAL_ODDS_WARNING_DELAY_MS)
-
-    return () => window.clearTimeout(timeoutId)
-  }, [delayedDisableReasonKey, TOTAL_ODDS_WARNING_DELAY_MS])
-
   const selectionLabel = bet.selections.length <= 1 ? t('betslip.single') : t('betslip.combo', { count: bet.selections.length })
-  const isPrimaryDisabled = wallet.isConnected
-    ? !bet.canBet || bet.approvePending || bet.betPending
-    : !wallet.canConnectWallet || wallet.isConnectingWallet
-  const primaryButtonLabel = !wallet.isConnected && wallet.isConnectingWallet ? t('betslip.connectingWallet') : bet.submitLabel
+  const panelState = useBetslipPanelState({
+    wallet,
+    bet,
+    connectingWalletLabel: t('betslip.connectingWallet'),
+  })
   const rootClassName = isEmbedded
     ? 'section-shell border-0 bg-transparent shadow-none'
     : 'panel section-shell desktop-surface-variant'
@@ -120,7 +93,7 @@ export function BetslipPanel({
           <p className="ui-text-muted mt-0.5 text-xs">{selectionLabel}</p>
         </div>
         <div className="flex items-center gap-2">
-          <button aria-label={t('betslip.settings')} className={iconButtonClass} onClick={() => setIsSettingsOpen((open) => !open)} type="button">
+          <button aria-label={t('betslip.settings')} className={iconButtonClass} onClick={panelState.toggleSettingsOpen} type="button">
             <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
               <path d="M4 7h10" strokeLinecap="round" />
               <path d="M18 7h2" strokeLinecap="round" />
@@ -167,7 +140,7 @@ export function BetslipPanel({
           <BetslipAmountSection betAmount={bet.betAmount} onBetAmountChange={actions.onBetAmountChange} />
 
           <BetslipSlippageSettings
-            isOpen={isSettingsOpen}
+            isOpen={panelState.isSettingsOpen}
             slippage={bet.slippage}
             onSlippageChange={actions.onSlippageChange}
           />
@@ -186,19 +159,19 @@ export function BetslipPanel({
             onRetryTransaction={actions.onSubmit}
           />
 
-          {visibleDisableReasonText && (
+          {panelState.visibleDisableReasonText && (
             <p className={`ui-state-warning-surface ui-text-body ${noticeClass}`}>
-              {visibleDisableReasonText}
+              {panelState.visibleDisableReasonText}
             </p>
           )}
 
           <button
             className={primarySubmitButtonClass}
-            disabled={isPrimaryDisabled}
+            disabled={panelState.isPrimaryDisabled}
             onClick={wallet.isConnected ? actions.onSubmit : actions.onConnectWallet}
             type="button"
           >
-            {primaryButtonLabel}
+            {panelState.primaryButtonLabel}
           </button>
         </div>
       </section>

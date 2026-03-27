@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { BetsAndTransferPanel } from './compositions/BetsAndTransferPanel'
 import { AppBottomNav } from './compositions/AppBottomNav'
 import { AppGameFiltersContainer } from './compositions/AppGameFiltersContainer'
@@ -12,8 +11,7 @@ import { DesktopSidebar } from './compositions/app/DesktopSidebar'
 import { ExploreContent } from './compositions/app/ExploreContent'
 import { MobileMenuSheet } from './compositions/app/MobileMenuSheet'
 import { buildBetslipPanelProps } from './helpers/buildBetslipPanelProps'
-import { useAppNavigation } from './hooks/useAppNavigation'
-import { useAppLayout } from './hooks/useAppLayout'
+import { useAppShellState } from './hooks/useAppShellState'
 import { useGameFilters } from './hooks/useGameFilters'
 import { useWalletConnection } from './hooks/useWalletConnection'
 import { useMarketData } from './hooks/useMarketData'
@@ -23,8 +21,6 @@ import { useRankings } from './hooks/useRankings'
 import { useUsdtTransfer } from './hooks/useUsdtTransfer'
 
 function App() {
-  const [isMobileBetslipOpen, setIsMobileBetslipOpen] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const wallet = useWalletConnection()
   const profile = useProfile({
     address: wallet.address,
@@ -40,35 +36,19 @@ function App() {
     marketSections,
   } = market
   const filters = useGameFilters(games)
-  useAppLayout({ isBodyScrollLocked: isMobileBetslipOpen || isMobileMenuOpen })
-  const {
-    mobileView,
-    desktopSidePanelTab,
-    setDesktopSidePanelTab,
-    isGuideRoute,
-    isRankingRoute,
-    marketPageMode,
-    activeGameId,
-    handleOpenGameMarkets,
-    handleNavigateToExplore,
-    handleNavigateToMobileView,
-    handleNavigateToGuide,
-    handleNavigateToRanking,
-  } = useAppNavigation({
+  const shell = useAppShellState({
     filteredGames: filters.filteredGames,
     selectedGameId,
     setSelectedGameId,
     isGamesLoading,
     onResetFilters: filters.resetFilters,
-    onCloseMobileBetslip: () => setIsMobileBetslipOpen(false),
   })
-  const isMyBetsViewActive = mobileView === 'bets' || desktopSidePanelTab === 'myBets'
   const betting = useBetting({
     address: wallet.address,
     isConnected: wallet.isConnected,
     games,
     marketSections,
-    isBetHistoryPollingEnabled: isMyBetsViewActive,
+    isBetHistoryPollingEnabled: shell.isMyBetsViewActive,
     refreshMarkets: market.retryMarkets,
   })
   const usdtTransfer = useUsdtTransfer({
@@ -80,24 +60,7 @@ function App() {
   const rankings = useRankings(wallet.address)
 
   const betslipPanelProps = buildBetslipPanelProps({ wallet, betting })
-  const shouldShowFilters = !isGuideRoute && !isRankingRoute
-  const shouldShowDesktopChat = true
-  const shouldShowDesktopSidebar = true
-  const shouldShowGuideContent = isGuideRoute
-  const shouldShowRankingContent = isRankingRoute
-  const shouldShowExploreContent = !isGuideRoute && !isRankingRoute && mobileView === 'explore'
-  const shouldShowMobileBetsPanel = !isGuideRoute && !isRankingRoute && mobileView === 'bets'
-  const shouldShowMobileChatPanel = !isGuideRoute && !isRankingRoute && mobileView === 'chat'
-  const shouldUseDesktopThreePanelLayout = true
-  const handleOpenMobileMenu = () => {
-    setIsMobileBetslipOpen(false)
-    setIsMobileMenuOpen(true)
-  }
-  const handleCloseMobileMenu = () => setIsMobileMenuOpen(false)
-  const handleOpenGuideFromMenu = () => {
-    setIsMobileMenuOpen(false)
-    handleNavigateToGuide()
-  }
+
   return (
     <div className="app-theme w-full max-w-[1440px] px-0 pb-36 pt-0 lg:pb-10 xl:max-w-none">
       <div className="sticky top-0 z-30">
@@ -114,13 +77,13 @@ function App() {
             isUsdtSupportedChain={usdtTransfer.isSupportedChain}
             rankingViewer={rankings.viewer}
             isRankingLoading={rankings.isLoading}
-            onTitleClick={handleNavigateToExplore}
-            onRankingClick={handleNavigateToRanking}
-            onGuideClick={handleNavigateToGuide}
+            onTitleClick={shell.handleNavigateToExplore}
+            onRankingClick={shell.handleNavigateToRanking}
+            onGuideClick={shell.handleNavigateToGuide}
           />
         </div>
 
-        {shouldShowFilters && (
+        {shell.shouldShowFilters && (
           <div className="md:hidden">
             <AppGameFiltersContainer filters={filters} games={games} />
           </div>
@@ -131,14 +94,14 @@ function App() {
       </div>
 
       <main
-        className={`mt-0 grid items-start gap-2 px-0 ${shouldUseDesktopThreePanelLayout ? 'md:grid-cols-[240px_minmax(0,1fr)_316px] md:gap-4 md:px-0' : 'md:gap-4 md:px-4'}`}
+        className="mt-0 grid items-start gap-2 px-0 md:grid-cols-[240px_minmax(0,1fr)_316px] md:gap-4 md:px-0"
       >
-        {shouldShowDesktopChat && <DesktopChatRail address={wallet.address} profile={profile} />}
+        <DesktopChatRail address={wallet.address} profile={profile} />
 
         <section className="min-w-0">
-          {shouldShowGuideContent ? (
+          {shell.shouldShowGuideContent ? (
             <GuidePage />
-          ) : shouldShowRankingContent ? (
+          ) : shell.shouldShowRankingContent ? (
             <RankingPage
               rankings={rankings.rankings}
               viewer={rankings.viewer}
@@ -149,64 +112,62 @@ function App() {
             />
           ) : (
             <ExploreContent
-              shouldShowExploreContent={shouldShowExploreContent}
-              marketPageMode={marketPageMode}
-              activeGameId={activeGameId}
+              shouldShowExploreContent={shell.shouldShowExploreContent}
+              marketPageMode={shell.marketPageMode}
+              activeGameId={shell.activeGameId}
               wallet={wallet}
               filters={filters}
               market={market}
               betting={betting}
               rankings={rankings}
-              onOpenGameMarkets={handleOpenGameMarkets}
+              onOpenGameMarkets={shell.handleOpenGameMarkets}
             />
           )}
 
-          <div className={`${shouldShowMobileBetsPanel ? 'md:hidden' : 'hidden'}`}>
+          <div className={`${shell.shouldShowMobileBetsPanel ? 'md:hidden' : 'hidden'}`}>
             <BetsAndTransferPanel wallet={wallet} betting={betting} />
           </div>
 
-          <div className={`${shouldShowMobileChatPanel ? 'md:hidden' : 'hidden'}`}>
+          <div className={`${shell.shouldShowMobileChatPanel ? 'md:hidden' : 'hidden'}`}>
             <LiveChatPanel address={wallet.address} profile={profile} className="h-[calc(100dvh-13rem)]" />
           </div>
         </section>
 
-        {shouldShowDesktopSidebar && (
-          <DesktopSidebar
-            desktopSidePanelTab={desktopSidePanelTab}
-            selectionCount={betting.selectionItems.length}
-            wallet={wallet}
-            betting={betting}
-            betslipPanelProps={betslipPanelProps}
-            onChangeTab={setDesktopSidePanelTab}
-          />
-        )}
+        <DesktopSidebar
+          desktopSidePanelTab={shell.desktopSidePanelTab}
+          selectionCount={betting.selectionItems.length}
+          wallet={wallet}
+          betting={betting}
+          betslipPanelProps={betslipPanelProps}
+          onChangeTab={shell.setDesktopSidePanelTab}
+        />
       </main>
 
       <AppBottomNav
-        mobileView={mobileView}
-        isMobileBetslipOpen={isMobileBetslipOpen}
-        isMobileMenuOpen={isMobileMenuOpen}
+        mobileView={shell.mobileView}
+        isMobileBetslipOpen={shell.isMobileBetslipOpen}
+        isMobileMenuOpen={shell.isMobileMenuOpen}
         selectionCount={betting.selectionItems.length}
-        onOpenExplore={handleNavigateToExplore}
-        onOpenBetslip={() => setIsMobileBetslipOpen(true)}
-        onOpenChat={() => handleNavigateToMobileView('chat')}
-        onOpenBets={() => handleNavigateToMobileView('bets')}
-        onOpenMenu={handleOpenMobileMenu}
+        onOpenExplore={shell.handleNavigateToExplore}
+        onOpenBetslip={shell.openMobileBetslip}
+        onOpenChat={() => shell.handleNavigateToMobileView('chat')}
+        onOpenBets={() => shell.handleNavigateToMobileView('bets')}
+        onOpenMenu={shell.openMobileMenu}
       />
 
       <MobileBetslipSheet
-        isOpen={isMobileBetslipOpen}
+        isOpen={shell.isMobileBetslipOpen}
         selectionCount={betting.selectionItems.length}
-        onOpen={() => setIsMobileBetslipOpen(true)}
-        onClose={() => setIsMobileBetslipOpen(false)}
+        onOpen={shell.openMobileBetslip}
+        onClose={shell.closeMobileBetslip}
         panelProps={betslipPanelProps}
         showLauncher={false}
       />
 
       <MobileMenuSheet
-        isOpen={isMobileMenuOpen}
-        onClose={handleCloseMobileMenu}
-        onOpenGuide={handleOpenGuideFromMenu}
+        isOpen={shell.isMobileMenuOpen}
+        onClose={shell.closeMobileMenu}
+        onOpenGuide={shell.openGuideFromMobileMenu}
       />
     </div>
   )

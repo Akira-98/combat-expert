@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { getWalletAvatarUrl } from '../helpers/walletUi'
-import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
+import { useHeaderController } from '../hooks/useHeaderController'
 import type { RankingViewer } from '../hooks/useRankings'
 import type { useUsdtTransfer } from '../hooks/useUsdtTransfer'
 import { useI18n } from '../i18n'
@@ -66,7 +64,7 @@ export function Header({
   onOpenAuthModal,
   onDisconnect,
 }: HeaderProps) {
-  const { locale, setLocale, t } = useI18n()
+  const { t } = useI18n()
   const buttonBaseClass =
     'inline-flex items-center justify-center text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 md:h-auto md:px-4 md:py-2 md:text-sm'
   const actionButtonClass = `btn-shell h-8 px-2.5 md:btn-shell-lg ${buttonBaseClass}`
@@ -84,90 +82,23 @@ export function Header({
   const mobileAccountSheetClass =
     'ui-surface-soft relative z-10 max-h-[min(86dvh,42rem)] w-full overflow-y-auto rounded-t-3xl border p-4 pb-[calc(env(safe-area-inset-bottom)+16px)] shadow-2xl'
   void isAAWallet
-  const [copyLabel, setCopyLabel] = useState<'idle' | 'copied' | 'failed'>('idle')
-  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false)
-  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false)
-  const avatarUrl = getWalletAvatarUrl(address)
-  const usdtBalanceLabel = !isUsdtSupportedChain
-    ? t('header.unsupportedNetwork')
-    : isUsdtBalanceLoading
-      ? t('header.balanceLoading')
-      : `${(usdtBalance ?? 0).toFixed(4)} USDT`
-
-  useBodyScrollLock(isAccountModalOpen || isTransferModalOpen)
-
-  useEffect(() => {
-    if (!isAccountModalOpen && !isTransferModalOpen) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsTransferModalOpen(false)
-        setIsAccountModalOpen(false)
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isAccountModalOpen, isTransferModalOpen])
-
-  useEffect(() => {
-    if (!isAccountModalOpen && !isTransferModalOpen) return
-
-    void usdtTransfer.refetchBalance()
-    const intervalId = window.setInterval(() => {
-      void usdtTransfer.refetchBalance()
-    }, 15000)
-
-    return () => window.clearInterval(intervalId)
-  }, [isAccountModalOpen, isTransferModalOpen, usdtTransfer])
-
-  const handleCopyAddress = async () => {
-    if (!address) return
-    try {
-      await navigator.clipboard.writeText(address)
-      setCopyLabel('copied')
-    } catch {
-      setCopyLabel('failed')
-    }
-    window.setTimeout(() => setCopyLabel('idle'), 1600)
-  }
-
-  const handleDisconnect = () => {
-    setIsAccountModalOpen(false)
-    onDisconnect()
-  }
-
-  const handleGuideNavigation = () => {
-    setIsTransferModalOpen(false)
-    setIsAccountModalOpen(false)
-    onGuideClick()
-  }
-
-  const handleRankingNavigation = () => {
-    setIsTransferModalOpen(false)
-    setIsAccountModalOpen(false)
-    onRankingClick()
-  }
-
-  const handleWalletAction = () => {
-    setIsAccountModalOpen(false)
-
-    if (!isConnected) {
-      onOpenAuthModal()
-      return
-    }
-
-    setIsTransferModalOpen(true)
-  }
-
-  const handleToggleLocale = () => {
-    setLocale(locale === 'ko' ? 'en' : 'ko')
-  }
+  const controller = useHeaderController({
+    address,
+    isConnected,
+    onGuideClick,
+    onRankingClick,
+    onOpenAuthModal,
+    onDisconnect,
+    usdtTransfer,
+    usdtBalance,
+    isUsdtBalanceLoading,
+    isUsdtSupportedChain,
+  })
 
   const accountPanel = (
     <AccountPanel
       address={address}
-      avatarUrl={avatarUrl}
+      avatarUrl={controller.avatarUrl}
       profileDisplayName={profileDisplayName}
       profileNickname={profileNickname}
       isProfileSaving={isProfileSaving}
@@ -175,14 +106,14 @@ export function Header({
       onSaveNickname={onSaveNickname}
       rankingViewer={rankingViewer}
       isRankingLoading={isRankingLoading}
-      usdtBalanceLabel={usdtBalanceLabel}
+      usdtBalanceLabel={controller.usdtBalanceLabel}
       iconButtonClass={iconButtonClass}
       primaryButtonClass={primaryButtonClass}
-      copyLabel={copyLabel}
-      onCopyAddress={handleCopyAddress}
-      onDisconnect={handleDisconnect}
-      onClose={() => setIsAccountModalOpen(false)}
-      onOpenRanking={handleRankingNavigation}
+      copyLabel={controller.copyLabel}
+      onCopyAddress={controller.handleCopyAddress}
+      onDisconnect={controller.handleDisconnect}
+      onClose={controller.closeAccountModal}
+      onOpenRanking={controller.handleRankingNavigation}
     />
   )
 
@@ -213,12 +144,12 @@ export function Header({
                 isConnecting={isConnecting}
                 isAuthenticated={isAuthenticated}
                 canOpenAuthModal={canOpenAuthModal}
-                onWalletClick={handleWalletAction}
+                onWalletClick={controller.handleWalletAction}
                 onOpenAuthModal={onOpenAuthModal}
                 onDisconnect={onDisconnect}
-                onGuideClick={handleGuideNavigation}
-                onRankingClick={handleRankingNavigation}
-                onToggleLocale={handleToggleLocale}
+                onGuideClick={controller.handleGuideNavigation}
+                onRankingClick={controller.handleRankingNavigation}
+                onToggleLocale={controller.handleToggleLocale}
               />
               {isAuthenticated && isWalletStatusReady && !isConnecting && !isReconnecting && (
                 <p className="ui-text-muted m-0 text-right text-xs">
@@ -230,26 +161,26 @@ export function Header({
           ) : (
             <div className="relative flex items-center justify-end gap-2">
               <HeaderNavButtons
-                onGuideClick={handleGuideNavigation}
-                onRankingClick={handleRankingNavigation}
-                onWalletClick={handleWalletAction}
-                onToggleLocale={handleToggleLocale}
+                onGuideClick={controller.handleGuideNavigation}
+                onRankingClick={controller.handleRankingNavigation}
+                onWalletClick={controller.handleWalletAction}
+                onToggleLocale={controller.handleToggleLocale}
                 showRankingOnMobile
                 showWalletOnMobile
               />
               <button
-                aria-expanded={isAccountModalOpen}
+                aria-expanded={controller.isAccountModalOpen}
                 aria-haspopup="dialog"
                 aria-label={t('header.accountMenuOpen')}
                 className={accountTriggerClass}
-                onClick={() => setIsAccountModalOpen((current) => !current)}
+                onClick={controller.handleToggleAccountModal}
                 type="button"
               >
-                <img alt="" className="h-10 w-10 rounded-full border object-cover" src={avatarUrl} />
+                <img alt="" className="h-10 w-10 rounded-full border object-cover" src={controller.avatarUrl} />
                 <span className="ui-text-strong hidden text-sm font-semibold md:inline">{profileDisplayName}</span>
               </button>
 
-              {isConnected && isAccountModalOpen && (
+              {isConnected && controller.isAccountModalOpen && (
                 <div className={desktopAccountPopoverClass}>
                   <section className="card-surface-soft card-shell-xl p-4 shadow-2xl">{accountPanel}</section>
                 </div>
@@ -259,12 +190,12 @@ export function Header({
         </div>
       </header>
 
-      {isConnected && isAccountModalOpen && (
+      {isConnected && controller.isAccountModalOpen && (
         <>
           <button
             aria-label={t('header.accountMenuClose')}
             className="fixed inset-0 z-40 hidden bg-transparent md:block"
-            onClick={() => setIsAccountModalOpen(false)}
+            onClick={controller.closeAccountModal}
             type="button"
           />
           {typeof document !== 'undefined' &&
@@ -273,7 +204,7 @@ export function Header({
                 <button
                   aria-label={t('header.accountSheetClose')}
                   className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
-                  onClick={() => setIsAccountModalOpen(false)}
+                  onClick={controller.closeAccountModal}
                   type="button"
                 />
                 <section className={mobileAccountSheetClass}>
@@ -285,7 +216,13 @@ export function Header({
             )}
         </>
       )}
-      <TransferModal isOpen={isTransferModalOpen} isConnected={isConnected} chainId={chainId} usdtTransfer={usdtTransfer} onClose={() => setIsTransferModalOpen(false)} />
+      <TransferModal
+        isOpen={controller.isTransferModalOpen}
+        isConnected={isConnected}
+        chainId={chainId}
+        usdtTransfer={usdtTransfer}
+        onClose={controller.closeTransferModal}
+      />
     </>
   )
 }

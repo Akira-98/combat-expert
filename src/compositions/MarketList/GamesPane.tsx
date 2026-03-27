@@ -1,8 +1,7 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { getGameTimingMeta } from '../../helpers/gameTiming'
 import { useI18n } from '../../i18n'
-import { GameOddsPreview } from './GameOddsPreview'
+import { useGamesPaneState } from '../../hooks/useGamesPaneState'
 import { EmptyState, ErrorState, GamesSkeletonList } from './PaneStates'
+import { GameCard } from './GameCard'
 import type { GamesPaneProps } from './types'
 
 export function GamesPane({
@@ -30,25 +29,7 @@ export function GamesPane({
     'border-white/6 bg-transparent shadow-none hover:text-inherit hover:border-white/10 hover:bg-white/[0.01]'
   const searchDialogClass =
     'mx-auto mt-[max(24px,calc(env(safe-area-inset-top)+16px))] w-[calc(100%-20px)] max-w-xl rounded-xl border border-slate-300 ui-surface p-3 shadow-2xl'
-  const [isLeagueExpanded, setIsLeagueExpanded] = useState(false)
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
-  const mobileLeagueOptions = isLeagueExpanded ? leagueOptions : leagueOptions.slice(0, 8)
-
-  useEffect(() => {
-    if (!isSearchModalOpen) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsSearchModalOpen(false)
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isSearchModalOpen])
-
-  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setIsSearchModalOpen(false)
-  }
+  const paneState = useGamesPaneState({ leagueOptions })
 
   return (
     <div className="grid content-start gap-2 pr-0 md:gap-2.5 xl:max-h-[calc(100dvh-8rem)] xl:overflow-y-auto xl:pr-1">
@@ -62,7 +43,7 @@ export function GamesPane({
             >
               {t('games.all')}
             </button>
-            {mobileLeagueOptions.map((leagueName) => (
+            {paneState.mobileLeagueOptions.map((leagueName) => (
               <button
                 key={leagueName}
                 className={`${mobileFilterButtonClass} ${leagueFilter === leagueName ? 'ui-btn-primary' : 'ui-btn-ghost ui-text-body'}`}
@@ -74,11 +55,11 @@ export function GamesPane({
             ))}
             {leagueOptions.length > 8 && (
               <button
-                className={`${mobileFilterButtonClass} md:hidden ${isLeagueExpanded ? 'ui-btn-secondary' : 'ui-btn-ghost ui-text-body'}`}
-                onClick={() => setIsLeagueExpanded((value) => !value)}
+                className={`${mobileFilterButtonClass} md:hidden ${paneState.isLeagueExpanded ? 'ui-btn-secondary' : 'ui-btn-ghost ui-text-body'}`}
+                onClick={paneState.toggleLeagueExpanded}
                 type="button"
               >
-                {isLeagueExpanded ? t('common.collapse') : t('common.more')}
+                {paneState.isLeagueExpanded ? t('common.collapse') : t('common.more')}
               </button>
             )}
           </div>
@@ -91,7 +72,7 @@ export function GamesPane({
         <button
           aria-label={t('games.openSearch')}
           className={searchTriggerButtonClass}
-          onClick={() => setIsSearchModalOpen(true)}
+          onClick={paneState.openSearchModal}
           type="button"
         >
           <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
@@ -108,69 +89,29 @@ export function GamesPane({
         <EmptyState title={t('games.emptyTitle')} description={t('games.emptyDesc')} />
       )}
       <div>
-        {games.map((game) => {
-        const isActive = game.gameId === selectedGameId
-        const timing = getGameTimingMeta(game.startsAt, game.state)
-        const badgeClass =
-          timing.tone === 'rose'
-            ? 'ui-state-danger'
-            : timing.tone === 'amber'
-              ? 'ui-state-warning'
-              : 'ui-pill'
-
-        return (
-          <div key={game.gameId} className="py-1 first:pt-0 last:pb-0">
-            <div
-              aria-pressed={isActive}
-              className={`${gameCardBaseClass} ${gameCardIdleClass}`}
-              onClick={() => onSelectGame(game.gameId)}
-              onKeyDown={(event) => {
-                if (event.target !== event.currentTarget) return
-                if (event.key !== 'Enter' && event.key !== ' ') return
-                event.preventDefault()
-                onSelectGame(game.gameId)
-              }}
-              role="button"
-              tabIndex={0}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <span className="ui-text-strong block font-semibold">{game.title}</span>
-                </div>
-              </div>
-
-              <div className="grid gap-1.5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
-                <div className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
-                  <span className="ui-pill chip-shell px-2 py-1 font-medium">
-                    {game.leagueName}
-                  </span>
-                  <span className={`chip-shell px-2 py-1 font-semibold ${badgeClass}`}>{timing.label}</span>
-                  <span className="ui-text-muted">{timing.detail}</span>
-                </div>
-                <GameOddsPreview
-                  gameId={game.gameId}
-                  participants={game.participants}
-                  priority={isActive}
-                  selectedOutcomes={selectedOutcomes}
-                  onSelectOutcome={onSelectOutcome}
-                  className="min-w-0 text-left md:max-w-[18rem] md:justify-end md:text-right"
-                />
-              </div>
-            </div>
-          </div>
-        )
-      })}
+        {games.map((game) => (
+          <GameCard
+            key={game.gameId}
+            game={game}
+            isActive={game.gameId === selectedGameId}
+            selectedOutcomes={selectedOutcomes}
+            onSelectGame={onSelectGame}
+            onSelectOutcome={onSelectOutcome}
+            gameCardBaseClass={gameCardBaseClass}
+            gameCardIdleClass={gameCardIdleClass}
+          />
+        ))}
       </div>
 
-      {isSearchModalOpen && (
+      {paneState.isSearchModalOpen && (
         <div
           aria-modal="true"
           className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm"
-          onClick={() => setIsSearchModalOpen(false)}
+          onClick={paneState.closeSearchModal}
           role="dialog"
         >
           <div className={searchDialogClass} onClick={(event) => event.stopPropagation()}>
-            <form className="flex items-center gap-2" onSubmit={handleSearchSubmit}>
+            <form className="flex items-center gap-2" onSubmit={paneState.handleSearchSubmit}>
               <svg aria-hidden="true" className="h-4 w-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="6.5" />
                 <path d="M16 16L21 21" />
@@ -188,7 +129,7 @@ export function GamesPane({
               </button>
               <button
                 className={`ui-btn-secondary btn-shell-lg ${modalActionButtonClass}`}
-                onClick={() => setIsSearchModalOpen(false)}
+                onClick={paneState.closeSearchModal}
                 type="button"
               >
                 {t('common.close')}
