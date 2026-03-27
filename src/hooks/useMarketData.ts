@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useChain } from '@azuro-org/sdk'
 import { useQuery } from '@tanstack/react-query'
-import { COMBAT_GAMES_LIMIT, fetchPreferredCombatGames } from '../api/combatGames'
+import { COMBAT_GAMES_PAGE_SIZE, fetchPreferredCombatGames } from '../api/combatGames'
 import { translate } from '../i18n'
 import { mapGamesToItems, mapMarketsToSections } from '../helpers/mappers'
 import { useMarketManagerConditions } from './useMarketManagerConditions'
@@ -35,12 +35,12 @@ export function useMarketData() {
   const { api, environment } = useChain()
 
   const gamesQuery = useQuery({
-    queryKey: ['combat-expert-games', api, environment, COMBAT_GAMES_LIMIT],
+    queryKey: ['combat-expert-games', api, environment, COMBAT_GAMES_PAGE_SIZE],
     queryFn: async () => {
       return fetchPreferredCombatGames({
         apiBaseUrl: api,
         environment,
-        limit: COMBAT_GAMES_LIMIT,
+        pageSize: COMBAT_GAMES_PAGE_SIZE,
       })
     },
     ...GAMES_QUERY_POLICY,

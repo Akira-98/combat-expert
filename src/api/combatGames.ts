@@ -1,12 +1,12 @@
 import { fetchMarketManagerGamesByFilters } from './marketManager'
 import type { MarketManagerGame } from '../types/marketManager'
 
-export const COMBAT_GAMES_LIMIT = 30
+export const COMBAT_GAMES_PAGE_SIZE = 50
 
 type FetchPreferredCombatGamesParams = {
   apiBaseUrl: string
   environment: string
-  limit?: number
+  pageSize?: number
 }
 
 const mergeUniqueGames = (primaryGames: MarketManagerGame[], secondaryGames: MarketManagerGame[]) => {
@@ -21,26 +21,22 @@ const mergeUniqueGames = (primaryGames: MarketManagerGame[], secondaryGames: Mar
 export async function fetchPreferredCombatGames({
   apiBaseUrl,
   environment,
-  limit = COMBAT_GAMES_LIMIT,
+  pageSize = COMBAT_GAMES_PAGE_SIZE,
 }: FetchPreferredCombatGamesParams) {
   const ufcGames = await fetchMarketManagerGamesByFilters({
     apiBaseUrl,
     environment,
     extraParams: { leagueSlug: 'ufc' },
     fallbackMessage: 'UFC 경기 목록 요청 실패',
-    perPage: limit,
+    perPage: pageSize,
   })
-
-  if (ufcGames.length >= limit) {
-    return ufcGames
-  }
 
   const mmaGames = await fetchMarketManagerGamesByFilters({
     apiBaseUrl,
     environment,
     extraParams: { sportSlug: 'mma' },
     fallbackMessage: 'MMA 경기 목록 요청 실패',
-    perPage: limit,
+    perPage: pageSize,
   })
 
   return mergeUniqueGames(ufcGames, mmaGames)
