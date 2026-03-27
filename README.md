@@ -1,107 +1,95 @@
-# React + TypeScript + Vite
+# CombatExpert
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CombatExpert is a community-centric prediction platform for combat sports fans, built on the Azuro Protocol. We bridge the gap between decentralized betting and social engagement by combining Azuro’s liquidity layer with native community features, including an expert ranking system, live event chat, and market-specific discussions.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+CombatExpert is a niche product for combat sports users rather than a generic sportsbook frontend.
 
-## React Compiler
+- UFC and MMA-focused market discovery
+- Community layer around live events and markets
+- Retention features through rankings and user identity
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Why It Fits Azuro Affiliate Onboarding
 
-## Expanding the ESLint configuration
+CombatExpert is positioned as an Azuro affiliate product, not just a protocol demo.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Azuro is used as the core betting and market layer
+- The product targets a defined user niche: combat sports fans
+- It adds engagement features beyond bet placement
+- It is structured for deployment with runtime config and server-side secrets
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Core User Flow
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Connect wallet
+2. Browse UFC and MMA games
+3. Select outcomes and build a betslip
+4. Place bets through the Azuro-integrated flow
+5. Track activity through My Bets, rankings, comments, and chat
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Azuro Integration
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- `@azuro-org/sdk` is used for market and betting integration
+- Affiliate configuration is served through `GET /api/public-config`
+- The current setup is built around Polygon + USDT flows
+- CombatExpert fetches preferred UFC and MMA games for a focused experience
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Relevant files:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- [src/api/combatGames.ts](./src/api/combatGames.ts)
+- [src/config/runtimeConfig.ts](./src/config/runtimeConfig.ts)
+- [api/public-config.js](./api/public-config.js)
+- [vite.config.ts](./vite.config.ts)
 
-## Azuro AA Connector Note
+## Current Status
 
-- `@azuro-org/sdk-social-aa-connector` is aliased to `src/azuroSdkSocialAaConnectorShim.ts` in `vite.config.ts`.
-- Do not alias it to app-level hooks (`src/azuroSocialAaConnector.ts`) for SDK usage.
-- Reason: the Azuro SDK dynamically imports this module inside `ChainProvider`; changing hook shape here can trigger React hook-order runtime errors.
+Implemented or in active progress:
 
-### SDK Update Checklist
+- UFC/MMA game and market browsing
+- Betslip and betting flow integration
+- My Bets experience
+- Live chat with Ably
+- Market comments
+- User profiles
+- Rankings backed by Supabase
 
-1. After changing `@azuro-org/sdk` or related auth packages, run `npm run dev`.
-2. Hard reload once and verify there is no `React has detected a change in the order of Hooks called by ChainProvider`.
-3. Verify there is no follow-up runtime error like `Cannot read properties of undefined (reading 'length')`.
-4. Run `npm run guard:alias` to ensure the SDK AA connector alias still points to the shim.
-5. Run `npm run smoke:chain-hooks` to catch ChainProvider hook-order console regressions.
+## Stack
 
-## Runtime Env Security
+React, TypeScript, Vite, Tailwind, Azuro SDK, Privy, wagmi, Ably, Supabase, and serverless API routes.
 
-- Client code no longer reads `VITE_*` secrets.
-- Public runtime config is served from `GET /api/public-config`.
-- Ably auth token requests are served from `GET|POST /api/ably-token`.
-
-### Required server env vars
+## Local Run
 
 ```bash
-AFFILIATE=0x0000000000000000000000000000000000000000
-RPC_URL=https://polygon-rpc.com
-WALLETCONNECT_PROJECT_ID=...
-PRIVY_APP_ID=...
-ABLY_API_KEY=...
-ABLY_CHANNEL=chat:ufc:live
-COMMENT_AUTH_JWT_SECRET=replace_with_a_long_random_secret
+npm install
+cp .env.example .env
+npm run dev
 ```
 
-For Vercel, set these variables in Project Settings -> Environment Variables.
+Required configuration is listed in [`.env.example`](./.env.example).
+
+## Live Experience
+
+- Official Website: [combatexpert.xyz](https://combatexpert.xyz)
+
+## Product Interface
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/ef336813-b56f-4e3b-9058-9dd4386e0b50" width="32%" alt="Main Market Dashboard" />
+  <img src="https://github.com/user-attachments/assets/482be3bc-2539-4ffd-92a2-5c46cc99e390" width="32%" alt="Expert Ranking System" />
+  <img src="https://github.com/user-attachments/assets/9b3d8ba0-ce77-458a-888a-908e8f72c184" width="32%" alt="Community Chat & Social" />
+</p>
+
+## Contact
+
+- Owner: `<Seongam>`
+- Telegram: `<@LegendaryChoi>`
+- Email: `<chitjddka11@gmail.com>`
+
+## Developer Note
+
+`@azuro-org/sdk-social-aa-connector` is intentionally aliased to a stable shim in [`vite.config.ts`](./vite.config.ts) to avoid SDK hook-order regressions. After SDK-related updates, verify with:
+
+```bash
+npm run guard:alias
+npm run smoke:chain-hooks
+```
