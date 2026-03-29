@@ -14,7 +14,7 @@ export function TopExpertsShowcase({ rankings, isLoading, errorMessage }: TopExp
 
   return (
     <section className="grid gap-3 md:mt-2 md:gap-4">
-      <p className="ui-text-strong m-0 px-1 text-lg font-semibold">Top Expert</p>
+      <p className="ui-text-strong m-0 px-1 text-lg font-semibold">Top Experts</p>
 
       {isLoading ? (
         <>
