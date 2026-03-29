@@ -1,4 +1,5 @@
 import { useI18n } from '../i18n'
+import { SocialLinks } from './SocialLinks'
 
 export function GuidePage() {
   const { t } = useI18n()
@@ -59,50 +60,7 @@ export function GuidePage() {
         </article>
         <article className="card-surface-soft card-shell-lg p-4">
           <p className="ui-text-strong m-0 text-sm font-semibold">{t('guide.contactTitle')}</p>
-          <div className="mt-3 flex items-center gap-4">
-            <div className="flex flex-col items-center gap-2">
-              <a
-                aria-label={t('guide.telegram')}
-                className="ui-btn-secondary inline-flex h-12 w-12 items-center justify-center rounded-full border no-underline transition hover:translate-y-[-1px]"
-                href="https://t.me/LegendaryChoi"
-                rel="noreferrer"
-                target="_blank"
-                title={t('guide.telegram')}
-              >
-                <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24">
-                  <path
-                    d="M21 5 3.8 11.6c-.8.3-.8 1.4 0 1.7l4.4 1.4 1.4 4.4c.3.8 1.4.8 1.7 0L18 1.9c.3-.8-.5-1.6-1.3-1.3Z"
-                    stroke="currentColor"
-                    strokeLinejoin="round"
-                    strokeWidth="1.8"
-                  />
-                  <path d="m8 14 10-10" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
-                </svg>
-              </a>
-              <span className="ui-text-muted text-xs">{t('guide.directMessage')}</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <a
-                aria-label={t('guide.discord')}
-                className="ui-btn-secondary inline-flex h-12 w-12 items-center justify-center rounded-full border no-underline transition hover:translate-y-[-1px]"
-                href="https://discord.gg/kb7x9SH7M"
-                rel="noreferrer"
-                target="_blank"
-                title={t('guide.discord')}
-              >
-                <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24">
-                  <path
-                    d="M8.7 7.6A14.6 14.6 0 0 1 12 7c1.1 0 2.2.2 3.3.6l.7 1.5c1.8.2 3.1 1.1 3.6 2.8.4 1.4.3 3-.4 4.8a9.7 9.7 0 0 1-3.3 1.7l-.8-1.3c.5-.2 1-.4 1.4-.7-.1.1-.2.1-.3.2A10.3 10.3 0 0 1 12 18c-1.5 0-2.9-.3-4.2-.9l-.3-.2c.4.3.9.5 1.4.7l-.8 1.3a9.7 9.7 0 0 1-3.3-1.7c-.7-1.8-.8-3.4-.4-4.8.5-1.7 1.8-2.6 3.6-2.8l.7-1.5Z"
-                    stroke="currentColor"
-                    strokeLinejoin="round"
-                    strokeWidth="1.8"
-                  />
-                  <path d="M9.4 12.3h.1m5 0h.1" stroke="currentColor" strokeLinecap="round" strokeWidth="2.2" />
-                </svg>
-              </a>
-              <span className="ui-text-muted text-xs">{t('guide.community')}</span>
-            </div>
-          </div>
+          <SocialLinks className="mt-3" />
         </article>
       </div>
     </section>

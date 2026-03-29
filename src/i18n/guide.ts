@@ -23,8 +23,7 @@ export const koGuideMessages: LocaleMessages = {
   'guide.contactTitle': '궁금한 점, 제안, 잡담 모두 환영합니다!',
   'guide.telegram': '텔레그램 1:1 문의',
   'guide.discord': '디스코드 커뮤니티',
-  'guide.directMessage': '1:1 문의',
-  'guide.community': '커뮤니티',
+  'guide.x': '공식 X',
 }
 
 export const enGuideMessages: LocaleMessages = {
@@ -50,6 +49,5 @@ export const enGuideMessages: LocaleMessages = {
   'guide.contactTitle': 'Questions, suggestions, and casual chat are all welcome.',
   'guide.telegram': 'Telegram 1:1 Support',
   'guide.discord': 'Discord Community',
-  'guide.directMessage': 'Direct Message',
-  'guide.community': 'Community',
+  'guide.x': 'Official X',
 }
