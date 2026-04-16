@@ -17,7 +17,8 @@ export function MobileMenuSheet({
   const { t } = useI18n()
   if (!isOpen || typeof document === 'undefined') return null
 
-  const menuButtonClass = 'ui-btn-secondary btn-shell-lg px-3 py-3 text-left text-sm font-semibold'
+  const menuButtonClass =
+    'ui-text-strong border-0 bg-transparent px-0 py-2 text-left text-sm font-black uppercase tracking-[0.08em] transition hover:text-[color:var(--app-accent)]'
 
   return createPortal(
     <div aria-modal="true" className="fixed inset-0 z-[72] xl:hidden" role="dialog">
