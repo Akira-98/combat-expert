@@ -36,7 +36,7 @@
     font-weight: 800;
     letter-spacing: 0.03em;
     transform: skewX(-6deg);
-    text-shadow: 0 2px 0 color-mix(in oklab, var(--app-accent) 50%, transparent);
+    text-shadow: 0 4px 0 color-mix(in oklab, var(--app-accent) 60%, transparent);
   }
 
   .ui-input {

@@ -168,6 +168,7 @@ function App() {
         isOpen={shell.isMobileMenuOpen}
         onClose={shell.closeMobileMenu}
         onOpenGuide={shell.openGuideFromMobileMenu}
+        onOpenLeaderboard={shell.openLeaderboardFromMobileMenu}
       />
     </div>
   )

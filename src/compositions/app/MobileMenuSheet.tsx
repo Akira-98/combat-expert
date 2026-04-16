@@ -5,12 +5,14 @@ type MobileMenuSheetProps = {
   isOpen: boolean
   onClose: () => void
   onOpenGuide: () => void
+  onOpenLeaderboard: () => void
 }
 
 export function MobileMenuSheet({
   isOpen,
   onClose,
   onOpenGuide,
+  onOpenLeaderboard,
 }: MobileMenuSheetProps) {
   const { t } = useI18n()
   if (!isOpen || typeof document === 'undefined') return null
@@ -38,6 +40,18 @@ export function MobileMenuSheet({
           </button>
         </div>
         <div className="mt-5 grid gap-2">
+          <button className={menuButtonClass} type="button">
+            {t('nav.news')}
+          </button>
+          <button className={menuButtonClass} type="button">
+            {t('nav.playerRankings')}
+          </button>
+          <button className={menuButtonClass} type="button">
+            {t('nav.forum')}
+          </button>
+          <button className={menuButtonClass} onClick={onOpenLeaderboard} type="button">
+            {t('nav.leaderboard')}
+          </button>
           <button className={menuButtonClass} onClick={onOpenGuide} type="button">
             {t('nav.guide')}
           </button>

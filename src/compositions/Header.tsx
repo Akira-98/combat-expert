@@ -119,24 +119,30 @@ export function Header({
 
   return (
     <>
-      <header className="section-shell flex min-h-[68px] items-center justify-between gap-2.5 bg-transparent px-2.5 py-1.5 shadow-none md:min-h-0 md:gap-4 md:p-4 desktop-surface-fill desktop-surface-variant">
-        <div className={titleWrapperClass}>
-          <h1 className="m-0">
-            {onTitleClick ? (
-              <button
-                aria-label={t('header.goToExplore')}
-                className={`${titleClass} m-0 cursor-pointer border-0 bg-transparent p-0 text-left`}
-                onClick={onTitleClick}
-                type="button"
-              >
-                {t('app.title')}
-              </button>
-            ) : (
-              <span className={titleClass}>{t('app.title')}</span>
-            )}
-          </h1>
+      <header className="section-shell grid min-h-[68px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5 bg-transparent px-2.5 py-1.5 shadow-none md:min-h-0 md:grid-cols-[240px_minmax(0,1fr)_316px] md:gap-4 md:p-4 desktop-surface-fill desktop-surface-variant">
+        <div className="flex min-w-0 items-center">
+          <div className={titleWrapperClass}>
+            <h1 className="m-0">
+              {onTitleClick ? (
+                <button
+                  aria-label={t('header.goToExplore')}
+                  className={`${titleClass} m-0 cursor-pointer border-0 bg-transparent p-0 text-left`}
+                  onClick={onTitleClick}
+                  type="button"
+                >
+                  {t('app.title')}
+                </button>
+              ) : (
+                <span className={titleClass}>{t('app.title')}</span>
+              )}
+            </h1>
+          </div>
         </div>
-        <div className="shrink-0">
+        <PreviewFeatureNav
+          onGuideClick={controller.handleGuideNavigation}
+          onLeaderboardClick={controller.handleRankingNavigation}
+        />
+        <div className="flex shrink-0 items-center justify-end">
           {!isConnected ? (
             <div className="flex flex-col items-end gap-2">
               <HeaderActions
@@ -165,6 +171,8 @@ export function Header({
                 onRankingClick={controller.handleRankingNavigation}
                 onWalletClick={controller.handleWalletAction}
                 onToggleLocale={controller.handleToggleLocale}
+                showGuideButton={false}
+                showRankingButton={false}
                 showRankingOnMobile
                 showWalletOnMobile
               />
@@ -261,6 +269,8 @@ function HeaderActions({
         onRankingClick={onRankingClick}
         onWalletClick={onWalletClick}
         onToggleLocale={onToggleLocale}
+        showGuideButton={false}
+        showRankingButton={false}
         showRankingOnMobile
         showWalletOnMobile
       />
@@ -273,5 +283,37 @@ function HeaderActions({
         </button>
       )}
     </div>
+  )
+}
+
+function PreviewFeatureNav({
+  onGuideClick,
+  onLeaderboardClick,
+}: {
+  onGuideClick: () => void
+  onLeaderboardClick: () => void
+}) {
+  const { t } = useI18n()
+  const previewNavButtonClass =
+    'ui-text-strong hidden border-0 bg-transparent px-0 py-1 text-[15px] font-black uppercase tracking-[0.08em] transition hover:text-[color:var(--app-accent)] md:inline-flex'
+
+  return (
+    <nav aria-label={t('nav.previewFeatures')} className="hidden min-w-0 items-center justify-between md:flex">
+      <button className={previewNavButtonClass} type="button">
+        {t('nav.news')}
+      </button>
+      <button className={previewNavButtonClass} type="button">
+        {t('nav.playerRankings')}
+      </button>
+      <button className={previewNavButtonClass} type="button">
+        {t('nav.forum')}
+      </button>
+      <button className={previewNavButtonClass} onClick={onLeaderboardClick} type="button">
+        {t('nav.leaderboard')}
+      </button>
+      <button className={previewNavButtonClass} onClick={onGuideClick} type="button">
+        {t('nav.guide')}
+      </button>
+    </nav>
   )
 }
