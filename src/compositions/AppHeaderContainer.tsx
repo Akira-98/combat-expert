@@ -14,6 +14,9 @@ type AppHeaderContainerProps = {
   rankingViewer: RankingViewer | null
   isRankingLoading: boolean
   onTitleClick: () => void
+  onNewsClick: () => void
+  onPlayerRankingsClick: () => void
+  onForumClick: () => void
   onRankingClick: () => void
   onGuideClick: () => void
 }
@@ -28,6 +31,9 @@ export function AppHeaderContainer({
   rankingViewer,
   isRankingLoading,
   onTitleClick,
+  onNewsClick,
+  onPlayerRankingsClick,
+  onForumClick,
   onRankingClick,
   onGuideClick,
 }: AppHeaderContainerProps) {
@@ -55,6 +61,9 @@ export function AppHeaderContainer({
       canOpenAuthModal={wallet.canOpenAuthModal}
       connectErrorMessage={wallet.connectErrorMessage}
       onTitleClick={onTitleClick}
+      onNewsClick={onNewsClick}
+      onPlayerRankingsClick={onPlayerRankingsClick}
+      onForumClick={onForumClick}
       onRankingClick={onRankingClick}
       onGuideClick={onGuideClick}
       onOpenAuthModal={wallet.openAuthModal}

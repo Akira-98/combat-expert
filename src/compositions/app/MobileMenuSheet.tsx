@@ -4,6 +4,9 @@ import { useI18n } from '../../i18n'
 type MobileMenuSheetProps = {
   isOpen: boolean
   onClose: () => void
+  onOpenNews: () => void
+  onOpenPlayerRankings: () => void
+  onOpenForum: () => void
   onOpenGuide: () => void
   onOpenLeaderboard: () => void
 }
@@ -11,6 +14,9 @@ type MobileMenuSheetProps = {
 export function MobileMenuSheet({
   isOpen,
   onClose,
+  onOpenNews,
+  onOpenPlayerRankings,
+  onOpenForum,
   onOpenGuide,
   onOpenLeaderboard,
 }: MobileMenuSheetProps) {
@@ -41,13 +47,13 @@ export function MobileMenuSheet({
           </button>
         </div>
         <div className="mt-5 grid gap-2">
-          <button className={menuButtonClass} type="button">
+          <button className={menuButtonClass} onClick={onOpenNews} type="button">
             {t('nav.news')}
           </button>
-          <button className={menuButtonClass} type="button">
+          <button className={menuButtonClass} onClick={onOpenPlayerRankings} type="button">
             {t('nav.playerRankings')}
           </button>
-          <button className={menuButtonClass} type="button">
+          <button className={menuButtonClass} onClick={onOpenForum} type="button">
             {t('nav.forum')}
           </button>
           <button className={menuButtonClass} onClick={onOpenLeaderboard} type="button">

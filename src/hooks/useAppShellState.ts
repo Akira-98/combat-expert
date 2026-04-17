@@ -37,21 +37,23 @@ export function useAppShellState({
 
   const isMyBetsViewActive =
     navigation.mobileView === 'bets' || navigation.desktopSidePanelTab === 'myBets'
+  const isStaticPageRoute = navigation.isGuideRoute || navigation.isRankingRoute || Boolean(navigation.previewPage)
 
   return {
     ...navigation,
     isMobileBetslipOpen,
     isMobileMenuOpen,
     isMyBetsViewActive,
-    shouldShowFilters: !navigation.isGuideRoute && !navigation.isRankingRoute,
+    shouldShowFilters: !isStaticPageRoute,
     shouldShowGuideContent: navigation.isGuideRoute,
     shouldShowRankingContent: navigation.isRankingRoute,
+    shouldShowPreviewContent: Boolean(navigation.previewPage),
     shouldShowExploreContent:
-      !navigation.isGuideRoute && !navigation.isRankingRoute && navigation.mobileView === 'explore',
+      !isStaticPageRoute && navigation.mobileView === 'explore',
     shouldShowMobileBetsPanel:
-      !navigation.isGuideRoute && !navigation.isRankingRoute && navigation.mobileView === 'bets',
+      !isStaticPageRoute && navigation.mobileView === 'bets',
     shouldShowMobileChatPanel:
-      !navigation.isGuideRoute && !navigation.isRankingRoute && navigation.mobileView === 'chat',
+      !isStaticPageRoute && navigation.mobileView === 'chat',
     openMobileBetslip: () => setIsMobileBetslipOpen(true),
     closeMobileBetslip,
     openMobileMenu: () => {
@@ -66,6 +68,18 @@ export function useAppShellState({
     openLeaderboardFromMobileMenu: () => {
       closeMobileMenu()
       navigation.handleNavigateToRanking()
+    },
+    openNewsFromMobileMenu: () => {
+      closeMobileMenu()
+      navigation.handleNavigateToPreviewPage('news')
+    },
+    openPlayerRankingsFromMobileMenu: () => {
+      closeMobileMenu()
+      navigation.handleNavigateToPreviewPage('player-rankings')
+    },
+    openForumFromMobileMenu: () => {
+      closeMobileMenu()
+      navigation.handleNavigateToPreviewPage('forum')
     },
   }
 }

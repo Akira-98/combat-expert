@@ -2,6 +2,7 @@ import { BetsAndTransferPanel } from './compositions/BetsAndTransferPanel'
 import { AppBottomNav } from './compositions/AppBottomNav'
 import { AppGameFiltersContainer } from './compositions/AppGameFiltersContainer'
 import { AppHeaderContainer } from './compositions/AppHeaderContainer'
+import { ComingSoonPage } from './compositions/ComingSoonPage'
 import { GuidePage } from './compositions/GuidePage'
 import { RankingPage } from './compositions/RankingPage'
 import { MobileBetslipSheet } from './compositions/MobileBetslipSheet'
@@ -78,6 +79,9 @@ function App() {
             rankingViewer={rankings.viewer}
             isRankingLoading={rankings.isLoading}
             onTitleClick={shell.handleNavigateToExplore}
+            onNewsClick={() => shell.handleNavigateToPreviewPage('news')}
+            onPlayerRankingsClick={() => shell.handleNavigateToPreviewPage('player-rankings')}
+            onForumClick={() => shell.handleNavigateToPreviewPage('forum')}
             onRankingClick={shell.handleNavigateToRanking}
             onGuideClick={shell.handleNavigateToGuide}
           />
@@ -110,6 +114,8 @@ function App() {
               onRetry={() => void rankings.refetch()}
               isConnected={wallet.isConnected}
             />
+          ) : shell.shouldShowPreviewContent ? (
+            <ComingSoonPage />
           ) : (
             <ExploreContent
               shouldShowExploreContent={shell.shouldShowExploreContent}
@@ -167,6 +173,9 @@ function App() {
       <MobileMenuSheet
         isOpen={shell.isMobileMenuOpen}
         onClose={shell.closeMobileMenu}
+        onOpenNews={shell.openNewsFromMobileMenu}
+        onOpenPlayerRankings={shell.openPlayerRankingsFromMobileMenu}
+        onOpenForum={shell.openForumFromMobileMenu}
         onOpenGuide={shell.openGuideFromMobileMenu}
         onOpenLeaderboard={shell.openLeaderboardFromMobileMenu}
       />

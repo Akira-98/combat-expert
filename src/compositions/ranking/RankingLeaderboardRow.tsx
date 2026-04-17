@@ -28,9 +28,8 @@ export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderbo
       <div className="flex items-center">
         <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${badgeClassName}`}>#{rank}</span>
       </div>
-      <div className="min-w-0">
+      <div className="flex min-w-0 flex-col justify-center">
         <p className="ui-text-strong m-0 truncate text-sm font-semibold">{entry.nickname || shortenAddress(entry.address, 6, 4)}</p>
-        <p className="ui-text-muted mt-1 mb-0 truncate text-xs">{shortenAddress(entry.address, 7, 5)}</p>
         <div className="mt-2 md:hidden">
           <EntryMetrics entry={entry} />
         </div>

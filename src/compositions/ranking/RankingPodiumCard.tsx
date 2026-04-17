@@ -22,7 +22,6 @@ export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: 
             #{rank}
           </div>
           <p className="ui-text-strong m-0 truncate text-lg font-semibold md:text-xl">{entry.nickname || shortenAddress(entry.address, 6, 4)}</p>
-          <p className="ui-text-muted mt-1 mb-0 truncate text-sm">{shortenAddress(entry.address, 7, 5)}</p>
         </div>
         <div className="text-right">
           <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">Score</p>

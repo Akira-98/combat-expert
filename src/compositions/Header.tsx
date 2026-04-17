@@ -30,6 +30,9 @@ type HeaderProps = {
   canOpenAuthModal: boolean
   connectErrorMessage?: string
   onTitleClick?: () => void
+  onNewsClick: () => void
+  onPlayerRankingsClick: () => void
+  onForumClick: () => void
   onRankingClick: () => void
   onGuideClick: () => void
   onOpenAuthModal: () => void
@@ -59,6 +62,9 @@ export function Header({
   canOpenAuthModal,
   connectErrorMessage,
   onTitleClick,
+  onNewsClick,
+  onPlayerRankingsClick,
+  onForumClick,
   onRankingClick,
   onGuideClick,
   onOpenAuthModal,
@@ -139,6 +145,9 @@ export function Header({
           </div>
         </div>
         <PreviewFeatureNav
+          onNewsClick={onNewsClick}
+          onPlayerRankingsClick={onPlayerRankingsClick}
+          onForumClick={onForumClick}
           onGuideClick={controller.handleGuideNavigation}
           onLeaderboardClick={controller.handleRankingNavigation}
         />
@@ -287,9 +296,15 @@ function HeaderActions({
 }
 
 function PreviewFeatureNav({
+  onNewsClick,
+  onPlayerRankingsClick,
+  onForumClick,
   onGuideClick,
   onLeaderboardClick,
 }: {
+  onNewsClick: () => void
+  onPlayerRankingsClick: () => void
+  onForumClick: () => void
   onGuideClick: () => void
   onLeaderboardClick: () => void
 }) {
@@ -299,13 +314,13 @@ function PreviewFeatureNav({
 
   return (
     <nav aria-label={t('nav.previewFeatures')} className="hidden min-w-0 items-center justify-between md:flex">
-      <button className={previewNavButtonClass} type="button">
+      <button className={previewNavButtonClass} onClick={onNewsClick} type="button">
         {t('nav.news')}
       </button>
-      <button className={previewNavButtonClass} type="button">
+      <button className={previewNavButtonClass} onClick={onPlayerRankingsClick} type="button">
         {t('nav.playerRankings')}
       </button>
-      <button className={previewNavButtonClass} type="button">
+      <button className={previewNavButtonClass} onClick={onForumClick} type="button">
         {t('nav.forum')}
       </button>
       <button className={previewNavButtonClass} onClick={onLeaderboardClick} type="button">

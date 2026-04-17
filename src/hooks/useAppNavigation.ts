@@ -4,7 +4,7 @@ import type { GameItem } from '../types/ui'
 export type MobileView = 'explore' | 'bets' | 'chat'
 export type DesktopSidePanelTab = 'myBets' | 'betslip'
 export type MarketPageMode = 'games' | 'markets'
-type RoutedPage = 'guide' | 'ranking'
+export type RoutedPage = 'guide' | 'ranking' | 'news' | 'player-rankings' | 'forum'
 
 const GAME_ROUTE_QUERY_KEY = 'game'
 const PAGE_ROUTE_QUERY_KEY = 'page'
@@ -20,7 +20,7 @@ function readRoutedPage() {
   if (typeof window === 'undefined') return undefined
 
   const value = new URLSearchParams(window.location.search).get(PAGE_ROUTE_QUERY_KEY)
-  return value === 'guide' || value === 'ranking' ? value : undefined
+  return value === 'guide' || value === 'ranking' || value === 'news' || value === 'player-rankings' || value === 'forum' ? value : undefined
 }
 
 function writeRouteState({ gameId, page }: { gameId?: string; page?: string }, replace = false) {
@@ -78,7 +78,7 @@ export function useAppNavigation({
   }, [])
 
   useEffect(() => {
-    if (routedPage === 'guide' || routedPage === 'ranking') return
+    if (routedPage) return
     if (filteredGames.length === 0) return
     if (routedGameId && filteredGames.some((game) => game.gameId === routedGameId)) {
       if (selectedGameId !== routedGameId) {
@@ -93,7 +93,7 @@ export function useAppNavigation({
   }, [filteredGames, routedGameId, routedPage, selectedGameId, setSelectedGameId])
 
   useEffect(() => {
-    if (routedPage === 'guide' || routedPage === 'ranking') return
+    if (routedPage) return
     if (!routedGameId || isGamesLoading) return
 
     const isVisible = filteredGames.some((game) => game.gameId === routedGameId)
@@ -108,6 +108,7 @@ export function useAppNavigation({
     : undefined
   const isGuideRoute = routedPage === 'guide'
   const isRankingRoute = routedPage === 'ranking'
+  const previewPage = routedPage === 'news' || routedPage === 'player-rankings' || routedPage === 'forum' ? routedPage : undefined
   const marketPageMode: MarketPageMode = routedGameId ? 'markets' : 'games'
   const activeGameId = marketPageMode === 'markets' ? routedGameId : visibleSelectedGameId
 
@@ -157,6 +158,14 @@ export function useAppNavigation({
     setRoutedPage('ranking')
   }
 
+  const handleNavigateToPreviewPage = (page: Exclude<RoutedPage, 'guide' | 'ranking'>) => {
+    onCloseMobileBetslip()
+    setMobileView('explore')
+    writeRouteState({ page })
+    setRoutedGameId(undefined)
+    setRoutedPage(page)
+  }
+
   return {
     mobileView,
     setMobileView,
@@ -164,6 +173,7 @@ export function useAppNavigation({
     setDesktopSidePanelTab,
     isGuideRoute,
     isRankingRoute,
+    previewPage,
     marketPageMode,
     activeGameId,
     handleOpenGameMarkets,
@@ -172,5 +182,6 @@ export function useAppNavigation({
     handleNavigateToMobileView,
     handleNavigateToGuide,
     handleNavigateToRanking,
+    handleNavigateToPreviewPage,
   }
 }
