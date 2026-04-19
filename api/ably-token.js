@@ -1,14 +1,8 @@
 import crypto from 'node:crypto'
 import * as Ably from 'ably'
+import { allowMethods, sendJson, sendServerError } from './_lib/http.js'
 
 const DEFAULT_TTL_MS = 60 * 60 * 1000
-
-function sendJson(res, statusCode, payload) {
-  res.status(statusCode)
-  res.setHeader('Content-Type', 'application/json')
-  res.setHeader('Cache-Control', 'no-store')
-  res.send(JSON.stringify(payload))
-}
 
 function normalizeClientId(input) {
   if (!input) return `guest-${crypto.randomUUID()}`
@@ -20,14 +14,11 @@ function normalizeClientId(input) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET' && req.method !== 'POST') {
-    res.setHeader('Allow', 'GET, POST')
-    return sendJson(res, 405, { error: 'Method not allowed' })
-  }
+  if (!allowMethods(req, res, ['GET', 'POST'])) return
 
   const ablyApiKey = process.env.ABLY_API_KEY
   if (!ablyApiKey) {
-    return sendJson(res, 500, { error: 'ABLY_API_KEY is not set' })
+    return sendJson(res, 500, { error: 'Missing server configuration' })
   }
 
   const channel = process.env.ABLY_CHANNEL || 'chat:ufc:live'
@@ -49,7 +40,6 @@ export default async function handler(req, res) {
     })
     return sendJson(res, 200, tokenRequest)
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to create token request'
-    return sendJson(res, 500, { error: message })
+    return sendServerError(res, error, 'Failed to create token request')
   }
 }

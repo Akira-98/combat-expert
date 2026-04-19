@@ -1,5 +1,5 @@
 import { loadServerEnv } from './_lib/env.js'
-import { allowMethods, sendJson } from './_lib/http.js'
+import { allowMethods, sendJson, sendServerError } from './_lib/http.js'
 import { isAuthorizedRankingSyncRequest } from './_lib/rankingAuth.js'
 import {
   applyRankingSyncEntries,
@@ -57,8 +57,7 @@ export default async function handler(req, res) {
       })
       normalizedEntries = orchestrationMeta.entries
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error'
-      return sendJson(res, 500, { error: message })
+      return sendServerError(res, error, 'Failed to build ranking sync entries')
     }
   }
 
@@ -99,7 +98,6 @@ export default async function handler(req, res) {
       orchestration: orchestrationMeta,
     })
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    return sendJson(res, 500, { error: message })
+    return sendServerError(res, error, 'Failed to apply ranking sync')
   }
 }

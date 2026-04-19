@@ -1,5 +1,5 @@
 import { loadServerEnv, normalizeAddress } from './_lib/env.js'
-import { allowMethods, sendJson } from './_lib/http.js'
+import { allowMethods, sendJson, sendServerError } from './_lib/http.js'
 import { fetchNicknameMapByAddresses } from './_lib/profileStore.js'
 import { fetchRankingSummary, fetchRankingTotals, mapRankingSummaryRow, mapRankingTotalRow, normalizeRankingLimit } from './_lib/rankingStore.js'
 
@@ -40,7 +40,6 @@ export default async function handler(req, res) {
       viewer,
     })
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    return sendJson(res, 500, { error: message })
+    return sendServerError(res, error, 'Failed to load rankings')
   }
 }

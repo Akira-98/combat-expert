@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useWalletClient } from 'wagmi'
 import { useAAWalletClient } from '../azuroSocialAaConnector'
+import { fetchProfile, saveProfile } from '../api/profile'
 import { buildProfileMessage, getProfileDisplayName, normalizeProfileNickname } from '../helpers/profile'
 import { translate } from '../i18n'
 
@@ -8,67 +9,6 @@ type UseProfileParams = {
   address?: `0x${string}`
   isConnected: boolean
   isAAWallet?: boolean
-}
-
-type ProfilePayload = {
-  address: string
-  nickname: string | null
-}
-
-async function fetchProfile(address: string): Promise<ProfilePayload> {
-  const response = await fetch(`/api/profile?address=${encodeURIComponent(address.toLowerCase())}`, {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
-  })
-
-  const payload = await response.json().catch(() => ({}))
-  if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('profile.loadFailed'))
-  }
-
-  return {
-    address: typeof payload?.address === 'string' ? payload.address : address.toLowerCase(),
-    nickname: typeof payload?.nickname === 'string' ? payload.nickname : null,
-  }
-}
-
-async function saveProfile({
-  address,
-  nickname,
-  issuedAt,
-  message,
-  signature,
-}: {
-  address: string
-  nickname: string
-  issuedAt: string
-  message: string
-  signature: string
-}): Promise<ProfilePayload> {
-  const response = await fetch('/api/profile', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify({
-      address,
-      nickname,
-      issuedAt,
-      message,
-      signature,
-    }),
-  })
-
-  const payload = await response.json().catch(() => ({}))
-  if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('profile.saveFailed'))
-  }
-
-  return {
-    address: typeof payload?.address === 'string' ? payload.address : address.toLowerCase(),
-    nickname: typeof payload?.nickname === 'string' ? payload.nickname : null,
-  }
 }
 
 export function useProfile({ address, isConnected, isAAWallet }: UseProfileParams) {

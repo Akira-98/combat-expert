@@ -1,6 +1,7 @@
 import type { WalletClient } from 'viem'
 import { buildCommentAuthMessage } from '../helpers/comments'
 import { translate } from '../i18n'
+import { getJson, postJson } from './http'
 
 export type MarketComment = {
   id: string
@@ -20,23 +21,14 @@ export type SignableAAWalletClient = {
   signMessage(args: { message: string }): Promise<string>
 }
 
-const JSON_HEADERS = {
-  'Content-Type': 'application/json',
-  Accept: 'application/json',
-} as const
-
 export async function fetchMarketComments(marketId: string): Promise<MarketComment[]> {
-  const response = await fetch(`/api/comments?marketId=${encodeURIComponent(marketId)}`, {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
-  })
+  const payload = await getJson(
+    `/api/comments?marketId=${encodeURIComponent(marketId)}`,
+    translate('marketComments.fetchFailed'),
+  )
+  const commentsPayload = payload && typeof payload === 'object' ? payload as { comments?: unknown } : {}
 
-  const payload = await response.json().catch(() => ({}))
-  if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('marketComments.fetchFailed'))
-  }
-
-  return Array.isArray(payload?.comments) ? payload.comments : []
+  return Array.isArray(commentsPayload.comments) ? commentsPayload.comments as MarketComment[] : []
 }
 
 export async function postMarketComment({
@@ -46,37 +38,26 @@ export async function postMarketComment({
   marketId: string
   content: string
 }): Promise<MarketComment> {
-  const response = await fetch('/api/comments', {
-    method: 'POST',
-    headers: JSON_HEADERS,
-    body: JSON.stringify({
+  const payload = await postJson(
+    '/api/comments',
+    {
       marketId,
       content,
-    }),
-  })
+    },
+    translate('marketComments.saveFailed'),
+  )
+  const commentPayload = payload && typeof payload === 'object' ? payload as { comment?: unknown } : {}
 
-  const payload = await response.json().catch(() => ({}))
-  if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('marketComments.saveFailed'))
-  }
-
-  return payload.comment as MarketComment
+  return commentPayload.comment as MarketComment
 }
 
 export async function fetchCommentSession(): Promise<CommentSessionPayload> {
-  const response = await fetch('/api/comment-auth/session', {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
-  })
-  const payload = await response.json().catch(() => ({}))
-
-  if (!response.ok) {
-    throw new Error(typeof payload?.error === 'string' ? payload.error : translate('marketComments.sessionFailed'))
-  }
+  const payload = await getJson('/api/comment-auth/session', translate('marketComments.sessionFailed'))
+  const sessionPayload = payload && typeof payload === 'object' ? payload as Partial<CommentSessionPayload> : {}
 
   return {
-    authenticated: Boolean(payload?.authenticated),
-    address: typeof payload?.address === 'string' ? payload.address : undefined,
+    authenticated: Boolean(sessionPayload.authenticated),
+    address: typeof sessionPayload.address === 'string' ? sessionPayload.address : undefined,
   }
 }
 
@@ -91,19 +72,11 @@ export async function createCommentSession({
   walletClient?: WalletClient
   aaWalletClient?: SignableAAWalletClient | null
 }) {
-  const nonceResponse = await fetch('/api/comment-auth/nonce', {
-    method: 'POST',
-    headers: JSON_HEADERS,
-    body: JSON.stringify({ address }),
-  })
+  const noncePayload = await postJson('/api/comment-auth/nonce', { address }, translate('marketComments.startLoginFailed'))
+  const nonceRecord = noncePayload && typeof noncePayload === 'object' ? noncePayload as Record<string, unknown> : {}
 
-  const noncePayload = await nonceResponse.json().catch(() => ({}))
-  if (!nonceResponse.ok) {
-    throw new Error(typeof noncePayload?.error === 'string' ? noncePayload.error : translate('marketComments.startLoginFailed'))
-  }
-
-  const nonce = typeof noncePayload?.nonce === 'string' ? noncePayload.nonce : ''
-  const issuedAt = typeof noncePayload?.issuedAt === 'string' ? noncePayload.issuedAt : ''
+  const nonce = typeof nonceRecord.nonce === 'string' ? nonceRecord.nonce : ''
+  const issuedAt = typeof nonceRecord.issuedAt === 'string' ? nonceRecord.issuedAt : ''
   if (!nonce || !issuedAt) {
     throw new Error(translate('marketComments.invalidLoginRequest'))
   }
@@ -128,19 +101,14 @@ export async function createCommentSession({
     throw new Error(translate('profile.noSignWalletClient'))
   }
 
-  const verifyResponse = await fetch('/api/comment-auth/verify', {
-    method: 'POST',
-    headers: JSON_HEADERS,
-    body: JSON.stringify({
+  await postJson(
+    '/api/comment-auth/verify',
+    {
       address,
       issuedAt,
       message,
       signature,
-    }),
-  })
-
-  const verifyPayload = await verifyResponse.json().catch(() => ({}))
-  if (!verifyResponse.ok) {
-    throw new Error(typeof verifyPayload?.error === 'string' ? verifyPayload.error : translate('marketComments.verifyLoginFailed'))
-  }
+    },
+    translate('marketComments.verifyLoginFailed'),
+  )
 }

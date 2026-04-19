@@ -1,4 +1,5 @@
 import { translate } from '../i18n'
+import { getJson } from './http'
 
 export type NewsItem = {
   id: string
@@ -39,16 +40,8 @@ function normalizeNewsItem(value: unknown): NewsItem | null {
 }
 
 export async function fetchNews(): Promise<NewsPayload> {
-  const response = await fetch('/api/news', {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
-  })
-
-  const payload: unknown = await response.json().catch(() => ({}))
+  const payload: unknown = await getJson('/api/news', translate('news.loadingFailed'))
   const payloadRecord = payload && typeof payload === 'object' ? payload as Record<string, unknown> : {}
-  if (!response.ok) {
-    throw new Error(typeof payloadRecord.error === 'string' ? payloadRecord.error : translate('news.loadingFailed'))
-  }
 
   const items = Array.isArray(payloadRecord.items)
     ? payloadRecord.items.map(normalizeNewsItem).filter((item): item is NewsItem => Boolean(item))

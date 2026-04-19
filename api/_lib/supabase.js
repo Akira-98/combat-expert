@@ -15,7 +15,7 @@ export async function supabaseSelect({ supabaseUrl, serviceRoleKey, path, errorM
 
   if (!response.ok) {
     const text = await response.text()
-    throw new Error(text || errorMessage)
+    throw new Error(errorMessage || 'Supabase select failed', { cause: text })
   }
 
   return response.json()
@@ -33,7 +33,7 @@ export async function supabaseInsert({ supabaseUrl, serviceRoleKey, table, body,
 
   if (!response.ok) {
     const text = await response.text()
-    throw new Error(text || errorMessage)
+    throw new Error(errorMessage || 'Supabase insert failed', { cause: text })
   }
 
   return response.json()
@@ -50,7 +50,7 @@ export async function supabaseRpc({ supabaseUrl, serviceRoleKey, fn, body, error
 
   if (!response.ok) {
     const text = await response.text()
-    throw new Error(text || errorMessage)
+    throw new Error(errorMessage || 'Supabase RPC failed', { cause: text })
   }
 
   return response.json()

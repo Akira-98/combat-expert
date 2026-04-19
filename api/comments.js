@@ -1,6 +1,6 @@
 import { fetchCommentsByMarketId, insertCommentRow, mapCommentRow } from './_lib/commentStore.js'
 import { loadServerEnv, normalizeAddress } from './_lib/env.js'
-import { allowMethods, sendJson } from './_lib/http.js'
+import { allowMethods, sendJson, sendServerError } from './_lib/http.js'
 import { fetchNicknameMapByAddresses } from './_lib/profileStore.js'
 import { readCommentSession } from './_lib/commentAuth.js'
 import { normalizeCommentContent as normalizeSharedCommentContent } from '../shared/signingPayloads.js'
@@ -66,7 +66,6 @@ export default async function handler(req, res) {
     const profileMap = await fetchNicknameMapByAddresses({ supabaseUrl, serviceRoleKey, addresses: [address] })
     return sendJson(res, 200, { comment: mapCommentRow(row, profileMap) })
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    return sendJson(res, 500, { error: message })
+    return sendServerError(res, error, 'Failed to process comments request')
   }
 }

@@ -1,3 +1,5 @@
+import { getJson } from '../api/http'
+
 export type RuntimeConfig = {
   affiliateAddress: string
   rpcUrl: string
@@ -26,15 +28,6 @@ function validateConfig(data: unknown): RuntimeConfig {
 }
 
 export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
-  const response = await fetch('/api/public-config', {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to load runtime config: ${response.status}`)
-  }
-
-  const payload = await response.json()
+  const payload = await getJson('/api/public-config', 'Failed to load runtime config')
   return validateConfig(payload)
 }

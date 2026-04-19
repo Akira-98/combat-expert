@@ -1,5 +1,5 @@
 import { loadServerEnv, normalizeAddress, parseIssuedAt } from './_lib/env.js'
-import { allowMethods, sendJson } from './_lib/http.js'
+import { allowMethods, sendJson, sendServerError } from './_lib/http.js'
 import { fetchProfileByAddress, upsertProfileByAddress } from './_lib/profileStore.js'
 import { assertFreshIssuedAt, verifySignedMessage } from './_lib/signature.js'
 import { buildProfileMessage, normalizeProfileNickname, PROFILE_MESSAGE_TTL_MS } from '../shared/signingPayloads.js'
@@ -61,7 +61,6 @@ export default async function handler(req, res) {
     const profile = await upsertProfileByAddress({ supabaseUrl, serviceRoleKey, address, nickname })
     return sendJson(res, 200, profile)
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    return sendJson(res, 500, { error: message })
+    return sendServerError(res, error, 'Failed to process profile request')
   }
 }

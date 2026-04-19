@@ -1,4 +1,5 @@
 const FALLBACK_POLYGON_RPC_URL = 'https://polygon-rpc.com'
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 export function normalizePolygonRpcUrl(rpcUrl) {
   const trimmed = (rpcUrl || '').trim()
@@ -25,5 +26,15 @@ export function loadServerEnv() {
     rpcUrl: normalizePolygonRpcUrl(process.env.RPC_URL),
     commentAuthSecret: (process.env.COMMENT_AUTH_JWT_SECRET || '').trim(),
     rankingSyncSecret: (process.env.RANKING_SYNC_SECRET || '').trim(),
+  }
+}
+
+export function loadPublicConfigEnv() {
+  return {
+    affiliateAddress: process.env.AFFILIATE || ZERO_ADDRESS,
+    rpcUrl: normalizePolygonRpcUrl(process.env.RPC_URL),
+    walletConnectProjectId: process.env.WALLETCONNECT_PROJECT_ID || '',
+    privyAppId: process.env.PRIVY_APP_ID || '',
+    ablyChannel: process.env.ABLY_CHANNEL || 'chat:ufc:live',
   }
 }

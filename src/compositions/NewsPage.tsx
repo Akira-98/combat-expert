@@ -57,21 +57,25 @@ export function NewsPage() {
 function NewsArticleCard({ item, publishedAt }: { item: NewsItem; publishedAt: string }) {
   return (
     <article className="card-surface-soft card-shell-xl overflow-hidden">
-      <a className="grid min-h-[132px] gap-0 text-inherit no-underline md:grid-cols-[176px_minmax(0,1fr)]" href={item.link} rel="noreferrer" target="_blank">
+      <a className="grid min-h-[104px] grid-cols-[104px_minmax(0,1fr)] gap-0 text-inherit no-underline md:min-h-[132px] md:grid-cols-[176px_minmax(0,1fr)]" href={item.link} rel="noreferrer" target="_blank">
         {item.imageUrl ? (
-          <img alt="" className="h-40 w-full object-cover md:h-full" loading="lazy" referrerPolicy="no-referrer" src={item.imageUrl} />
+          <img alt="" className="h-full min-h-[104px] w-full object-cover md:min-h-[132px]" loading="lazy" referrerPolicy="no-referrer" src={item.imageUrl} />
         ) : (
-          <div className="ui-divider-faint flex h-28 items-center justify-center border-b md:h-full md:border-r md:border-b-0">
-            <span className="ui-text-muted text-xs font-semibold uppercase tracking-[0.18em]">{item.source}</span>
+          <div className="ui-divider-faint flex h-full min-h-[104px] items-center justify-center border-r md:min-h-[132px]">
+            <span className="ui-text-muted px-2 text-center text-[10px] font-semibold uppercase md:text-xs">{item.source}</span>
           </div>
         )}
-        <div className="min-w-0 p-4">
-          <div className="ui-text-muted flex flex-wrap items-center gap-2 text-xs font-semibold">
+        <div className="min-w-0 p-3 md:p-4">
+          <div className="ui-text-muted flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-semibold md:text-xs">
             <span>{item.source}</span>
             {publishedAt ? <span>{publishedAt}</span> : null}
           </div>
-          <h3 className="ui-text-strong m-0 mt-2 break-words text-lg font-semibold leading-snug md:text-xl">{item.title}</h3>
-          {item.summary ? <p className="ui-text-body m-0 mt-2 break-words text-sm leading-6">{item.summary}</p> : null}
+          <h3 className="ui-text-strong m-0 mt-1 break-words text-sm font-semibold leading-snug md:mt-2 md:text-xl">{item.title}</h3>
+          {item.summary ? (
+            <p className="ui-text-body m-0 mt-1 hidden break-words text-sm leading-6 sm:[-webkit-box-orient:vertical] sm:[display:-webkit-box] sm:line-clamp-2 sm:overflow-hidden md:mt-2">
+              {item.summary}
+            </p>
+          ) : null}
         </div>
       </a>
     </article>
@@ -81,9 +85,9 @@ function NewsArticleCard({ item, publishedAt }: { item: NewsItem; publishedAt: s
 function NewsLoadingState() {
   return (
     <div className="grid gap-3 px-4">
-      <div className="card-surface-soft card-shell-xl h-40" />
-      <div className="card-surface-soft card-shell-xl h-40" />
-      <div className="card-surface-soft card-shell-xl h-40" />
+      <div className="card-surface-soft card-shell-xl h-[104px] md:h-40" />
+      <div className="card-surface-soft card-shell-xl h-[104px] md:h-40" />
+      <div className="card-surface-soft card-shell-xl h-[104px] md:h-40" />
     </div>
   )
 }

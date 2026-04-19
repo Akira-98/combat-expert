@@ -1,4 +1,4 @@
-import { allowMethods, sendJson } from './_lib/http.js'
+import { allowMethods, sendJson, sendServerError } from './_lib/http.js'
 import { fetchNewsItems } from './_lib/newsFeed.js'
 
 const NEWS_CACHE_CONTROL = 's-maxage=300, stale-while-revalidate=600'
@@ -20,7 +20,6 @@ export default async function handler(req, res) {
       NEWS_CACHE_CONTROL,
     )
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to load news'
-    return sendJson(res, 500, { error: message })
+    return sendServerError(res, error, 'Failed to load news')
   }
 }
