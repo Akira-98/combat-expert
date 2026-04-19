@@ -152,6 +152,24 @@ function App() {
         />
       </main>
 
+      <footer className="flex items-center justify-center px-4 py-8 text-sm font-semibold text-[color:var(--app-text-muted)]">
+        <a
+          aria-label="Powered by Azuro"
+          className="inline-flex items-center gap-3 text-inherit no-underline transition hover:text-[color:var(--app-text-body)]"
+          href="https://azuro.org"
+          rel="noreferrer"
+          target="_blank"
+        >
+          <span>Powered by Azuro</span>
+          <img
+            src="/Desktop/Azuro_token_full.png"
+            alt=""
+            aria-hidden="true"
+            className="h-8 w-8 shrink-0"
+          />
+        </a>
+      </footer>
+
       <AppBottomNav
         mobileView={shell.mobileView}
         isMobileBetslipOpen={shell.isMobileBetslipOpen}
