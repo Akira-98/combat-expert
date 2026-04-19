@@ -4,6 +4,7 @@ import { AppGameFiltersContainer } from './compositions/AppGameFiltersContainer'
 import { AppHeaderContainer } from './compositions/AppHeaderContainer'
 import { ComingSoonPage } from './compositions/ComingSoonPage'
 import { GuidePage } from './compositions/GuidePage'
+import { NewsPage } from './compositions/NewsPage'
 import { RankingPage } from './compositions/RankingPage'
 import { MobileBetslipSheet } from './compositions/MobileBetslipSheet'
 import { LiveChatPanel } from './compositions/LiveChatPanel'
@@ -114,6 +115,8 @@ function App() {
               onRetry={() => void rankings.refetch()}
               isConnected={wallet.isConnected}
             />
+          ) : shell.previewPage === 'news' ? (
+            <NewsPage />
           ) : shell.shouldShowPreviewContent ? (
             <ComingSoonPage />
           ) : (

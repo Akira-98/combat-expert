@@ -1,7 +1,7 @@
-export function sendJson(res, statusCode, payload) {
+export function sendJson(res, statusCode, payload, cacheControl = 'no-store') {
   res.status(statusCode)
   res.setHeader('Content-Type', 'application/json')
-  res.setHeader('Cache-Control', 'no-store')
+  res.setHeader('Cache-Control', cacheControl)
   res.send(JSON.stringify(payload))
 }
 
