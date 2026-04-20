@@ -1,5 +1,5 @@
 import type { RankingViewer } from '../../hooks/useRankings'
-import { shortenAddress } from '../../helpers/walletUi'
+import { getWalletAvatarUrl, shortenAddress } from '../../helpers/walletUi'
 import { useI18n } from '../../i18n'
 
 type RankingViewerCardProps = {
@@ -16,25 +16,26 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
       <div className="relative">
         <p className="ui-text-muted m-0 text-[11px] font-semibold uppercase tracking-[0.18em]">{t('ranking.myStanding')}</p>
         {viewer ? (
-          <div className="mt-3 grid gap-3">
+          <div className="mt-2.5 grid gap-2.5">
             <div className="min-w-0">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div className="flex min-w-0 max-w-full flex-1 items-center gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex min-w-0 max-w-full flex-1 items-center gap-3">
                   <span className="ui-text-muted shrink-0 text-sm font-black">
                     #{viewer.rank}
                   </span>
-                  <p className="ui-text-strong m-0 truncate text-lg font-semibold md:text-xl">
+                  <img alt="" className="h-8 w-8 shrink-0 rounded-full border object-cover" src={getWalletAvatarUrl(viewer.address)} />
+                  <p className="ui-text-strong m-0 min-w-0 truncate text-lg font-semibold md:text-xl">
                     {viewer.nickname || shortenAddress(viewer.address, 6, 4)}
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="flex shrink-0 items-baseline gap-2 text-right">
                   <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">Score</p>
-                  <p className="ui-text-strong mt-1 mb-0 text-2xl font-semibold leading-none md:text-3xl">{viewer.totalScore.toFixed(1)}</p>
+                  <p className="ui-text-strong m-0 text-2xl font-semibold leading-none md:text-3xl">{viewer.totalScore.toFixed(1)}</p>
                 </div>
               </div>
             </div>
 
-            <div className="ui-divider-faint grid grid-cols-4 gap-x-2 gap-y-2 border-t pt-3">
+            <div className="ui-divider-faint grid grid-cols-4 gap-x-2 gap-y-2 border-t pt-2.5">
               <StatItem
                 label={t('ranking.record')}
                 value={t('ranking.winsLosses', { wins: viewer.winCount, losses: viewer.loseCount })}

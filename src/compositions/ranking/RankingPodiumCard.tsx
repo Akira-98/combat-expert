@@ -18,17 +18,12 @@ export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: 
     >
       <div className="grid gap-3">
         <TrophyIcon className={`h-7 w-7 ${trophyColorClassName}`} />
-        <div className="flex items-start justify-between gap-3">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <img alt="" className="h-9 w-9 shrink-0 rounded-full border object-cover" src={getWalletAvatarUrl(entry.address)} />
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="ui-text-muted shrink-0 text-sm font-bold">
-                #{rank}
-              </span>
-              <p className="ui-text-strong m-0 truncate text-lg font-semibold md:text-xl">{entry.nickname || shortenAddress(entry.address, 6, 4)}</p>
-            </div>
+            <p className="ui-text-strong m-0 min-w-0 truncate text-lg font-semibold md:text-xl">{entry.nickname || shortenAddress(entry.address, 6, 4)}</p>
           </div>
-          <div className="text-right">
+          <div className="shrink-0 text-right">
             <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">Score</p>
             <p className="ui-text-strong mt-1 mb-0 text-3xl font-semibold leading-none md:text-[2rem]">{entry.totalScore.toFixed(1)}</p>
           </div>

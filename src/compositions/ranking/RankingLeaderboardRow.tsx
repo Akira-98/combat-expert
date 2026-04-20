@@ -13,10 +13,10 @@ export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderbo
 
   return (
     <div
-      className={`grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b px-4 py-2.5 last:border-b-0 md:grid-cols-[84px_minmax(0,1fr)_112px_280px] ${rowClassName}`}
+      className={`grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b border-[color:var(--app-border)] px-4 py-2.5 last:border-b-0 md:grid-cols-[84px_minmax(0,1fr)_112px_280px] ${rowClassName}`}
     >
       <div className="flex items-center">
-        <span className="ui-text-muted text-sm font-bold">#{rank}</span>
+        <span className="ui-text-strong text-sm font-bold">{rank}</span>
       </div>
       <div className="flex min-w-0 flex-col justify-center">
         <p className="ui-text-strong m-0 truncate text-sm font-semibold">{entry.nickname || shortenAddress(entry.address, 6, 4)}</p>
