@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/share/market/:gameId",
+      "destination": "/api/share/market/:gameId"
+    },
+    {
+      "source": "/og/market/:gameId",
+      "destination": "/api/og/market/:gameId"
+    }
+  ]
+}

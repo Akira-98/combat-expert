@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { formatGameStartTime } from '../../helpers/formatters'
 import { useI18n } from '../../i18n'
 import { selectionKey } from '../../helpers/mappers'
@@ -68,8 +69,37 @@ export function MarketsPane({
 }
 
 export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<MarketsPaneProps['selectedGame']> }) {
+  const { t } = useI18n()
+  const [shareFeedback, setShareFeedback] = useState<{ gameId: string; status: 'copied' | 'failed' }>()
   const [leftName = 'Fighter A', rightName = 'Fighter B'] = selectedGame.participants
   const matchupLabel = [leftName, rightName].filter(Boolean).join(' - ')
+  const shareUrl = typeof window === 'undefined'
+    ? ''
+    : `${window.location.origin}/share/market/${encodeURIComponent(selectedGame.gameId)}`
+  const shareStatus = shareFeedback?.gameId === selectedGame.gameId ? shareFeedback.status : 'idle'
+
+  const handleShareMarket = async () => {
+    if (!shareUrl) return
+
+    const shareData = {
+      title: selectedGame.title || matchupLabel || 'Combat Expert',
+      text: `${selectedGame.leagueName} market on Combat Expert`,
+      url: shareUrl,
+    }
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData)
+        return
+      }
+
+      await navigator.clipboard.writeText(shareUrl)
+      setShareFeedback({ gameId: selectedGame.gameId, status: 'copied' })
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return
+      setShareFeedback({ gameId: selectedGame.gameId, status: 'failed' })
+    }
+  }
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 md:gap-5">
@@ -79,6 +109,17 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
         <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em] md:text-[11px]">{selectedGame.leagueName}</p>
         <p className="ui-text-strong mt-2 mb-0 text-sm font-semibold md:text-base">{formatGameStartTime(selectedGame.startsAt)}</p>
         <p className="ui-text-strong mt-3 mb-0 max-w-[18ch] text-xs font-semibold leading-tight md:max-w-[24ch] md:text-sm">{matchupLabel}</p>
+        <button
+          className="ui-ghost-button mt-3 min-w-20 rounded-md px-3 py-1.5 text-xs font-semibold transition"
+          onClick={handleShareMarket}
+          type="button"
+        >
+          {shareStatus === 'copied'
+            ? t('market.shareCopied')
+            : shareStatus === 'failed'
+              ? t('market.shareFailed')
+              : t('market.share')}
+        </button>
       </div>
 
       <CompetitorProfile initials={getCompetitorInitials(rightName)} align="right" />
