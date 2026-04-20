@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "guard:alias": "node ./scripts/verify-sdk-alias.mjs",
-    "smoke:chain-hooks": "npm exec --yes --package=playwright@1.51.1 -- node ./scripts/smoke-chainprovider-hooks.mjs",
+    "smoke:chain-hooks": "node ./scripts/smoke-chainprovider-hooks.mjs",
     "ranking:sync": "node ./scripts/ranking-sync.mjs"
   },
   "dependencies": {
