@@ -2,6 +2,8 @@ import type { LocaleMessages } from './types'
 
 export const koRankingMessages: LocaleMessages = {
   'ranking.pageTitle': 'Top 격잘알 랭킹',
+  'ranking.pageDescription': '정산된 예측 기준으로 순위와 점수를 확인하세요.',
+  'ranking.myStanding': '내 순위',
   'ranking.totalScore': '총점',
   'ranking.record': '전적',
   'ranking.hitRate': '적중률',
@@ -24,6 +26,8 @@ export const koRankingMessages: LocaleMessages = {
 
 export const enRankingMessages: LocaleMessages = {
   'ranking.pageTitle': 'Leaderboard',
+  'ranking.pageDescription': 'Track rankings and scores from settled predictions.',
+  'ranking.myStanding': 'My Standing',
   'ranking.totalScore': 'Score',
   'ranking.record': 'Record',
   'ranking.hitRate': 'Hit Rate',

@@ -16,22 +16,24 @@ export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry
   const { t } = useI18n()
   return (
     <section className="grid gap-3">
-      <div className="px-4 pt-4 pb-1 md:px-4 md:pt-5 md:pb-1">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h2 className="ui-text-strong m-0 text-[28px] font-semibold tracking-tight md:text-[36px]">{t('ranking.pageTitle')}</h2>
+      <div className="ui-leaderboard-hero card-shell relative overflow-hidden border px-4 py-5 md:px-6 md:py-6">
+        <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(320px,420px)] md:items-center">
+          <div className="min-w-0">
+            <h2 className="ui-text-strong m-0 text-[32px] font-semibold tracking-[0.16em] md:text-[44px]">
+              {t('ranking.pageTitle')}
+            </h2>
+            <p className="ui-text-body mt-4 mb-0 max-w-xl text-sm md:text-base">{t('ranking.pageDescription')}</p>
           </div>
+          <RankingViewerCard viewer={viewer} isConnected={isConnected} />
         </div>
       </div>
-
-      <RankingViewerCard viewer={viewer} isConnected={isConnected} />
 
       {isLoading ? (
         <RankingLoadingState />
       ) : errorMessage ? (
         <RankingErrorState errorMessage={errorMessage} onRetry={onRetry} />
       ) : (
-        <div className="card-surface-soft card-shell-xl overflow-hidden">
+        <div className="ui-leaderboard-list card-shell overflow-hidden border">
           <div className="ui-divider-faint ui-text-muted grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] md:grid-cols-[84px_minmax(0,1fr)_112px_280px]">
             <span>Rank</span>
             <span>Player</span>

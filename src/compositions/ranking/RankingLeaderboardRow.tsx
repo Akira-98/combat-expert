@@ -9,17 +9,8 @@ type RankingLeaderboardRowProps = {
 }
 
 export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderboardRowProps) {
-  const topRankStyle = getTopRankStyle(rank)
-  const rowClassName = topRankStyle
-    ? topRankStyle.row
-    : isViewer
-      ? 'ui-rank-row-viewer'
-      : ''
-  const badgeClassName = topRankStyle
-    ? topRankStyle.badge
-    : isViewer
-      ? 'ui-rank-badge-viewer'
-      : 'ui-rank-badge-mid'
+  const rowClassName = isViewer ? 'ui-rank-row-viewer' : 'ui-rank-row'
+  const badgeClassName = isViewer ? 'ui-rank-badge-viewer' : 'ui-rank-badge'
 
   return (
     <div
@@ -35,7 +26,7 @@ export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderbo
         </div>
       </div>
       <div className="flex items-center justify-end">
-        <p className="ui-text-strong m-0 text-lg font-black">{entry.totalScore.toFixed(1)}</p>
+        <p className="ui-rank-score m-0 text-lg font-black">{entry.totalScore.toFixed(1)}</p>
       </div>
       <div className="hidden items-center justify-end md:flex">
         <EntryMetrics entry={entry} />
@@ -54,29 +45,4 @@ function EntryMetrics({ entry }: { entry: RankingEntry | RankingViewer }) {
       <span>{t('ranking.totalCount', { count: entry.eventCount })}</span>
     </div>
   )
-}
-
-function getTopRankStyle(rank: number) {
-  if (rank === 1) {
-    return {
-      row: 'ui-rank-row-top',
-      badge: 'ui-rank-badge-top',
-    }
-  }
-
-  if (rank === 2) {
-    return {
-      row: 'ui-rank-row-mid',
-      badge: 'ui-rank-badge-mid',
-    }
-  }
-
-  if (rank === 3) {
-    return {
-      row: 'ui-rank-row-viewer',
-      badge: 'ui-rank-badge-viewer',
-    }
-  }
-
-  return null
 }

@@ -12,12 +12,11 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
   if (!isConnected) return null
 
   return (
-    <section className="ui-viewer-card card-shell-xl relative overflow-hidden border">
-      <div aria-hidden="true" className="ui-viewer-card-glow pointer-events-none absolute inset-x-0 top-0 h-24" />
-      <div className="relative px-4 py-4 md:px-5">
-        <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">My Standing</p>
+    <section className="ui-viewer-card relative overflow-hidden rounded-lg border">
+      <div className="relative px-4 py-4">
+        <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('ranking.myStanding')}</p>
         {viewer ? (
-          <div className="mt-4 grid gap-4 md:grid-cols-[minmax(0,1.3fr)_minmax(0,0.9fr)] md:gap-5">
+          <div className="mt-4 grid gap-4">
             <div className="min-w-0">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -36,7 +35,7 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
               </div>
             </div>
 
-            <div className="ui-divider-faint grid grid-cols-4 gap-x-3 gap-y-3 border-t pt-4 md:gap-x-5 md:border-t-0 md:border-l md:pt-0 md:pl-5">
+            <div className="ui-divider-faint grid grid-cols-4 gap-x-3 gap-y-3 border-t pt-4">
               <StatItem
                 label={t('ranking.record')}
                 value={t('ranking.winsLosses', { wins: viewer.winCount, losses: viewer.loseCount })}
