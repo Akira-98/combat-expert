@@ -78,25 +78,60 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
     : `${window.location.origin}/share/market/${encodeURIComponent(selectedGame.gameId)}`
   const shareStatus = shareFeedback?.gameId === selectedGame.gameId ? shareFeedback.status : 'idle'
 
+  const copyShareUrl = async () => {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(shareUrl)
+      return
+    }
+
+    const input = document.createElement('textarea')
+    input.value = shareUrl
+    input.setAttribute('readonly', '')
+    input.style.position = 'fixed'
+    input.style.top = '-9999px'
+    document.body.appendChild(input)
+    input.select()
+
+    try {
+      if (!document.execCommand('copy')) {
+        throw new Error('Copy command failed')
+      }
+    } finally {
+      document.body.removeChild(input)
+    }
+  }
+
   const handleShareMarket = async () => {
     if (!shareUrl) return
 
-    const shareData = {
+    const shareData: ShareData = {
       title: selectedGame.title || matchupLabel || 'Combat Expert',
       text: `${selectedGame.leagueName} market on Combat Expert`,
       url: shareUrl,
     }
+    const urlOnlyShareData: ShareData = { url: shareUrl }
 
     try {
-      if (navigator.share) {
-        await navigator.share(shareData)
+      const nativeShareData = !navigator.share
+        ? undefined
+        : !navigator.canShare || navigator.canShare(shareData)
+          ? shareData
+          : navigator.canShare(urlOnlyShareData)
+            ? urlOnlyShareData
+            : undefined
+
+      if (nativeShareData) {
+        await navigator.share(nativeShareData)
         return
       }
-
-      await navigator.clipboard.writeText(shareUrl)
-      setShareFeedback({ gameId: selectedGame.gameId, status: 'copied' })
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') return
+    }
+
+    try {
+      await copyShareUrl()
+      setShareFeedback({ gameId: selectedGame.gameId, status: 'copied' })
+    } catch {
       setShareFeedback({ gameId: selectedGame.gameId, status: 'failed' })
     }
   }
@@ -110,15 +145,24 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
         <p className="ui-text-strong mt-2 mb-0 text-sm font-semibold md:text-base">{formatGameStartTime(selectedGame.startsAt)}</p>
         <p className="ui-text-strong mt-3 mb-0 max-w-[18ch] text-xs font-semibold leading-tight md:max-w-[24ch] md:text-sm">{matchupLabel}</p>
         <button
-          className="ui-ghost-button mt-3 min-w-20 rounded-md px-3 py-1.5 text-xs font-semibold transition"
+          aria-label={t('market.share')}
+          className="ui-ghost-icon mt-3 inline-flex h-8 min-w-8 items-center justify-center gap-1.5 rounded-md px-2 text-xs font-semibold transition"
           onClick={handleShareMarket}
+          title={t('market.share')}
           type="button"
         >
-          {shareStatus === 'copied'
-            ? t('market.shareCopied')
-            : shareStatus === 'failed'
-              ? t('market.shareFailed')
-              : t('market.share')}
+          <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+            <path d="M8.5 12.5 15.5 16.5" strokeLinecap="round" />
+            <path d="M15.5 7.5 8.5 11.5" strokeLinecap="round" />
+            <circle cx="6" cy="12" r="2.5" />
+            <circle cx="18" cy="6" r="2.5" />
+            <circle cx="18" cy="18" r="2.5" />
+          </svg>
+          {shareStatus !== 'idle' && (
+            <span>
+              {shareStatus === 'copied' ? t('market.shareCopied') : t('market.shareFailed')}
+            </span>
+          )}
         </button>
       </div>
 
