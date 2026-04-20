@@ -20,7 +20,6 @@ export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry
         <h2 className="ui-text-strong m-0 text-[30px] font-semibold tracking-[0.14em] md:text-[40px]">
           {t('ranking.pageTitle')}
         </h2>
-        <p className="ui-text-body mt-2 mb-0 max-w-xl text-sm md:text-base">{t('ranking.pageDescription')}</p>
       </div>
 
       {isConnected ? (

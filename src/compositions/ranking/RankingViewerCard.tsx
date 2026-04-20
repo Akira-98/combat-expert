@@ -19,14 +19,13 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
           <div className="mt-3 grid gap-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <div className="ui-viewer-badge inline-flex items-center rounded-full border px-2.5 py-0.5 text-sm font-black">
+                <div className="flex min-w-0 max-w-full flex-1 items-center gap-2">
+                  <span className="ui-text-muted shrink-0 text-sm font-black">
                     #{viewer.rank}
-                  </div>
-                  <p className="ui-text-strong mt-2 mb-0 truncate text-lg font-semibold md:text-xl">
+                  </span>
+                  <p className="ui-text-strong m-0 truncate text-lg font-semibold md:text-xl">
                     {viewer.nickname || shortenAddress(viewer.address, 6, 4)}
                   </p>
-                  <p className="ui-text-muted mt-1 mb-0 truncate text-xs md:text-sm">{shortenAddress(viewer.address, 7, 5)}</p>
                 </div>
                 <div className="text-right">
                   <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">Score</p>
