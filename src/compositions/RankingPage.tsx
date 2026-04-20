@@ -15,18 +15,19 @@ type RankingPageProps = {
 export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry, isConnected }: RankingPageProps) {
   const { t } = useI18n()
   return (
-    <section className="grid gap-2.5">
-      <div className="ui-leaderboard-hero card-shell relative overflow-hidden border px-4 py-3 md:px-5 md:py-4">
-        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(300px,380px)] md:items-center">
-          <div className="min-w-0">
-            <h2 className="ui-text-strong m-0 text-[30px] font-semibold tracking-[0.14em] md:text-[40px]">
-              {t('ranking.pageTitle')}
-            </h2>
-            <p className="ui-text-body mt-2 mb-0 max-w-xl text-sm md:text-base">{t('ranking.pageDescription')}</p>
-          </div>
+    <section className="mt-2.5 grid gap-2.5">
+      <div className="min-w-0 px-1">
+        <h2 className="ui-text-strong m-0 text-[30px] font-semibold tracking-[0.14em] md:text-[40px]">
+          {t('ranking.pageTitle')}
+        </h2>
+        <p className="ui-text-body mt-2 mb-0 max-w-xl text-sm md:text-base">{t('ranking.pageDescription')}</p>
+      </div>
+
+      {isConnected ? (
+        <div className="ui-leaderboard-hero card-shell relative overflow-hidden border px-4 py-3 md:px-5 md:py-4">
           <RankingViewerCard viewer={viewer} isConnected={isConnected} />
         </div>
-      </div>
+      ) : null}
 
       {isLoading ? (
         <RankingLoadingState />
@@ -40,7 +41,7 @@ export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry
             <span className="text-right">Score</span>
             <span className="hidden md:block">Stats</span>
           </div>
-          <div className="ui-divider-faint divide-y">
+          <div>
             {rankings.map((entry, index) => (
               <RankingLeaderboardRow key={entry.address} entry={entry} rank={index + 1} isViewer={viewer?.address === entry.address} />
             ))}
