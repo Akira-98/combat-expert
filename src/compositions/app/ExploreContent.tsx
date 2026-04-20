@@ -35,11 +35,30 @@ export function ExploreContent({
   return (
     <div className={shouldShowExploreContent ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}>
       {shouldShowTopExperts ? (
-        <TopExpertsShowcase
-          rankings={rankings.rankings}
-          isLoading={rankings.isLoading}
-          errorMessage={rankings.errorMessage}
-        />
+        <>
+          <div className="relative overflow-hidden rounded-lg">
+            <img
+              src="/IMG_3904.AVIF"
+              alt="Combat expert"
+              className="h-55 w-full object-cover object-center md:h-75"
+              loading="eager"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 px-4 pb-5 text-center text-white">
+              <p className="m-0 font-['Anton'] text-2xl font-black uppercase leading-tight tracking-normal md:text-4xl">
+                Sterling vs. Zalal
+              </p>
+              <p className="m-0 font-['Anton'] text-xl font-black uppercase leading-tight tracking-normal md:text-3xl">
+                April 25th.
+              </p>
+            </div>
+          </div>
+          <TopExpertsShowcase
+            rankings={rankings.rankings}
+            isLoading={rankings.isLoading}
+            errorMessage={rankings.errorMessage}
+          />
+        </>
       ) : null}
       {shouldShowTopExperts ? <p className="ui-text-strong m-0 px-1 text-lg font-bold">Events</p> : null}
       <MarketList
