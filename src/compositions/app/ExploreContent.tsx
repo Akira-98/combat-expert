@@ -38,7 +38,7 @@ export function ExploreContent({
         <>
           <div className="relative overflow-hidden rounded-lg">
             <img
-              src="/IMG_3904.AVIF"
+              src="/images/sterling-zalal.avif"
               alt="Combat expert"
               className="h-55 w-full object-cover object-center md:h-75"
               loading="eager"
