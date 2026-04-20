@@ -15,14 +15,14 @@ type RankingPageProps = {
 export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry, isConnected }: RankingPageProps) {
   const { t } = useI18n()
   return (
-    <section className="grid gap-3">
-      <div className="ui-leaderboard-hero card-shell relative overflow-hidden border px-4 py-5 md:px-6 md:py-6">
-        <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(320px,420px)] md:items-center">
+    <section className="grid gap-2.5">
+      <div className="ui-leaderboard-hero card-shell relative overflow-hidden border px-4 py-3 md:px-5 md:py-4">
+        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(300px,380px)] md:items-center">
           <div className="min-w-0">
-            <h2 className="ui-text-strong m-0 text-[32px] font-semibold tracking-[0.16em] md:text-[44px]">
+            <h2 className="ui-text-strong m-0 text-[30px] font-semibold tracking-[0.14em] md:text-[40px]">
               {t('ranking.pageTitle')}
             </h2>
-            <p className="ui-text-body mt-4 mb-0 max-w-xl text-sm md:text-base">{t('ranking.pageDescription')}</p>
+            <p className="ui-text-body mt-2 mb-0 max-w-xl text-sm md:text-base">{t('ranking.pageDescription')}</p>
           </div>
           <RankingViewerCard viewer={viewer} isConnected={isConnected} />
         </div>
@@ -34,7 +34,7 @@ export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry
         <RankingErrorState errorMessage={errorMessage} onRetry={onRetry} />
       ) : (
         <div className="ui-leaderboard-list card-shell overflow-hidden border">
-          <div className="ui-divider-faint ui-text-muted grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] md:grid-cols-[84px_minmax(0,1fr)_112px_280px]">
+          <div className="ui-divider-faint ui-text-muted grid grid-cols-[72px_minmax(0,1fr)_88px] gap-2 border-b px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] md:grid-cols-[84px_minmax(0,1fr)_112px_280px]">
             <span>Rank</span>
             <span>Player</span>
             <span className="text-right">Score</span>

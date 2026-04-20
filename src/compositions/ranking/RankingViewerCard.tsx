@@ -12,30 +12,29 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
   if (!isConnected) return null
 
   return (
-    <section className="ui-viewer-card relative overflow-hidden rounded-lg border">
-      <div className="relative px-4 py-4">
-        <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('ranking.myStanding')}</p>
+    <section className="relative min-w-0">
+      <div className="relative">
         {viewer ? (
-          <div className="mt-4 grid gap-4">
+          <div className="grid gap-3">
             <div className="min-w-0">
-              <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="ui-viewer-badge inline-flex items-center rounded-full border px-3 py-1 text-sm font-black">
+                  <div className="ui-viewer-badge inline-flex items-center rounded-full border px-2.5 py-0.5 text-sm font-black">
                     #{viewer.rank}
                   </div>
-                  <p className="ui-text-strong mt-3 mb-0 truncate text-xl font-semibold md:text-2xl">
+                  <p className="ui-text-strong mt-2 mb-0 truncate text-lg font-semibold md:text-xl">
                     {viewer.nickname || shortenAddress(viewer.address, 6, 4)}
                   </p>
                   <p className="ui-text-muted mt-1 mb-0 truncate text-xs md:text-sm">{shortenAddress(viewer.address, 7, 5)}</p>
                 </div>
                 <div className="text-right">
                   <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">Score</p>
-                  <p className="ui-text-strong mt-1 mb-0 text-3xl font-semibold leading-none">{viewer.totalScore.toFixed(1)}</p>
+                  <p className="ui-text-strong mt-1 mb-0 text-2xl font-semibold leading-none md:text-3xl">{viewer.totalScore.toFixed(1)}</p>
                 </div>
               </div>
             </div>
 
-            <div className="ui-divider-faint grid grid-cols-4 gap-x-3 gap-y-3 border-t pt-4">
+            <div className="ui-divider-faint grid grid-cols-4 gap-x-2 gap-y-2 border-t pt-3">
               <StatItem
                 label={t('ranking.record')}
                 value={t('ranking.winsLosses', { wins: viewer.winCount, losses: viewer.loseCount })}
@@ -47,7 +46,7 @@ export function RankingViewerCard({ viewer, isConnected }: RankingViewerCardProp
             </div>
           </div>
         ) : (
-          <div className="ui-divider-faint mt-4 border-t pt-4">
+          <div className="ui-divider-faint border-t pt-3">
             <p className="ui-text-strong m-0 text-sm font-semibold">{t('ranking.noViewerData')}</p>
             <p className="ui-text-muted mt-1 mb-0 text-sm">{t('ranking.noViewerDataDesc')}</p>
           </div>
@@ -69,7 +68,7 @@ function StatItem({
   return (
     <div className="min-w-0">
       <p className="ui-text-muted m-0 text-[9px] font-medium uppercase tracking-[0.14em] md:text-[10px] md:tracking-[0.18em]">{label}</p>
-      <p className="ui-text-strong mt-2 mb-0 truncate text-sm font-bold md:text-base">{value}</p>
+      <p className="ui-text-strong mt-1 mb-0 truncate text-sm font-bold md:text-base">{value}</p>
       {secondaryValue ? <p className="ui-text-muted mt-1 mb-0 truncate text-[10px] md:text-[11px]">{secondaryValue}</p> : null}
     </div>
   )
