@@ -13,6 +13,8 @@ type AppHeaderContainerProps = {
   isUsdtSupportedChain: boolean
   rankingViewer: RankingViewer | null
   isRankingLoading: boolean
+  totalPoints: number
+  isPointsLoading: boolean
   onTitleClick: () => void
   onNewsClick: () => void
   onPlayerRankingsClick: () => void
@@ -30,6 +32,8 @@ export function AppHeaderContainer({
   isUsdtSupportedChain,
   rankingViewer,
   isRankingLoading,
+  totalPoints,
+  isPointsLoading,
   onTitleClick,
   onNewsClick,
   onPlayerRankingsClick,
@@ -58,6 +62,8 @@ export function AppHeaderContainer({
       isUsdtSupportedChain={isUsdtSupportedChain}
       rankingViewer={rankingViewer}
       isRankingLoading={isRankingLoading}
+      totalPoints={totalPoints}
+      isPointsLoading={isPointsLoading}
       canOpenAuthModal={wallet.canOpenAuthModal}
       connectErrorMessage={wallet.connectErrorMessage}
       onTitleClick={onTitleClick}

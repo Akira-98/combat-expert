@@ -14,6 +14,12 @@ export function normalizeAddress(value) {
   return /^0x[a-f0-9]{40}$/.test(trimmed) ? trimmed : ''
 }
 
+export function normalizeTxHash(value) {
+  if (typeof value !== 'string') return ''
+  const trimmed = value.trim().toLowerCase()
+  return /^0x[a-f0-9]{64}$/.test(trimmed) ? trimmed : ''
+}
+
 export function parseIssuedAt(value) {
   const timestamp = Date.parse(String(value || ''))
   return Number.isFinite(timestamp) ? timestamp : NaN
@@ -24,6 +30,7 @@ export function loadServerEnv() {
     supabaseUrl: (process.env.SUPABASE_URL || '').trim(),
     serviceRoleKey: (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim(),
     rpcUrl: normalizePolygonRpcUrl(process.env.RPC_URL),
+    affiliateAddress: normalizeAddress(process.env.AFFILIATE),
     commentAuthSecret: (process.env.COMMENT_AUTH_JWT_SECRET || '').trim(),
     rankingSyncSecret: (process.env.RANKING_SYNC_SECRET || '').trim(),
   }

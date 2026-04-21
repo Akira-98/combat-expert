@@ -14,6 +14,8 @@ type AccountPanelProps = {
   onSaveNickname: (nickname: string) => Promise<unknown>
   rankingViewer: RankingViewer | null
   isRankingLoading: boolean
+  totalPoints: number
+  isPointsLoading: boolean
   usdtBalanceLabel: string
   iconButtonClass: string
   primaryButtonClass: string
@@ -34,6 +36,8 @@ export function AccountPanel({
   onSaveNickname,
   rankingViewer,
   isRankingLoading,
+  totalPoints,
+  isPointsLoading,
   usdtBalanceLabel,
   iconButtonClass,
   primaryButtonClass,
@@ -111,6 +115,13 @@ export function AccountPanel({
             <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('account.balance')}</p>
           </div>
           <p className="ui-text-strong m-0 text-sm font-semibold">{usdtBalanceLabel}</p>
+        </section>
+
+        <section className={`${rowClass} items-center`}>
+          <div>
+            <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('account.points')}</p>
+          </div>
+          <p className="ui-text-strong m-0 text-sm font-semibold">{isPointsLoading ? t('common.loading') : t('points.total', { count: totalPoints })}</p>
         </section>
 
         <section className={rowClass}>

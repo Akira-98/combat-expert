@@ -27,6 +27,24 @@ const GAME_BETS_QUERY = gql`
   }
 `
 
+const BETS_BY_CREATED_TX_HASH_QUERY = gql`
+  query BetsByCreatedTxHash($createdTxHash: Bytes!) {
+    v3Bets(first: 10, where: { createdTxHash: $createdTxHash }, subgraphError: allow) {
+      betId
+      bettor
+      actor
+      owner
+      affiliate
+      amount
+      odds
+      status
+      result
+      createdTxHash
+      createdBlockTimestamp
+    }
+  }
+`
+
 const V3_BETS_PAGE_SIZE = 200
 const POLYGON_CHAIN_ID = 137
 
@@ -126,4 +144,17 @@ export async function fetchSettledV3BetsByGameId(gameId) {
   }
 
   return allBets
+}
+
+export async function fetchV3BetsByCreatedTxHash(createdTxHash) {
+  const chainData = getPolygonChainData()
+  const data = await gqlRequest({
+    url: chainData.graphql.bets,
+    document: BETS_BY_CREATED_TX_HASH_QUERY,
+    variables: {
+      createdTxHash,
+    },
+  })
+
+  return Array.isArray(data?.v3Bets) ? data.v3Bets : []
 }

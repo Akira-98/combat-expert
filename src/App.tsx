@@ -19,6 +19,7 @@ import { useWalletConnection } from './hooks/useWalletConnection'
 import { useMarketData } from './hooks/useMarketData'
 import { useBetting } from './hooks/useBetting'
 import { useProfile } from './hooks/useProfile'
+import { usePoints } from './hooks/usePoints'
 import { useRankings } from './hooks/useRankings'
 import { useUsdtTransfer } from './hooks/useUsdtTransfer'
 
@@ -45,6 +46,7 @@ function App() {
     isGamesLoading,
     onResetFilters: filters.resetFilters,
   })
+  const points = usePoints(wallet.address)
   const betting = useBetting({
     address: wallet.address,
     isConnected: wallet.isConnected,
@@ -52,6 +54,7 @@ function App() {
     marketSections,
     isBetHistoryPollingEnabled: shell.isMyBetsViewActive,
     refreshMarkets: market.retryMarkets,
+    onBetPointsClaimed: () => void points.refetch(),
   })
   const usdtTransfer = useUsdtTransfer({
     address: wallet.address,
@@ -79,6 +82,8 @@ function App() {
             isUsdtSupportedChain={usdtTransfer.isSupportedChain}
             rankingViewer={rankings.viewer}
             isRankingLoading={rankings.isLoading}
+            totalPoints={points.totalPoints}
+            isPointsLoading={points.isLoading}
             onTitleClick={shell.handleNavigateToExplore}
             onNewsClick={() => shell.handleNavigateToPreviewPage('news')}
             onPlayerRankingsClick={() => shell.handleNavigateToPreviewPage('player-rankings')}

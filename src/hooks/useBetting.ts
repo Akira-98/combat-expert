@@ -16,6 +16,7 @@ type UseBettingParams = {
   marketSections: MarketSection[]
   isBetHistoryPollingEnabled?: boolean
   refreshMarkets?: () => void
+  onBetPointsClaimed?: () => void
 }
 
 export function useBetting({
@@ -25,6 +26,7 @@ export function useBetting({
   marketSections,
   isBetHistoryPollingEnabled = false,
   refreshMarkets,
+  onBetPointsClaimed,
 }: UseBettingParams) {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
   const { items, addItem, clear, removeItem } = useBaseBetslip()
@@ -54,6 +56,7 @@ export function useBetting({
     odds,
     totalOdds,
     slippage,
+    onBetPointsClaimed,
     onBetSuccess: () => {
       clear()
       selectionState.resetSelectionMeta()

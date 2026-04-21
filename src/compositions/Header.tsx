@@ -27,6 +27,8 @@ type HeaderProps = {
   isUsdtSupportedChain?: boolean
   rankingViewer: RankingViewer | null
   isRankingLoading: boolean
+  totalPoints: number
+  isPointsLoading: boolean
   canOpenAuthModal: boolean
   connectErrorMessage?: string
   onTitleClick?: () => void
@@ -59,6 +61,8 @@ export function Header({
   isUsdtSupportedChain,
   rankingViewer,
   isRankingLoading,
+  totalPoints,
+  isPointsLoading,
   canOpenAuthModal,
   connectErrorMessage,
   onTitleClick,
@@ -112,6 +116,8 @@ export function Header({
       onSaveNickname={onSaveNickname}
       rankingViewer={rankingViewer}
       isRankingLoading={isRankingLoading}
+      totalPoints={totalPoints}
+      isPointsLoading={isPointsLoading}
       usdtBalanceLabel={controller.usdtBalanceLabel}
       iconButtonClass={iconButtonClass}
       primaryButtonClass={primaryButtonClass}

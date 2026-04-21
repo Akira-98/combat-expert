@@ -1,6 +1,7 @@
 import { useBet, useBetTokenBalance } from '@azuro-org/sdk'
 import type { Address } from 'viem'
 import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
+import { claimBetParticipationPoints } from '../api/points'
 import { useAppConfig } from '../config/useAppConfig'
 import { useBetHistory } from './useBetHistory'
 import { useBetRedeem } from './useBetRedeem'
@@ -9,6 +10,27 @@ import { useTransactionNotice } from './useTransactionNotice'
 import { translate } from '../i18n'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+const POINT_CLAIM_RETRY_DELAYS_MS = [0, 3_000, 10_000]
+
+function wait(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
+}
+
+async function claimBetParticipationPointsWithRetry({ txHash, walletAddress }: { txHash: string; walletAddress: string }) {
+  let lastResult
+
+  for (const [index, delay] of POINT_CLAIM_RETRY_DELAYS_MS.entries()) {
+    if (delay > 0) await wait(delay)
+
+    lastResult = await claimBetParticipationPoints({ txHash, walletAddress })
+    if (lastResult.status !== 'pending_indexing') return lastResult
+    if (index === POINT_CLAIM_RETRY_DELAYS_MS.length - 1) return lastResult
+  }
+
+  return lastResult
+}
 
 type UseBettingTransactionsParams = {
   address?: Address
@@ -24,6 +46,7 @@ type UseBettingTransactionsParams = {
   totalOdds: number
   slippage: number
   onBetSuccess: (receiptHash?: `0x${string}`) => void
+  onBetPointsClaimed?: () => void
 }
 
 export function useBettingTransactions({
@@ -36,6 +59,7 @@ export function useBettingTransactions({
   totalOdds,
   slippage,
   onBetSuccess,
+  onBetPointsClaimed,
 }: UseBettingTransactionsParams) {
   const { transactionNotice, clearTransactionNotice, setSuccessNotice, setErrorNotice } = useTransactionNotice({
     mapErrorMessage: getFriendlyTransactionErrorMessage,
@@ -58,6 +82,18 @@ export function useBettingTransactions({
     totalOdds,
     onSuccess: (receipt) => {
       onBetSuccess(receipt?.transactionHash)
+      if (address && receipt?.transactionHash) {
+        void claimBetParticipationPointsWithRetry({
+          txHash: receipt.transactionHash,
+          walletAddress: address,
+        })
+          .then((result) => {
+            if (result?.points) onBetPointsClaimed?.()
+          })
+          .catch((error) => {
+            console.warn('Failed to claim bet participation points', error)
+          })
+      }
       void refetchBetTokenBalance()
       setSuccessNotice({
         title: translate('betting.betSuccessTitle'),
