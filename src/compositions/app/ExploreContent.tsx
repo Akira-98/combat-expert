@@ -40,7 +40,7 @@ export function ExploreContent({
             <img
               src="/images/ufc-perth.jpg"
               alt="Combat expert"
-              className="h-55 w-full object-cover object-center md:h-75"
+              className="h-55 w-full object-cover object-center md:h-85"
               loading="eager"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
