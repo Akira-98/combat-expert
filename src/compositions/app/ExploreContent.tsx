@@ -38,7 +38,7 @@ export function ExploreContent({
         <>
           <div className="relative overflow-hidden rounded-lg">
             <img
-              src="/images/sterling-zalal.avif"
+              src="/images/ufc-perth.jpg"
               alt="Combat expert"
               className="h-55 w-full object-cover object-center md:h-75"
               loading="eager"
@@ -46,10 +46,10 @@ export function ExploreContent({
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 px-4 pb-5 text-center text-white">
               <p className="m-0 font-['Anton'] text-2xl font-black uppercase leading-tight tracking-normal md:text-4xl">
-                Sterling vs. Zalal
+                DELLA MADDALENA VS PRATES
               </p>
               <p className="m-0 font-['Anton'] text-xl font-black uppercase leading-tight tracking-normal md:text-3xl">
-                April 25th.
+                MAY 2th
               </p>
             </div>
           </div>
