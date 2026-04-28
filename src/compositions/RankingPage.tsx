@@ -25,11 +25,20 @@ export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry
       </div>
 
       {!isLoading && !errorMessage && podium.length > 0 ? (
-        <div className="grid gap-3 md:grid-cols-3">
-          {podium.map((entry, index) => (
-            <RankingPodiumCard key={entry.address} entry={entry} rank={index + 1} />
-          ))}
-        </div>
+        <>
+          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1 md:hidden">
+            {podium.map((entry, index) => (
+              <div key={entry.address} className="w-[calc(100vw-2rem)] max-w-[360px] shrink-0 snap-center">
+                <RankingPodiumCard entry={entry} rank={index + 1} />
+              </div>
+            ))}
+          </div>
+          <div className="hidden gap-3 md:grid md:grid-cols-3">
+            {podium.map((entry, index) => (
+              <RankingPodiumCard key={entry.address} entry={entry} rank={index + 1} />
+            ))}
+          </div>
+        </>
       ) : null}
 
       {isLoading ? (
