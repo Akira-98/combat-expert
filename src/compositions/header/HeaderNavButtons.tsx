@@ -32,12 +32,7 @@ export function HeaderNavButtons({
   return (
     <>
       <button aria-label={t('nav.wallet')} className={getNavButtonClass(showWalletOnMobile)} onClick={onWalletClick} title={t('nav.wallet')} type="button">
-        <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <path d="M7 7h11" strokeLinecap="round" />
-          <path d="m14 4 4 3-4 3" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M17 17H6" strokeLinecap="round" />
-          <path d="m10 14-4 3 4 3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <img aria-hidden="true" className="h-5 w-5" src="/tether-logo.svg" />
       </button>
       {showRankingButton && (
         <button aria-label={t('nav.ranking')} className={getNavButtonClass(showRankingOnMobile)} onClick={onRankingClick} title={t('nav.ranking')} type="button">

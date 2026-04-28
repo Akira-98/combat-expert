@@ -2,10 +2,9 @@ import type { useBetting } from '../../hooks/useBetting'
 import type { MarketPageMode } from '../../hooks/useAppNavigation'
 import type { useGameFilters } from '../../hooks/useGameFilters'
 import type { useMarketData } from '../../hooks/useMarketData'
-import type { useRankings } from '../../hooks/useRankings'
 import type { useWalletConnection } from '../../hooks/useWalletConnection'
 import { MarketList } from '../MarketList'
-import { TopExpertsShowcase } from './TopExpertsShowcase'
+import { TopEventsShowcase } from './TopEventsShowcase'
 
 type ExploreContentProps = {
   shouldShowExploreContent: boolean
@@ -15,7 +14,6 @@ type ExploreContentProps = {
   filters: ReturnType<typeof useGameFilters>
   market: ReturnType<typeof useMarketData>
   betting: ReturnType<typeof useBetting>
-  rankings: ReturnType<typeof useRankings>
   onOpenGameMarkets: (gameId: string) => void
 }
 
@@ -27,7 +25,6 @@ export function ExploreContent({
   filters,
   market,
   betting,
-  rankings,
   onOpenGameMarkets,
 }: ExploreContentProps) {
   const shouldShowTopExperts = marketPageMode === 'games'
@@ -35,32 +32,23 @@ export function ExploreContent({
   return (
     <div className={shouldShowExploreContent ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}>
       {shouldShowTopExperts ? (
-        <>
-          <div className="relative overflow-hidden rounded-lg">
-            <img
-              src="/images/ufc-perth.jpg"
-              alt="Combat expert"
-              className="h-55 w-full object-cover object-center md:h-85"
-              loading="eager"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 px-4 pb-5 text-center text-white">
-              <p className="m-0 font-['Anton'] text-2xl font-black uppercase leading-tight tracking-normal md:text-4xl">
-                DELLA MADDALENA VS PRATES
-              </p>
-              <p className="m-0 font-['Anton'] text-xl font-black uppercase leading-tight tracking-normal md:text-3xl">
-                MAY 2th
-              </p>
-            </div>
-          </div>
-          <TopExpertsShowcase
-            rankings={rankings.rankings}
-            isLoading={rankings.isLoading}
-            errorMessage={rankings.errorMessage}
-          />
-        </>
+        <TopEventsShowcase
+          games={market.games}
+          selectedOutcomes={betting.selectedOutcomes}
+          onOpenGameMarkets={onOpenGameMarkets}
+          onSelectOutcome={betting.selectOutcome}
+        />
       ) : null}
-      {shouldShowTopExperts ? <p className="ui-text-strong m-0 px-1 text-lg font-bold">Events</p> : null}
+      {shouldShowTopExperts ? (
+        <div className="flex items-center gap-2 px-1">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-amber-300 via-orange-400 to-red-500 text-black" aria-hidden="true">
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 3.5A1.5 1.5 0 0 1 5.5 2h9A1.5 1.5 0 0 1 16 3.5v13a.75.75 0 0 1-1.08.67L10 14.74l-4.92 2.43A.75.75 0 0 1 4 16.5v-13Zm3 2.75A.75.75 0 0 0 7 7.75h6a.75.75 0 0 0 0-1.5H7Zm0 3A.75.75 0 0 0 7 10.75h4a.75.75 0 0 0 0-1.5H7Z" />
+            </svg>
+          </span>
+          <p className="ui-text-strong m-0 text-lg font-bold">Events</p>
+        </div>
+      ) : null}
       <MarketList
         pageMode={marketPageMode}
         isGamesLoading={market.isGamesLoading}

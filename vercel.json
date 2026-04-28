@@ -7,6 +7,30 @@
     {
       "source": "/og/market/:gameId",
       "destination": "/api/og/market/:gameId"
+    },
+    {
+      "source": "/guide",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/ranking",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/news",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/player-rankings",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/forum",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/markets/:gameId",
+      "destination": "/index.html"
     }
   ]
 }

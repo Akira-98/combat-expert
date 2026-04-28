@@ -133,7 +133,6 @@ function App() {
               filters={filters}
               market={market}
               betting={betting}
-              rankings={rankings}
               onOpenGameMarkets={shell.handleOpenGameMarkets}
             />
           )}

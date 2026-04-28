@@ -1,7 +1,7 @@
 import type { RankingEntry, RankingViewer } from '../hooks/useRankings'
 import { useI18n } from '../i18n'
 import { RankingLeaderboardRow } from './ranking/RankingLeaderboardRow'
-import { RankingViewerCard } from './ranking/RankingViewerCard'
+import { RankingPodiumCard } from './ranking/RankingPodiumCard'
 
 type RankingPageProps = {
   rankings: RankingEntry[]
@@ -12,8 +12,10 @@ type RankingPageProps = {
   isConnected: boolean
 }
 
-export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry, isConnected }: RankingPageProps) {
+export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry }: RankingPageProps) {
   const { t } = useI18n()
+  const podium = rankings.slice(0, 3)
+
   return (
     <section className="mt-2.5 grid gap-2.5">
       <div className="min-w-0 px-1">
@@ -22,9 +24,11 @@ export function RankingPage({ rankings, viewer, isLoading, errorMessage, onRetry
         </h2>
       </div>
 
-      {isConnected ? (
-        <div className="ui-leaderboard-hero card-shell relative overflow-hidden border px-4 py-3 md:px-5 md:py-4">
-          <RankingViewerCard viewer={viewer} isConnected={isConnected} />
+      {!isLoading && !errorMessage && podium.length > 0 ? (
+        <div className="grid gap-3 md:grid-cols-3">
+          {podium.map((entry, index) => (
+            <RankingPodiumCard key={entry.address} entry={entry} rank={index + 1} />
+          ))}
         </div>
       ) : null}
 

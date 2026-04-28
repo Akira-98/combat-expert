@@ -243,6 +243,7 @@ export function Header({
         isOpen={controller.isTransferModalOpen}
         isConnected={isConnected}
         chainId={chainId}
+        address={address}
         usdtTransfer={usdtTransfer}
         onClose={controller.closeTransferModal}
       />

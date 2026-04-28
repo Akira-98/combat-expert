@@ -8,9 +8,27 @@ export type RoutedPage = 'guide' | 'ranking' | 'news' | 'player-rankings' | 'for
 
 const GAME_ROUTE_QUERY_KEY = 'game'
 const PAGE_ROUTE_QUERY_KEY = 'page'
+const MARKET_ROUTE_PREFIX = '/markets/'
+const PAGE_ROUTES: Record<RoutedPage, string> = {
+  guide: '/guide',
+  ranking: '/ranking',
+  news: '/news',
+  'player-rankings': '/player-rankings',
+  forum: '/forum',
+}
+
+function parseRoutedPage(value: string | null) {
+  return value === 'guide' || value === 'ranking' || value === 'news' || value === 'player-rankings' || value === 'forum' ? value : undefined
+}
 
 function readRoutedGameId() {
   if (typeof window === 'undefined') return undefined
+
+  const pathname = window.location.pathname
+  if (pathname.startsWith(MARKET_ROUTE_PREFIX)) {
+    const encodedGameId = pathname.slice(MARKET_ROUTE_PREFIX.length).split('/')[0]
+    return encodedGameId ? decodeURIComponent(encodedGameId) : undefined
+  }
 
   const value = new URLSearchParams(window.location.search).get(GAME_ROUTE_QUERY_KEY)
   return value || undefined
@@ -19,26 +37,25 @@ function readRoutedGameId() {
 function readRoutedPage() {
   if (typeof window === 'undefined') return undefined
 
+  const pathname = window.location.pathname
+  const routedPage = Object.entries(PAGE_ROUTES).find(([, route]) => route === pathname)?.[0] as RoutedPage | undefined
+  if (routedPage) return routedPage
+
   const value = new URLSearchParams(window.location.search).get(PAGE_ROUTE_QUERY_KEY)
-  return value === 'guide' || value === 'ranking' || value === 'news' || value === 'player-rankings' || value === 'forum' ? value : undefined
+  return parseRoutedPage(value)
 }
 
 function writeRouteState({ gameId, page }: { gameId?: string; page?: string }, replace = false) {
   if (typeof window === 'undefined') return
 
-  const url = new URL(window.location.href)
+  let nextPath = '/'
   if (gameId) {
-    url.searchParams.set(GAME_ROUTE_QUERY_KEY, gameId)
-  } else {
-    url.searchParams.delete(GAME_ROUTE_QUERY_KEY)
-  }
-  if (page) {
-    url.searchParams.set(PAGE_ROUTE_QUERY_KEY, page)
-  } else {
-    url.searchParams.delete(PAGE_ROUTE_QUERY_KEY)
+    nextPath = `${MARKET_ROUTE_PREFIX}${encodeURIComponent(gameId)}`
+  } else if (page && page in PAGE_ROUTES) {
+    nextPath = PAGE_ROUTES[page as RoutedPage]
   }
 
-  const nextUrl = `${url.pathname}${url.search}${url.hash}`
+  const nextUrl = `${nextPath}${window.location.hash}`
   if (replace) {
     window.history.replaceState({}, '', nextUrl)
     return
