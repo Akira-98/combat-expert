@@ -176,12 +176,13 @@ function App() {
 
       <AppBottomNav
         mobileView={shell.mobileView}
+        isRankingActive={shell.shouldShowRankingContent}
         isMobileBetslipOpen={shell.isMobileBetslipOpen}
         isMobileMenuOpen={shell.isMobileMenuOpen}
         selectionCount={betting.selectionItems.length}
         onOpenExplore={shell.handleNavigateToExplore}
         onOpenBetslip={shell.openMobileBetslip}
-        onOpenChat={() => shell.handleNavigateToMobileView('chat')}
+        onOpenRankings={shell.handleNavigateToRanking}
         onOpenBets={() => shell.handleNavigateToMobileView('bets')}
         onOpenMenu={shell.openMobileMenu}
       />
@@ -202,7 +203,6 @@ function App() {
         onOpenPlayerRankings={shell.openPlayerRankingsFromMobileMenu}
         onOpenForum={shell.openForumFromMobileMenu}
         onOpenGuide={shell.openGuideFromMobileMenu}
-        onOpenLeaderboard={shell.openLeaderboardFromMobileMenu}
       />
     </div>
   )

@@ -169,7 +169,7 @@ function TokenNetworkPicker() {
   const { t } = useI18n()
 
   return (
-    <div className="grid gap-3 md:grid-cols-2">
+    <div className="grid grid-cols-2 gap-3">
       <AssetSelect label={t('walletTransfer.coin')} logoSrc="/tether-logo.svg" value="USDT" />
       <AssetSelect label={t('walletTransfer.chain')} logoSrc="/polygon-logo.svg" value="Polygon" />
     </div>

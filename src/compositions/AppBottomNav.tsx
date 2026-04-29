@@ -3,24 +3,26 @@ import { useI18n } from '../i18n'
 
 type AppBottomNavProps = {
   mobileView: MobileView
+  isRankingActive: boolean
   isMobileBetslipOpen: boolean
   isMobileMenuOpen: boolean
   selectionCount: number
   onOpenExplore: () => void
   onOpenBetslip: () => void
-  onOpenChat: () => void
+  onOpenRankings: () => void
   onOpenBets: () => void
   onOpenMenu: () => void
 }
 
 export function AppBottomNav({
   mobileView,
+  isRankingActive,
   isMobileBetslipOpen,
   isMobileMenuOpen,
   selectionCount,
   onOpenExplore,
   onOpenBetslip,
-  onOpenChat,
+  onOpenRankings,
   onOpenBets,
   onOpenMenu,
 }: AppBottomNavProps) {
@@ -55,22 +57,25 @@ export function AppBottomNav({
           </button>
           <button
             className={`${navItemClass} ${
-              mobileView === 'chat' ? navItemActiveClass : navItemIdleClass
+              isRankingActive ? navItemActiveClass : navItemIdleClass
             }`}
-            onClick={onOpenChat}
+            onClick={onOpenRankings}
             type="button"
           >
             <span
               aria-hidden
               className={`ui-bottom-nav-indicator absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full transition ${
-                mobileView === 'chat' ? 'opacity-100' : 'opacity-0'
+                isRankingActive ? 'opacity-100' : 'opacity-0'
               }`}
             />
             <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
-              <path d="M7.5 17.25H5.75A1.75 1.75 0 0 1 4 15.5v-7A1.75 1.75 0 0 1 5.75 6.75h12.5A1.75 1.75 0 0 1 20 8.5v7a1.75 1.75 0 0 1-1.75 1.75H11l-3.5 2.25z" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
-              <path d="M8 11.25h8M8 14.25h5" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+              <path d="M8 21h8" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+              <path d="M12 16v5" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+              <path d="M7 4h10v3a5 5 0 0 1-10 0V4Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+              <path d="M7 6H5a2 2 0 0 0 2 2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+              <path d="M17 6h2a2 2 0 0 1-2 2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
             </svg>
-            <span className="mt-1">{t('bottomNav.chat')}</span>
+            <span className="mt-1">{t('bottomNav.rankings')}</span>
           </button>
           <button
             aria-label={t('bottomNav.openBetslip')}

@@ -8,7 +8,6 @@ type MobileMenuSheetProps = {
   onOpenPlayerRankings: () => void
   onOpenForum: () => void
   onOpenGuide: () => void
-  onOpenLeaderboard: () => void
 }
 
 export function MobileMenuSheet({
@@ -18,7 +17,6 @@ export function MobileMenuSheet({
   onOpenPlayerRankings,
   onOpenForum,
   onOpenGuide,
-  onOpenLeaderboard,
 }: MobileMenuSheetProps) {
   const { t } = useI18n()
   if (!isOpen || typeof document === 'undefined') return null
@@ -55,9 +53,6 @@ export function MobileMenuSheet({
           </button>
           <button className={menuButtonClass} onClick={onOpenForum} type="button">
             {t('nav.forum')}
-          </button>
-          <button className={menuButtonClass} onClick={onOpenLeaderboard} type="button">
-            {t('nav.leaderboard')}
           </button>
           <button className={menuButtonClass} onClick={onOpenGuide} type="button">
             {t('nav.guide')}

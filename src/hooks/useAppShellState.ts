@@ -65,10 +65,6 @@ export function useAppShellState({
       closeMobileMenu()
       navigation.handleNavigateToGuide()
     },
-    openLeaderboardFromMobileMenu: () => {
-      closeMobileMenu()
-      navigation.handleNavigateToRanking()
-    },
     openNewsFromMobileMenu: () => {
       closeMobileMenu()
       navigation.handleNavigateToPreviewPage('news')
