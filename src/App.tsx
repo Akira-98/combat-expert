@@ -176,6 +176,7 @@ function App() {
 
       <AppBottomNav
         mobileView={shell.mobileView}
+        isExploreActive={shell.shouldShowExploreContent}
         isRankingActive={shell.shouldShowRankingContent}
         isMobileBetslipOpen={shell.isMobileBetslipOpen}
         isMobileMenuOpen={shell.isMobileMenuOpen}

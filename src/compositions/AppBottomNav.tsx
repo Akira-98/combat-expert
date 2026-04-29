@@ -3,6 +3,7 @@ import { useI18n } from '../i18n'
 
 type AppBottomNavProps = {
   mobileView: MobileView
+  isExploreActive: boolean
   isRankingActive: boolean
   isMobileBetslipOpen: boolean
   isMobileMenuOpen: boolean
@@ -16,6 +17,7 @@ type AppBottomNavProps = {
 
 export function AppBottomNav({
   mobileView,
+  isExploreActive,
   isRankingActive,
   isMobileBetslipOpen,
   isMobileMenuOpen,
@@ -38,7 +40,7 @@ export function AppBottomNav({
         <div className="relative grid w-full grid-cols-[1fr_1fr_auto_1fr_1fr] items-end gap-1 px-2 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-2">
           <button
             className={`${navItemClass} ${
-              mobileView === 'explore' ? navItemActiveClass : navItemIdleClass
+              isExploreActive ? navItemActiveClass : navItemIdleClass
             }`}
             onClick={onOpenExplore}
             type="button"
@@ -46,7 +48,7 @@ export function AppBottomNav({
             <span
               aria-hidden
               className={`ui-bottom-nav-indicator absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full transition ${
-                mobileView === 'explore' ? 'opacity-100' : 'opacity-0'
+                isExploreActive ? 'opacity-100' : 'opacity-0'
               }`}
             />
             <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
