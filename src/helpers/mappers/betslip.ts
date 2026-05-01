@@ -5,6 +5,7 @@ import { selectionKey } from './selection'
 type BetslipItemLike = {
   conditionId: string
   outcomeId: string
+  gameId?: string
 }
 
 export const buildSelectedOutcomes = (items: BetslipItemLike[]): Set<SelectionKey> =>
@@ -12,8 +13,8 @@ export const buildSelectedOutcomes = (items: BetslipItemLike[]): Set<SelectionKe
 
 export const buildOutcomeMeta = (
   sections: MarketSection[],
-): Map<SelectionKey, { label: string; odds: number; conditionState: string; gameId: string; marketTitle: string }> => {
-  const map = new Map<SelectionKey, { label: string; odds: number; conditionState: string; gameId: string; marketTitle: string }>()
+): Map<SelectionKey, { label: string; odds: number; conditionState: string; gameId: string; marketTitle: string; gameTitle?: string }> => {
+  const map = new Map<SelectionKey, { label: string; odds: number; conditionState: string; gameId: string; marketTitle: string; gameTitle?: string }>()
 
   sections.forEach((section) => {
     section.outcomes.forEach((outcome) => {
@@ -32,13 +33,14 @@ export const buildOutcomeMeta = (
 
 export const mapBetslipToSelectionItems = (
   items: BetslipItemLike[],
-  outcomeMeta: Map<SelectionKey, { label: string; odds: number; gameId: string }>,
+  outcomeMeta: Map<SelectionKey, { label: string; odds: number; gameId: string; gameTitle?: string }>,
   games: GameItem[],
 ): SelectionItem[] =>
   items.map((item) => {
     const key = selectionKey(item.conditionId, item.outcomeId)
     const meta = outcomeMeta.get(key)
-    const gameTitle = games.find((game) => game.gameId === meta?.gameId)?.title
+    const gameId = meta?.gameId ?? item.gameId
+    const gameTitle = games.find((game) => game.gameId === gameId)?.title ?? meta?.gameTitle
 
     return {
       conditionId: item.conditionId,

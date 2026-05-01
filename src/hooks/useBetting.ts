@@ -11,6 +11,7 @@ import { useBettingTransactions } from './useBettingTransactions'
 const DEFAULT_SLIPPAGE = 3
 const REFERRAL_SHARE_ROUTE_PREFIX = '/share/picks/'
 const ACTIVE_REFERRAL_SHARE_STORAGE_KEY = 'combatexpert.activeReferralShareId'
+const SHARE_MESSAGE_TIMEOUT_MS = 3000
 
 type ShareMessage = 'copied' | 'shared' | 'failed'
 
@@ -50,6 +51,27 @@ async function copyTextToClipboard(text: string) {
 
 function isShareAbortError(error: unknown) {
   return error instanceof DOMException && error.name === 'AbortError'
+}
+
+function buildReferralSelections(
+  items: { conditionId: string; outcomeId: string; gameId: string; isExpressForbidden?: boolean }[],
+  selectionItems: { conditionId: string; outcomeId: string; gameTitle: string; label: string; odds: number }[],
+) {
+  return items.map((item) => {
+    const displayItem = selectionItems.find(
+      (selection) => selection.conditionId === item.conditionId && selection.outcomeId === item.outcomeId,
+    )
+
+    return {
+      conditionId: item.conditionId,
+      outcomeId: item.outcomeId,
+      gameId: item.gameId,
+      isExpressForbidden: Boolean(item.isExpressForbidden),
+      gameTitle: displayItem?.gameTitle,
+      label: displayItem?.label,
+      odds: displayItem?.odds,
+    }
+  })
 }
 
 export function useBetting({
@@ -110,6 +132,16 @@ export function useBetting({
   const mismatchHandledRef = useRef(false)
 
   useEffect(() => {
+    if (!shareState.message) return
+
+    const timeoutId = window.setTimeout(() => {
+      setShareState((current) => current.message === shareState.message ? { isPending: false } : current)
+    }, SHARE_MESSAGE_TIMEOUT_MS)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [shareState.message])
+
+  useEffect(() => {
     if (!selectionState.sdkConditionStateMismatch) {
       mismatchHandledRef.current = false
       return
@@ -137,6 +169,7 @@ export function useBetting({
 
         clear()
         selectionState.resetSelectionMeta()
+        selectionState.rememberSharedSelectionMeta(share.selections)
         for (const selection of share.selections) {
           addItem({
             conditionId: selection.conditionId,
@@ -198,7 +231,7 @@ export function useBetting({
     try {
       const result = await createReferralShare({
         referrerWallet: address,
-        selections: items,
+        selections: buildReferralSelections(items, selectionState.selectionItems),
       })
 
       if (navigator.share) {

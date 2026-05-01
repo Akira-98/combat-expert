@@ -5,6 +5,11 @@ export type ReferralSelection = {
   outcomeId: string
   gameId: string
   isExpressForbidden?: boolean
+  gameTitle?: string
+  label?: string
+  odds?: number
+  marketTitle?: string
+  selectionName?: string
 }
 
 export type ReferralShare = {

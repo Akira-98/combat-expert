@@ -9,11 +9,18 @@ type SelectionMeta = {
   conditionState: string
   gameId: string
   marketTitle: string
+  gameTitle?: string
 }
 
 type BetslipItemLike = {
   conditionId: string
   outcomeId: string
+  gameId?: string
+  gameTitle?: string
+  label?: string
+  odds?: number
+  marketTitle?: string
+  selectionName?: string
 }
 
 export function useBetslipSelectionMeta(params: { marketSections: MarketSection[]; selectedOutcomes: Set<SelectionKey> }) {
@@ -65,6 +72,40 @@ export function useBetslipSelectionMeta(params: { marketSections: MarketSection[
     })
   }
 
+  const rememberSharedSelectionMeta = (items: BetslipItemLike[]) => {
+    setSelectionMetaCache((prev) => {
+      const next = new Map(prev)
+
+      items.forEach((item) => {
+        const key = selectionKey(item.conditionId, item.outcomeId)
+        const current = outcomeMeta.get(key)
+        const label = item.label || item.selectionName
+        const odds = Number(item.odds)
+
+        if (current) {
+          next.set(key, {
+            ...current,
+            gameTitle: item.gameTitle,
+          })
+          return
+        }
+
+        if (!item.gameId || !label) return
+
+        next.set(key, {
+          label,
+          odds: Number.isFinite(odds) ? odds : 0,
+          conditionState: 'Created',
+          gameId: item.gameId,
+          marketTitle: item.marketTitle || translate('betslip.selectionItem'),
+          gameTitle: item.gameTitle,
+        })
+      })
+
+      return next
+    })
+  }
+
   const resetSelectionMeta = () => {
     setSelectionMetaCache(new Map())
   }
@@ -97,6 +138,7 @@ export function useBetslipSelectionMeta(params: { marketSections: MarketSection[
     mergedOutcomeMeta,
     selectedOutcomePriceChanges,
     rememberSelectionMeta,
+    rememberSharedSelectionMeta,
     syncSelectionMeta,
     resetSelectionMeta,
     removeSelectionMeta,

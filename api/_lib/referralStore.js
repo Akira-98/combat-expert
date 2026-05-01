@@ -21,15 +21,28 @@ function normalizeSelection(selection) {
   const conditionId = String(selection.conditionId ?? '').trim()
   const outcomeId = String(selection.outcomeId ?? '').trim()
   const gameId = String(selection.gameId ?? '').trim()
+  const gameTitle = String(selection.gameTitle ?? '').trim()
+  const label = String(selection.label ?? '').trim()
+  const marketTitle = String(selection.marketTitle ?? '').trim()
+  const selectionName = String(selection.selectionName ?? '').trim()
+  const odds = Number(selection.odds)
 
   if (!conditionId || !outcomeId || !gameId) return undefined
 
-  return {
+  const normalized = {
     conditionId,
     outcomeId,
     gameId,
     isExpressForbidden: Boolean(selection.isExpressForbidden),
   }
+
+  if (gameTitle) normalized.gameTitle = gameTitle
+  if (label) normalized.label = label
+  if (marketTitle) normalized.marketTitle = marketTitle
+  if (selectionName) normalized.selectionName = selectionName
+  if (Number.isFinite(odds) && odds > 0) normalized.odds = odds
+
+  return normalized
 }
 
 export function normalizeReferralSelections(value) {
