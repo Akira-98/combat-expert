@@ -11,6 +11,10 @@
       "destination": "/api/share/market/:gameId"
     },
     {
+      "source": "/share/picks/:shareId",
+      "destination": "/index.html"
+    },
+    {
       "source": "/og/market/:gameId",
       "destination": "/api/og/market/:gameId"
     },
