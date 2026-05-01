@@ -36,11 +36,23 @@ const BETS_BY_CREATED_TX_HASH_QUERY = gql`
       owner
       affiliate
       amount
+      payout
       odds
       status
       result
+      isFreebet
+      resolvedBlockTimestamp
       createdTxHash
       createdBlockTimestamp
+      selections {
+        outcome {
+          outcomeId
+          condition {
+            conditionId
+            gameId
+          }
+        }
+      }
     }
   }
 `

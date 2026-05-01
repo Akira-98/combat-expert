@@ -9,11 +9,21 @@ function mapBetClaimBet(rawBet) {
     owner: normalizeAddress(rawBet?.owner),
     affiliate: normalizeAddress(rawBet?.affiliate),
     amount: typeof rawBet?.amount === 'string' ? rawBet.amount : String(rawBet?.amount ?? ''),
+    payout: typeof rawBet?.payout === 'string' ? rawBet.payout : String(rawBet?.payout ?? ''),
     odds: typeof rawBet?.odds === 'string' ? rawBet.odds : String(rawBet?.odds ?? ''),
     status: typeof rawBet?.status === 'string' ? rawBet.status : '',
     result: typeof rawBet?.result === 'string' ? rawBet.result : '',
+    isFreebet: Boolean(rawBet?.isFreebet),
+    resolvedBlockTimestamp: typeof rawBet?.resolvedBlockTimestamp === 'string' ? rawBet.resolvedBlockTimestamp : String(rawBet?.resolvedBlockTimestamp ?? ''),
     createdTxHash: normalizeTxHash(rawBet?.createdTxHash),
     createdBlockTimestamp: typeof rawBet?.createdBlockTimestamp === 'string' ? rawBet.createdBlockTimestamp : String(rawBet?.createdBlockTimestamp ?? ''),
+    selections: Array.isArray(rawBet?.selections)
+      ? rawBet.selections.map((selection) => ({
+          conditionId: String(selection?.outcome?.condition?.conditionId ?? ''),
+          outcomeId: String(selection?.outcome?.outcomeId ?? ''),
+          gameId: String(selection?.outcome?.condition?.gameId ?? ''),
+        }))
+      : [],
   }
 }
 

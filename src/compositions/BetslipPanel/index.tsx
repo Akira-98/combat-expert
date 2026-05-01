@@ -33,6 +33,8 @@ export type BetslipPanelBetState = {
   amountValidationMessage?: string
   transactionSteps: TransactionStep[]
   transactionNotice?: TransactionNotice
+  sharePending?: boolean
+  shareMessage?: string
 }
 
 export type BetslipPanelActions = {
@@ -40,6 +42,7 @@ export type BetslipPanelActions = {
   onBetAmountChange: (value: string) => void
   onSlippageChange: (value: number) => void
   onSubmit: () => void
+  onShare: () => void
   onClear: () => void
   onDismissTransactionNotice: () => void
   onRemoveSelection: (item: Pick<SelectionItem, 'conditionId' | 'outcomeId'>) => void
@@ -103,6 +106,19 @@ export function BetslipPanel({
               <circle cx="16" cy="17" r="2" />
             </svg>
           </button>
+          <button
+            aria-label={t('betslip.share')}
+            className={iconButtonClass}
+            disabled={bet.selections.length === 0 || bet.sharePending}
+            onClick={actions.onShare}
+            type="button"
+          >
+            <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+              <path d="M8 12h8" strokeLinecap="round" />
+              <path d="M13 7l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M4 4v16" strokeLinecap="round" />
+            </svg>
+          </button>
           <button aria-label={t('betslip.clear')} className={dangerIconButtonClass} onClick={actions.onClear} type="button">
             <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
               <path d="M3 6h18" strokeLinecap="round" />
@@ -162,6 +178,12 @@ export function BetslipPanel({
           {panelState.visibleDisableReasonText && (
             <p className={`ui-state-warning-surface ui-text-body ${noticeClass}`}>
               {panelState.visibleDisableReasonText}
+            </p>
+          )}
+
+          {bet.shareMessage && (
+            <p className={`${bet.shareMessage === 'copied' ? 'ui-state-success' : 'ui-state-danger'} ui-text-body ${noticeClass}`}>
+              {bet.shareMessage === 'copied' ? t('betslip.shareCopied') : t('betslip.shareFailed')}
             </p>
           )}
 

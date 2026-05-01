@@ -39,6 +39,24 @@ export async function supabaseInsert({ supabaseUrl, serviceRoleKey, table, body,
   return response.json()
 }
 
+export async function supabaseUpdate({ supabaseUrl, serviceRoleKey, path, body, prefer, errorMessage }) {
+  const response = await fetch(`${supabaseUrl}/rest/v1/${path}`, {
+    method: 'PATCH',
+    headers: buildHeaders(serviceRoleKey, {
+      'Content-Type': 'application/json',
+      Prefer: prefer || 'return=representation',
+    }),
+    body: JSON.stringify(body),
+  })
+
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(errorMessage || 'Supabase update failed', { cause: text })
+  }
+
+  return response.json()
+}
+
 export async function supabaseRpc({ supabaseUrl, serviceRoleKey, fn, body, errorMessage }) {
   const response = await fetch(`${supabaseUrl}/rest/v1/rpc/${fn}`, {
     method: 'POST',

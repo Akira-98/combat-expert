@@ -2,6 +2,7 @@ import { useBet, useBetTokenBalance } from '@azuro-org/sdk'
 import type { Address } from 'viem'
 import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
 import { claimBetParticipationPoints } from '../api/points'
+import { recordReferralReward } from '../api/referrals'
 import { useAppConfig } from '../config/useAppConfig'
 import { useBetHistory } from './useBetHistory'
 import { useBetRedeem } from './useBetRedeem'
@@ -11,6 +12,7 @@ import { translate } from '../i18n'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const POINT_CLAIM_RETRY_DELAYS_MS = [0, 3_000, 10_000]
+const REFERRAL_REWARD_RETRY_DELAYS_MS = [0, 3_000, 10_000]
 
 function wait(ms: number) {
   return new Promise((resolve) => {
@@ -32,6 +34,28 @@ async function claimBetParticipationPointsWithRetry({ txHash, walletAddress }: {
   return lastResult
 }
 
+async function recordReferralRewardWithRetry({
+  shareId,
+  txHash,
+  bettorWallet,
+}: {
+  shareId: string
+  txHash: string
+  bettorWallet: string
+}) {
+  let lastResult
+
+  for (const [index, delay] of REFERRAL_REWARD_RETRY_DELAYS_MS.entries()) {
+    if (delay > 0) await wait(delay)
+
+    lastResult = await recordReferralReward({ shareId, txHash, bettorWallet })
+    if (lastResult.status !== 'pending_indexing') return lastResult
+    if (index === REFERRAL_REWARD_RETRY_DELAYS_MS.length - 1) return lastResult
+  }
+
+  return lastResult
+}
+
 type UseBettingTransactionsParams = {
   address?: Address
   isConnected: boolean
@@ -45,8 +69,10 @@ type UseBettingTransactionsParams = {
   odds: Record<string, number>
   totalOdds: number
   slippage: number
+  activeReferralShareId?: string
   onBetSuccess: (receiptHash?: `0x${string}`) => void
   onBetPointsClaimed?: () => void
+  onReferralRewardRecorded?: () => void
 }
 
 export function useBettingTransactions({
@@ -58,8 +84,10 @@ export function useBettingTransactions({
   odds,
   totalOdds,
   slippage,
+  activeReferralShareId,
   onBetSuccess,
   onBetPointsClaimed,
+  onReferralRewardRecorded,
 }: UseBettingTransactionsParams) {
   const { transactionNotice, clearTransactionNotice, setSuccessNotice, setErrorNotice } = useTransactionNotice({
     mapErrorMessage: getFriendlyTransactionErrorMessage,
@@ -93,6 +121,20 @@ export function useBettingTransactions({
           .catch((error) => {
             console.warn('Failed to claim bet participation points', error)
           })
+
+        if (activeReferralShareId) {
+          void recordReferralRewardWithRetry({
+            shareId: activeReferralShareId,
+            bettorWallet: address,
+            txHash: receipt.transactionHash,
+          })
+            .then((result) => {
+              if (result?.ok) onReferralRewardRecorded?.()
+            })
+            .catch((error) => {
+              console.warn('Failed to record referral reward', error)
+            })
+        }
       }
       void refetchBetTokenBalance()
       setSuccessNotice({

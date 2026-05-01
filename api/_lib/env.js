@@ -33,6 +33,7 @@ export function loadServerEnv() {
     affiliateAddress: normalizeAddress(process.env.AFFILIATE),
     commentAuthSecret: (process.env.COMMENT_AUTH_JWT_SECRET || '').trim(),
     rankingSyncSecret: (process.env.RANKING_SYNC_SECRET || '').trim(),
+    cronSecret: (process.env.CRON_SECRET || '').trim(),
   }
 }
 
