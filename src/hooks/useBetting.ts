@@ -12,6 +12,8 @@ const DEFAULT_SLIPPAGE = 3
 const REFERRAL_SHARE_ROUTE_PREFIX = '/share/picks/'
 const ACTIVE_REFERRAL_SHARE_STORAGE_KEY = 'combatexpert.activeReferralShareId'
 
+type ShareMessage = 'copied' | 'shared' | 'failed'
+
 type UseBettingParams = {
   address?: Address
   isConnected: boolean
@@ -20,6 +22,34 @@ type UseBettingParams = {
   isBetHistoryPollingEnabled?: boolean
   refreshMarkets?: () => void
   onBetPointsClaimed?: () => void
+}
+
+async function copyTextToClipboard(text: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text)
+    return
+  }
+
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.setAttribute('readonly', '')
+  textarea.style.position = 'fixed'
+  textarea.style.top = '0'
+  textarea.style.left = '-9999px'
+  document.body.appendChild(textarea)
+  textarea.focus()
+  textarea.select()
+
+  try {
+    const didCopy = document.execCommand('copy')
+    if (!didCopy) throw new Error('Copy command was rejected.')
+  } finally {
+    document.body.removeChild(textarea)
+  }
+}
+
+function isShareAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === 'AbortError'
 }
 
 export function useBetting({
@@ -36,7 +66,7 @@ export function useBetting({
     if (typeof window === 'undefined') return undefined
     return window.localStorage.getItem(ACTIVE_REFERRAL_SHARE_STORAGE_KEY) || undefined
   })
-  const [shareState, setShareState] = useState<{ isPending: boolean; message?: string }>({ isPending: false })
+  const [shareState, setShareState] = useState<{ isPending: boolean; message?: ShareMessage }>({ isPending: false })
   const { items, addItem, clear, removeItem } = useBaseBetslip()
   const {
     betAmount,
@@ -171,7 +201,34 @@ export function useBetting({
         selections: items,
       })
 
-      await navigator.clipboard?.writeText(result.shareUrl)
+      if (navigator.share) {
+        const shareData: ShareData = {
+          title: 'Combat Expert picks',
+          text: 'Check out this Combat Expert betslip.',
+          url: result.shareUrl,
+        }
+        const urlOnlyShareData: ShareData = { url: result.shareUrl }
+        const nativeShareData = !navigator.canShare || navigator.canShare(shareData)
+          ? shareData
+          : navigator.canShare(urlOnlyShareData)
+            ? urlOnlyShareData
+            : undefined
+
+        if (nativeShareData) {
+          try {
+            await navigator.share(nativeShareData)
+            setShareState({ isPending: false, message: 'shared' })
+            return
+          } catch (error) {
+            if (isShareAbortError(error)) {
+              setShareState({ isPending: false })
+              return
+            }
+          }
+        }
+      }
+
+      await copyTextToClipboard(result.shareUrl)
       setShareState({ isPending: false, message: 'copied' })
     } catch (error) {
       console.warn('Failed to create referral share', error)

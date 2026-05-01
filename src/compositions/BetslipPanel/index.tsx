@@ -34,7 +34,7 @@ export type BetslipPanelBetState = {
   transactionSteps: TransactionStep[]
   transactionNotice?: TransactionNotice
   sharePending?: boolean
-  shareMessage?: string
+  shareMessage?: 'copied' | 'shared' | 'failed'
 }
 
 export type BetslipPanelActions = {
@@ -182,8 +182,12 @@ export function BetslipPanel({
           )}
 
           {bet.shareMessage && (
-            <p className={`${bet.shareMessage === 'copied' ? 'ui-state-success' : 'ui-state-danger'} ui-text-body ${noticeClass}`}>
-              {bet.shareMessage === 'copied' ? t('betslip.shareCopied') : t('betslip.shareFailed')}
+            <p className={`${bet.shareMessage === 'failed' ? 'ui-state-danger' : 'ui-state-success'} ui-text-body ${noticeClass}`}>
+              {bet.shareMessage === 'copied'
+                ? t('betslip.shareCopied')
+                : bet.shareMessage === 'shared'
+                  ? t('betslip.shareShared')
+                  : t('betslip.shareFailed')}
             </p>
           )}
 
