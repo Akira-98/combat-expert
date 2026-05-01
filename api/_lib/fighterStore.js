@@ -16,7 +16,10 @@ function encodeSupabaseStoragePath(path) {
 }
 
 function buildPublicFighterImageUrl(supabaseUrl, imagePath) {
-  const encodedPath = encodeSupabaseStoragePath(imagePath)
+  const trimmedPath = String(imagePath || '').trim()
+  if (/^https?:\/\//i.test(trimmedPath)) return trimmedPath
+
+  const encodedPath = encodeSupabaseStoragePath(trimmedPath)
   if (!encodedPath) return null
 
   return `${supabaseUrl}/storage/v1/object/public/${FIGHTER_IMAGE_BUCKET}/${encodedPath}`

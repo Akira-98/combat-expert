@@ -73,7 +73,7 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
   const { t } = useI18n()
   const [shareFeedback, setShareFeedback] = useState<{ gameId: string; status: 'copied' | 'failed' }>()
   const [leftName = 'Fighter A', rightName = 'Fighter B'] = selectedGame.participants
-  const { imageUrlByName } = useFighterImages([leftName, rightName])
+  const { getImageUrlByName } = useFighterImages([leftName, rightName])
   const matchupLabel = [leftName, rightName].filter(Boolean).join(' - ')
   const shareUrl = typeof window === 'undefined'
     ? ''
@@ -141,7 +141,7 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 md:gap-5">
       <CompetitorProfile
-        imageUrl={imageUrlByName.get(normalizeCompetitorName(leftName))}
+        imageUrl={getImageUrlByName(leftName)}
         initials={getCompetitorInitials(leftName)}
         name={leftName}
         align="left"
@@ -174,7 +174,7 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
       </div>
 
       <CompetitorProfile
-        imageUrl={imageUrlByName.get(normalizeCompetitorName(rightName))}
+        imageUrl={getImageUrlByName(rightName)}
         initials={getCompetitorInitials(rightName)}
         name={rightName}
         align="right"
@@ -216,10 +216,6 @@ function CompetitorProfile({
       </div>
     </div>
   )
-}
-
-function normalizeCompetitorName(name: string) {
-  return name.trim().replace(/\s+/g, ' ')
 }
 
 function getCompetitorInitials(name: string) {

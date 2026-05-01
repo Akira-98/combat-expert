@@ -6,6 +6,10 @@ function normalizeFighterName(value: string) {
   return value.trim().replace(/\s+/g, ' ')
 }
 
+function normalizeFighterNameKey(value: string) {
+  return normalizeFighterName(value).toLocaleLowerCase()
+}
+
 export function useFighterImages(names: string[]) {
   const normalizedNames = useMemo(
     () => [...new Set(names.map(normalizeFighterName).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
@@ -26,7 +30,7 @@ export function useFighterImages(names: string[]) {
 
     for (const fighter of query.data ?? []) {
       if (fighter.azuroName && fighter.imageUrl) {
-        map.set(normalizeFighterName(fighter.azuroName), fighter.imageUrl)
+        map.set(normalizeFighterNameKey(fighter.azuroName), fighter.imageUrl)
       }
     }
 
@@ -36,5 +40,6 @@ export function useFighterImages(names: string[]) {
   return {
     ...query,
     imageUrlByName,
+    getImageUrlByName: (name: string) => imageUrlByName.get(normalizeFighterNameKey(name)),
   }
 }
