@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { formatGameStartTime } from '../../helpers/formatters'
 import { useI18n } from '../../i18n'
 import { selectionKey } from '../../helpers/mappers'
+import { useFighterImages } from '../../hooks/useFighterImages'
 import { EmptyState, ErrorState, MarketsSkeleton } from './PaneStates'
 import { OutcomeButton } from './OutcomeButton'
 import type { MarketsPaneProps } from './types'
@@ -72,6 +73,7 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
   const { t } = useI18n()
   const [shareFeedback, setShareFeedback] = useState<{ gameId: string; status: 'copied' | 'failed' }>()
   const [leftName = 'Fighter A', rightName = 'Fighter B'] = selectedGame.participants
+  const { imageUrlByName } = useFighterImages([leftName, rightName])
   const matchupLabel = [leftName, rightName].filter(Boolean).join(' - ')
   const shareUrl = typeof window === 'undefined'
     ? ''
@@ -138,7 +140,12 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 md:gap-5">
-      <CompetitorProfile initials={getCompetitorInitials(leftName)} align="left" />
+      <CompetitorProfile
+        imageUrl={imageUrlByName.get(normalizeCompetitorName(leftName))}
+        initials={getCompetitorInitials(leftName)}
+        name={leftName}
+        align="left"
+      />
 
       <div className="min-w-[92px] text-center md:min-w-[128px]">
         <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em] md:text-[11px]">{selectedGame.leagueName}</p>
@@ -166,23 +173,53 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
         </button>
       </div>
 
-      <CompetitorProfile initials={getCompetitorInitials(rightName)} align="right" />
+      <CompetitorProfile
+        imageUrl={imageUrlByName.get(normalizeCompetitorName(rightName))}
+        initials={getCompetitorInitials(rightName)}
+        name={rightName}
+        align="right"
+      />
     </div>
   )
 }
 
-function CompetitorProfile({ initials, align }: { initials: string; align: 'left' | 'right' }) {
+function CompetitorProfile({
+  imageUrl,
+  initials,
+  name,
+  align,
+}: {
+  imageUrl?: string
+  initials: string
+  name: string
+  align: 'left' | 'right'
+}) {
   const layoutClass = align === 'right' ? 'justify-items-end text-right' : 'justify-items-start text-left'
+  const [failedImageUrl, setFailedImageUrl] = useState<string>()
+  const shouldShowImage = Boolean(imageUrl) && failedImageUrl !== imageUrl
 
   return (
     <div className={`grid min-w-0 gap-2 ${layoutClass}`}>
       <div className="ui-competitor-frame relative h-18 w-18 rounded-full border p-1.5 md:h-24 md:w-24">
         <div className="ui-competitor-core flex h-full w-full items-center justify-center overflow-hidden rounded-full border">
-          <span className="ui-text-strong text-lg font-black tracking-[0.08em] md:text-2xl">{initials}</span>
+          {shouldShowImage ? (
+            <img
+              alt={name}
+              className="h-full w-full object-cover"
+              src={imageUrl}
+              onError={() => setFailedImageUrl(imageUrl)}
+            />
+          ) : (
+            <span className="ui-text-strong text-lg font-black tracking-[0.08em] md:text-2xl">{initials}</span>
+          )}
         </div>
       </div>
     </div>
   )
+}
+
+function normalizeCompetitorName(name: string) {
+  return name.trim().replace(/\s+/g, ' ')
 }
 
 function getCompetitorInitials(name: string) {

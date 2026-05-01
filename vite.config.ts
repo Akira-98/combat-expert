@@ -20,6 +20,8 @@ type AppServerEnv = {
   ABLY_CHANNEL: string
   ABLY_CAPABILITY_JSON: string
   ABLY_TOKEN_TTL_MS: string
+  SUPABASE_URL: string
+  SUPABASE_SERVICE_ROLE_KEY: string
 }
 
 type DevApiRequest = {
@@ -141,13 +143,35 @@ function createRuntimeServerPlugin(env: Partial<AppServerEnv>): Plugin {
 
       return newsHandler(req, apiResponse)
     }
+
+    if (requestUrl.pathname === '/api/fighters') {
+      process.env.SUPABASE_URL ||= env.SUPABASE_URL || ''
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||= env.SUPABASE_SERVICE_ROLE_KEY || ''
+
+      const fightersModule = await import(new URL('./api/fighters.js', import.meta.url).href)
+      const fightersHandler = fightersModule.default as (req: DevApiRequest, res: DevApiResponse) => Promise<void>
+      const apiResponse: DevApiResponse = {
+        status(statusCode) {
+          res.statusCode = statusCode
+          return apiResponse
+        },
+        setHeader(name, value) {
+          res.setHeader(name, value)
+        },
+        send(body) {
+          res.end(body)
+        },
+      }
+
+      return fightersHandler(req, apiResponse)
+    }
   }
 
   return {
     name: 'runtime-api-dev-plugin',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (req.url?.startsWith('/api/public-config') || req.url?.startsWith('/api/ably-token') || req.url?.startsWith('/api/news')) {
+        if (req.url?.startsWith('/api/public-config') || req.url?.startsWith('/api/ably-token') || req.url?.startsWith('/api/news') || req.url?.startsWith('/api/fighters')) {
           void handleApiRequest(req, res)
           return
         }
@@ -156,7 +180,7 @@ function createRuntimeServerPlugin(env: Partial<AppServerEnv>): Plugin {
     },
     configurePreviewServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (req.url?.startsWith('/api/public-config') || req.url?.startsWith('/api/ably-token') || req.url?.startsWith('/api/news')) {
+        if (req.url?.startsWith('/api/public-config') || req.url?.startsWith('/api/ably-token') || req.url?.startsWith('/api/news') || req.url?.startsWith('/api/fighters')) {
           void handleApiRequest(req, res)
           return
         }
