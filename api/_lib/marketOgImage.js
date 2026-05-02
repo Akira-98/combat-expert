@@ -66,7 +66,7 @@ function formatOdds(odds) {
   return Number.isFinite(value) && value > 0 ? value.toFixed(2) : '-'
 }
 
-function FighterBadge({ name, align }) {
+function FighterBadge({ name, align, imageUrl }) {
   const isRight = align === 'right'
 
   return h(
@@ -107,19 +107,30 @@ function FighterBadge({ name, align }) {
             justifyContent: 'center',
           },
         },
-        h(
-          'div',
-          {
-            style: {
-              color: COLORS.textStrong,
-              fontSize: 48,
-              fontWeight: 900,
-              letterSpacing: 5,
-              paddingLeft: 5,
-            },
-          },
-          getInitials(name),
-        ),
+        imageUrl
+          ? h('img', {
+              alt: '',
+              src: imageUrl,
+              style: {
+                width: '100%',
+                height: '100%',
+                borderRadius: 999,
+                objectFit: 'cover',
+              },
+            })
+          : h(
+              'div',
+              {
+                style: {
+                  color: COLORS.textStrong,
+                  fontSize: 48,
+                  fontWeight: 900,
+                  letterSpacing: 5,
+                  paddingLeft: 5,
+                },
+              },
+              getInitials(name),
+            ),
       ),
     ),
   )
@@ -169,7 +180,7 @@ function OutcomeTile({ label, odds }) {
   )
 }
 
-export function MarketOgImage({ game, marketPreview }) {
+export function MarketOgImage({ game, marketPreview, fighterImages = [] }) {
   const participants = getParticipantNames(game)
   const leftName = participants[0] || 'Fighter A'
   const rightName = participants[1] || 'Fighter B'
@@ -269,7 +280,7 @@ export function MarketOgImage({ game, marketPreview }) {
           gap: 34,
         },
       },
-      h(FighterBadge, { name: leftName, align: 'left' }),
+      h(FighterBadge, { name: leftName, align: 'left', imageUrl: fighterImages[0] }),
       h(
         'div',
         {
@@ -323,7 +334,7 @@ export function MarketOgImage({ game, marketPreview }) {
           `${leftName} - ${rightName}`,
         ),
       ),
-      h(FighterBadge, { name: rightName, align: 'right' }),
+      h(FighterBadge, { name: rightName, align: 'right', imageUrl: fighterImages[1] }),
     ),
     h(
       'div',

@@ -12,7 +12,11 @@
     },
     {
       "source": "/share/picks/:shareId",
-      "destination": "/index.html"
+      "destination": "/api/share/picks/:shareId"
+    },
+    {
+      "source": "/og/picks/:shareId",
+      "destination": "/api/og/picks/:shareId"
     },
     {
       "source": "/og/market/:gameId",

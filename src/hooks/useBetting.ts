@@ -53,6 +53,16 @@ function isShareAbortError(error: unknown) {
   return error instanceof DOMException && error.name === 'AbortError'
 }
 
+function getReferralShareIdFromLocation(location: Location) {
+  const pathname = location.pathname
+  if (pathname.startsWith(REFERRAL_SHARE_ROUTE_PREFIX)) {
+    const encodedShareId = pathname.slice(REFERRAL_SHARE_ROUTE_PREFIX.length).split('/')[0]
+    return encodedShareId ? decodeURIComponent(encodedShareId) : ''
+  }
+
+  return new URLSearchParams(location.search).get('shareId') || ''
+}
+
 function buildReferralSelections(
   items: { conditionId: string; outcomeId: string; gameId: string; isExpressForbidden?: boolean }[],
   selectionItems: { conditionId: string; outcomeId: string; gameTitle: string; label: string; odds: number }[],
@@ -154,11 +164,7 @@ export function useBetting({
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const pathname = window.location.pathname
-    if (!pathname.startsWith(REFERRAL_SHARE_ROUTE_PREFIX)) return
-
-    const encodedShareId = pathname.slice(REFERRAL_SHARE_ROUTE_PREFIX.length).split('/')[0]
-    const shareId = encodedShareId ? decodeURIComponent(encodedShareId) : ''
+    const shareId = getReferralShareIdFromLocation(window.location)
     if (!shareId) return
 
     let isCanceled = false
