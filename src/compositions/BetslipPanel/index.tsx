@@ -67,6 +67,8 @@ export function BetslipPanel({
   const secondaryButtonClass = `ui-btn-secondary btn-shell md:btn-shell-lg ${actionButtonBaseClass}`
   const iconButtonClass =
     'ui-ghost-icon inline-flex h-8 w-8 items-center justify-center rounded-full text-sm transition disabled:cursor-not-allowed disabled:opacity-60'
+  const shareButtonClass =
+    'inline-flex h-8 items-center justify-center rounded-full bg-[color:var(--app-accent)] px-3 text-xs font-bold text-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--app-accent)_42%,transparent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60'
   const dangerIconButtonClass =
     'inline-flex h-8 w-8 items-center justify-center rounded-full bg-transparent text-sm text-[color:var(--app-danger)] transition hover:bg-[color:color-mix(in_srgb,var(--app-danger)_10%,transparent)] disabled:cursor-not-allowed disabled:opacity-60'
   const noticeClass = 'm-0 rounded-md border p-2 text-sm md:rounded-lg'
@@ -108,16 +110,12 @@ export function BetslipPanel({
           </button>
           <button
             aria-label={t('betslip.share')}
-            className={iconButtonClass}
+            className={shareButtonClass}
             disabled={bet.selections.length === 0 || bet.sharePending}
             onClick={actions.onShare}
             type="button"
           >
-            <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-              <path d="M8 12h8" strokeLinecap="round" />
-              <path d="M13 7l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M4 4v16" strokeLinecap="round" />
-            </svg>
+            {bet.sharePending ? t('betslip.sharePending') : t('betslip.share')}
           </button>
           <button aria-label={t('betslip.clear')} className={dangerIconButtonClass} onClick={actions.onClear} type="button">
             <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
