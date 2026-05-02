@@ -1,9 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { Analytics } from '@vercel/analytics/react'
 import { Buffer } from 'buffer'
 import './index.css'
-import { AppProviders } from './AppProviders'
 import { BootSplash } from './BootSplash'
 import { loadRuntimeConfig } from './config/runtimeConfig'
 import { translate } from './i18n'
@@ -40,7 +38,15 @@ function renderFatalConfigError(message: string) {
 
 async function bootstrap() {
   try {
-    const runtimeConfig = await loadRuntimeConfig()
+    const runtimeConfigPromise = loadRuntimeConfig()
+    const appProvidersPromise = import('./AppProviders')
+    const analyticsPromise = import('@vercel/analytics/react')
+
+    const runtimeConfig = await runtimeConfigPromise
+    const [{ AppProviders }, { Analytics }] = await Promise.all([
+      appProvidersPromise,
+      analyticsPromise,
+    ])
 
     root.render(
       <React.StrictMode>

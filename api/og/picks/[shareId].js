@@ -1,7 +1,7 @@
 import { fetchGamesByIds } from '../../_lib/azuro.js'
 import { loadServerEnv } from '../../_lib/env.js'
-import { fetchExistingFighterImage, getParticipantNames } from '../../_lib/marketOgImage.js'
-import { firstQueryValue, getRequestOrigin, h, sendPngImage } from '../../_lib/ogImage.js'
+import { fetchFighterImages, getParticipantNames } from '../../_lib/marketOgImage.js'
+import { firstQueryValue, h, sendPngImage } from '../../_lib/ogImage.js'
 import { PicksOgImage } from '../../_lib/picksOgImage.js'
 import { fetchReferralShareById } from '../../_lib/referralStore.js'
 
@@ -10,12 +10,20 @@ const FALLBACK_SHARE = {
   selections: [],
 }
 
-async function sendPicksImage(res, { share = FALLBACK_SHARE, game, fighterImages = [] }) {
+function getGameId(game) {
+  return game?.gameId || game?.id || ''
+}
+
+function uniqueValues(values) {
+  return [...new Set(values.filter(Boolean))]
+}
+
+async function sendPicksImage(res, { share = FALLBACK_SHARE, games = [], fighterImages = [] }) {
   await sendPngImage(
     res,
     h(PicksOgImage, {
       share,
-      game,
+      games,
       fighterImages,
     }),
   )
@@ -43,18 +51,28 @@ export default async function handler(req, res) {
     }
 
     const share = shareResult.share
-    const representativeGameId = share.selections?.[0]?.gameId
-    const [game] = representativeGameId ? await fetchGamesByIds([representativeGameId]) : []
-    const origin = getRequestOrigin(req)
-    const participants = getParticipantNames(game)
-    const fighterImages = await Promise.all([
-      fetchExistingFighterImage(origin, participants[0]),
-      fetchExistingFighterImage(origin, participants[1]),
-    ])
+    const visibleSelections = Array.isArray(share.selections) ? share.selections.slice(0, 4) : []
+    const gameIds = uniqueValues(visibleSelections.map((selection) => selection?.gameId))
+    const games = await fetchGamesByIds(gameIds)
+    const visibleGameIds = new Set(gameIds)
+    const fighterNames = uniqueValues(
+      games
+        .filter((game) => visibleGameIds.has(getGameId(game)))
+        .flatMap((game) => getParticipantNames(game).slice(0, 2)),
+    )
+    const fighterImageUrls = await fetchFighterImages({
+      supabaseUrl,
+      serviceRoleKey,
+      names: fighterNames,
+    })
+    const fighterImages = fighterNames.map((name, index) => ({
+      name,
+      imageUrl: fighterImageUrls[index],
+    }))
 
     await sendPicksImage(res, {
       share,
-      game,
+      games,
       fighterImages,
     })
   } catch (error) {

@@ -1,7 +1,8 @@
 import { fetchGamesByIds } from '../../_lib/azuro.js'
-import { fetchExistingFighterImage, getParticipantNames, MarketOgImage } from '../../_lib/marketOgImage.js'
+import { loadServerEnv } from '../../_lib/env.js'
+import { fetchFighterImages, getParticipantNames, MarketOgImage } from '../../_lib/marketOgImage.js'
 import { fetchMarketPreviewByGameId } from '../../_lib/marketManager.js'
-import { firstQueryValue, getRequestOrigin, h, sendPngImage } from '../../_lib/ogImage.js'
+import { firstQueryValue, h, sendPngImage } from '../../_lib/ogImage.js'
 
 const FALLBACK_MARKET_PREVIEW = { marketTitle: 'Market', outcomes: [] }
 
@@ -30,19 +31,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    const origin = getRequestOrigin(req)
+    const { supabaseUrl, serviceRoleKey } = loadServerEnv()
     const [game] = await fetchGamesByIds([gameId])
     const participants = getParticipantNames(game)
-    const [leftImage, rightImage, marketPreview] = await Promise.all([
-      fetchExistingFighterImage(origin, participants[0]),
-      fetchExistingFighterImage(origin, participants[1]),
+    const [fighterImages, marketPreview] = await Promise.all([
+      fetchFighterImages({
+        supabaseUrl,
+        serviceRoleKey,
+        names: participants.slice(0, 2),
+      }),
       fetchMarketPreviewByGameId(gameId, participants),
     ])
 
     await sendMarketImage(res, {
       game,
       marketPreview,
-      fighterImages: [leftImage, rightImage],
+      fighterImages,
     })
   } catch (error) {
     console.error(error)

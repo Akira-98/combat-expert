@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png?v=2" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Han+Sans&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Han+Sans&display=swap" />
+    </noscript>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#192230" />
     <meta name="description" content="Combat Expert - Explore MMA fights, markets, and betting trends in real time." />
@@ -17,9 +28,119 @@
     <meta name="twitter:description" content="Explore MMA fights, markets, and betting trends in real time." />
     <meta name="twitter:image" content="https://combatexpert.xyz/og-image.png?v=3" />
     <title>Combat Expert</title>
+    <style>
+      :root {
+        --app-bg: #000000;
+        --app-surface: #0b0f14;
+        --app-surface-soft: #0f141c;
+        --app-border: #1f2937;
+        --app-text-strong: #e6eef8;
+        --app-text-body: #b5c2d2;
+        --app-accent: #ff6b00;
+      }
+
+      html {
+        min-height: 100%;
+        background: var(--app-bg);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--app-bg);
+        color: var(--app-text-body);
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      #root {
+        min-height: 100dvh;
+      }
+
+      .initial-splash {
+        box-sizing: border-box;
+        min-height: 100dvh;
+        padding: calc(env(safe-area-inset-top) + 4px) 12px 24px;
+        color: var(--app-text-strong);
+        overflow: hidden;
+      }
+
+      .initial-splash__header {
+        min-height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--app-border);
+      }
+
+      .initial-splash__brand {
+        color: #ffffff;
+        font-family: Anton, "Black Han Sans", "Segoe UI", sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1.18;
+        letter-spacing: 0.03em;
+        text-shadow: 0 3px 0 rgba(255, 107, 0, 0.5);
+        transform: skewX(-6deg);
+      }
+
+      .initial-splash__pill,
+      .initial-splash__line,
+      .initial-splash__card {
+        background: rgba(230, 238, 248, 0.1);
+        animation: initial-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      .initial-splash__pill {
+        width: 96px;
+        height: 32px;
+        border-radius: 999px;
+      }
+
+      .initial-splash__content {
+        display: grid;
+        gap: 12px;
+        padding-top: 16px;
+      }
+
+      .initial-splash__line {
+        width: 56%;
+        height: 18px;
+        border-radius: 6px;
+      }
+
+      .initial-splash__line--wide {
+        width: 78%;
+        height: 40px;
+      }
+
+      .initial-splash__card {
+        height: 160px;
+        border-radius: 12px;
+        background: var(--app-surface-soft);
+      }
+
+      @keyframes initial-pulse {
+        50% {
+          opacity: 0.5;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="initial-splash" aria-label="Loading Combat Expert">
+        <div class="initial-splash__header">
+          <div class="initial-splash__brand">Combat Expert</div>
+          <div class="initial-splash__pill"></div>
+        </div>
+        <main class="initial-splash__content">
+          <div class="initial-splash__line"></div>
+          <div class="initial-splash__line initial-splash__line--wide"></div>
+          <div class="initial-splash__card"></div>
+          <div class="initial-splash__card"></div>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

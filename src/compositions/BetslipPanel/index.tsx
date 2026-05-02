@@ -68,7 +68,7 @@ export function BetslipPanel({
   const iconButtonClass =
     'ui-ghost-icon inline-flex h-8 w-8 items-center justify-center rounded-full text-sm transition disabled:cursor-not-allowed disabled:opacity-60'
   const shareButtonClass =
-    'inline-flex h-8 items-center justify-center rounded-full bg-[color:var(--app-accent)] px-3 text-xs font-bold text-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--app-accent)_42%,transparent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60'
+    'inline-flex h-8 items-center justify-center rounded-full bg-[linear-gradient(135deg,#ff8a1f_0%,var(--app-accent)_48%,#ffb000_100%)] px-3 text-xs font-bold text-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--app-accent)_42%,transparent),0_8px_18px_-14px_var(--app-accent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60'
   const dangerIconButtonClass =
     'inline-flex h-8 w-8 items-center justify-center rounded-full bg-transparent text-sm text-[color:var(--app-danger)] transition hover:bg-[color:color-mix(in_srgb,var(--app-danger)_10%,transparent)] disabled:cursor-not-allowed disabled:opacity-60'
   const noticeClass = 'm-0 rounded-md border p-2 text-sm md:rounded-lg'
@@ -98,6 +98,15 @@ export function BetslipPanel({
           <p className="ui-text-muted mt-0.5 text-xs">{selectionLabel}</p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            aria-label={t('betslip.share')}
+            className={shareButtonClass}
+            disabled={bet.selections.length === 0 || bet.sharePending}
+            onClick={actions.onShare}
+            type="button"
+          >
+            {bet.sharePending ? t('betslip.sharePending') : t('betslip.share')}
+          </button>
           <button aria-label={t('betslip.settings')} className={iconButtonClass} onClick={panelState.toggleSettingsOpen} type="button">
             <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
               <path d="M4 7h10" strokeLinecap="round" />
@@ -107,15 +116,6 @@ export function BetslipPanel({
               <circle cx="16" cy="7" r="2" />
               <circle cx="16" cy="17" r="2" />
             </svg>
-          </button>
-          <button
-            aria-label={t('betslip.share')}
-            className={shareButtonClass}
-            disabled={bet.selections.length === 0 || bet.sharePending}
-            onClick={actions.onShare}
-            type="button"
-          >
-            {bet.sharePending ? t('betslip.sharePending') : t('betslip.share')}
           </button>
           <button aria-label={t('betslip.clear')} className={dangerIconButtonClass} onClick={actions.onClear} type="button">
             <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">

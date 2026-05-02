@@ -1,3 +1,4 @@
+import { fetchFightersByAzuroNames } from './fighterStore.js'
 import { h } from './ogImage.js'
 
 export function getParticipantNames(game) {
@@ -22,31 +23,33 @@ function getInitials(name) {
     .join('')
 }
 
-function slugifyName(name) {
-  return String(name || '')
-    .trim()
-    .toLowerCase()
-    .replace(/['’]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+function normalizeFighterNameKey(name) {
+  return String(name || '').trim().replace(/\s+/g, ' ').toLowerCase()
 }
 
-export async function fetchExistingFighterImage(origin, name) {
-  const slug = slugifyName(name)
-  if (!slug) return undefined
+export async function fetchFighterImages({ supabaseUrl, serviceRoleKey, names }) {
+  const normalizedNames = Array.isArray(names) ? names.filter(Boolean) : []
+  const imageUrlByName = new Map()
 
-  for (const extension of ['png', 'jpg', 'jpeg', 'webp']) {
-    const url = `${origin}/fighters/${slug}.${extension}`
-
+  if (supabaseUrl && serviceRoleKey && normalizedNames.length > 0) {
     try {
-      const response = await fetch(url, { method: 'HEAD' })
-      if (response.ok) return url
-    } catch {
-      return undefined
+      const fighters = await fetchFightersByAzuroNames({
+        supabaseUrl,
+        serviceRoleKey,
+        names: normalizedNames,
+      })
+
+      for (const fighter of fighters) {
+        if (fighter?.azuroName && fighter?.imageUrl) {
+          imageUrlByName.set(normalizeFighterNameKey(fighter.azuroName), fighter.imageUrl)
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to fetch OG fighter images from storage', error)
     }
   }
 
-  return undefined
+  return normalizedNames.map((name) => imageUrlByName.get(normalizeFighterNameKey(name)))
 }
 
 const COLORS = {
