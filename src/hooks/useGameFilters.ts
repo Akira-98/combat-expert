@@ -16,7 +16,7 @@ export function useGameFilters(games: GameItem[]) {
   const deferredGameSearchQuery = useDeferredValue(gameSearchQuery)
 
   const leagueOptions = useMemo(
-    () => Array.from(new Set(games.map((game) => game.leagueName))).sort((a, b) => a.localeCompare(b, 'ko')),
+    () => Array.from(new Set(games.map((game) => game.leagueName))).sort((a, b) => a.localeCompare(b, 'en')),
     [games],
   )
 

@@ -4,7 +4,6 @@ type HeaderNavButtonsProps = {
   onGuideClick: () => void
   onRankingClick: () => void
   onWalletClick: () => void
-  onToggleLocale: () => void
   showGuideOnMobile?: boolean
   showGuideButton?: boolean
   showRankingOnMobile?: boolean
@@ -16,14 +15,13 @@ export function HeaderNavButtons({
   onGuideClick,
   onRankingClick,
   onWalletClick,
-  onToggleLocale,
   showGuideOnMobile = false,
   showGuideButton = true,
   showRankingOnMobile = false,
   showRankingButton = true,
   showWalletOnMobile = false,
 }: HeaderNavButtonsProps) {
-  const { locale, t } = useI18n()
+  const { t } = useI18n()
   const getNavButtonClass = (isVisibleOnMobile: boolean) =>
     `ui-ghost-icon h-9 w-9 items-center justify-center rounded-full text-sm transition ${
       isVisibleOnMobile ? 'inline-flex md:inline-flex' : 'hidden md:inline-flex'
@@ -54,9 +52,6 @@ export function HeaderNavButtons({
           </svg>
         </button>
       )}
-      <button aria-label={t('nav.languageToggle')} className="ui-ghost-icon inline-flex h-9 min-w-11 items-center justify-center rounded-full px-2 text-[11px] font-semibold transition" onClick={onToggleLocale} title={t('common.language')} type="button">
-        {locale.toUpperCase()}
-      </button>
     </>
   )
 }

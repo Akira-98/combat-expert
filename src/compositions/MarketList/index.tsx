@@ -13,12 +13,10 @@ export function MarketList({
   marketSections,
   selectedOutcomes,
   selectedOutcomePriceChanges,
-  gameSearchQuery,
   leagueFilter,
   leagueOptions,
   totalGamesCount,
   onSelectGame,
-  onGameSearchQueryChange,
   onLeagueFilterChange,
   onSelectOutcome,
   onRetryGames,
@@ -35,12 +33,10 @@ export function MarketList({
             selectedGameId={selectedGameId}
             games={games}
             selectedOutcomes={selectedOutcomes}
-            gameSearchQuery={gameSearchQuery}
             leagueFilter={leagueFilter}
             leagueOptions={leagueOptions}
             totalGamesCount={totalGamesCount}
             onSelectGame={onSelectGame}
-            onGameSearchQueryChange={onGameSearchQueryChange}
             onLeagueFilterChange={onLeagueFilterChange}
             onSelectOutcome={onSelectOutcome}
             onRetryGames={onRetryGames}

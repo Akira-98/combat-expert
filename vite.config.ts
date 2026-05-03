@@ -1,5 +1,3 @@
-import crypto from 'node:crypto'
-import * as Ably from 'ably'
 import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -8,7 +6,6 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 const isAnalyze = process.env.ANALYZE === 'true'
-const DEFAULT_ABLY_TTL_MS = 60 * 60 * 1000
 const FALLBACK_POLYGON_RPC_URL = 'https://polygon-rpc.com'
 
 type AppServerEnv = {
@@ -16,10 +13,6 @@ type AppServerEnv = {
   RPC_URL: string
   WALLETCONNECT_PROJECT_ID: string
   PRIVY_APP_ID: string
-  ABLY_API_KEY: string
-  ABLY_CHANNEL: string
-  ABLY_CAPABILITY_JSON: string
-  ABLY_TOKEN_TTL_MS: string
   SUPABASE_URL: string
   SUPABASE_SERVICE_ROLE_KEY: string
 }
@@ -70,7 +63,6 @@ function createRuntimeServerPlugin(env: Partial<AppServerEnv>): Plugin {
     rpcUrl: normalizePolygonRpcUrl(env.RPC_URL),
     walletConnectProjectId: env.WALLETCONNECT_PROJECT_ID || '',
     privyAppId: env.PRIVY_APP_ID || '',
-    ablyChannel: env.ABLY_CHANNEL || 'chat:ufc:live',
   })
 
   const sendJson = (res: { statusCode: number; setHeader: (name: string, value: string) => void; end: (body: string) => void }, statusCode: number, payload: unknown) => {
@@ -94,54 +86,6 @@ function createRuntimeServerPlugin(env: Partial<AppServerEnv>): Plugin {
         return sendJson(res, 500, { error: 'Missing required server env configuration' })
       }
       return sendJson(res, 200, config)
-    }
-
-    if (requestUrl.pathname === '/api/ably-token') {
-      if (req.method !== 'GET' && req.method !== 'POST') return sendJson(res, 405, { error: 'Method not allowed' })
-
-      const apiKey = env.ABLY_API_KEY || ''
-      if (!apiKey) return sendJson(res, 500, { error: 'ABLY_API_KEY is not set' })
-
-      const requestedClientId = requestUrl.searchParams.get('clientId') || ''
-      const clientId = requestedClientId.trim() || `guest-${crypto.randomUUID()}`
-      const capability =
-        env.ABLY_CAPABILITY_JSON ||
-        JSON.stringify({
-          [env.ABLY_CHANNEL || 'chat:ufc:live']: ['publish', 'subscribe', 'history', 'presence'],
-        })
-      const ttlMs = Number(env.ABLY_TOKEN_TTL_MS || DEFAULT_ABLY_TTL_MS)
-
-      try {
-        const restClient = new Ably.Rest({ key: apiKey })
-        const tokenRequest = await restClient.auth.createTokenRequest({
-          clientId,
-          capability,
-          ttl: Number.isFinite(ttlMs) && ttlMs > 0 ? ttlMs : DEFAULT_ABLY_TTL_MS,
-        })
-        return sendJson(res, 200, tokenRequest)
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'Failed to create token request'
-        return sendJson(res, 500, { error: message })
-      }
-    }
-
-    if (requestUrl.pathname === '/api/news') {
-      const newsModule = await import(new URL('./api/news.js', import.meta.url).href)
-      const newsHandler = newsModule.default as (req: DevApiRequest, res: DevApiResponse) => Promise<void>
-      const apiResponse: DevApiResponse = {
-        status(statusCode) {
-          res.statusCode = statusCode
-          return apiResponse
-        },
-        setHeader(name, value) {
-          res.setHeader(name, value)
-        },
-        send(body) {
-          res.end(body)
-        },
-      }
-
-      return newsHandler(req, apiResponse)
     }
 
     if (requestUrl.pathname === '/api/fighters') {
@@ -171,7 +115,7 @@ function createRuntimeServerPlugin(env: Partial<AppServerEnv>): Plugin {
     name: 'runtime-api-dev-plugin',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (req.url?.startsWith('/api/public-config') || req.url?.startsWith('/api/ably-token') || req.url?.startsWith('/api/news') || req.url?.startsWith('/api/fighters')) {
+        if (req.url?.startsWith('/api/public-config') || req.url?.startsWith('/api/fighters')) {
           void handleApiRequest(req, res)
           return
         }
@@ -180,7 +124,7 @@ function createRuntimeServerPlugin(env: Partial<AppServerEnv>): Plugin {
     },
     configurePreviewServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (req.url?.startsWith('/api/public-config') || req.url?.startsWith('/api/ably-token') || req.url?.startsWith('/api/news') || req.url?.startsWith('/api/fighters')) {
+        if (req.url?.startsWith('/api/public-config') || req.url?.startsWith('/api/fighters')) {
           void handleApiRequest(req, res)
           return
         }

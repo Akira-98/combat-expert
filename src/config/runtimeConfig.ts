@@ -5,7 +5,6 @@ export type RuntimeConfig = {
   rpcUrl: string
   walletConnectProjectId: string
   privyAppId: string
-  ablyChannel: string
 }
 
 function validateConfig(data: unknown): RuntimeConfig {
@@ -23,7 +22,6 @@ function validateConfig(data: unknown): RuntimeConfig {
     rpcUrl: config.rpcUrl,
     walletConnectProjectId: config.walletConnectProjectId,
     privyAppId: config.privyAppId,
-    ablyChannel: config.ablyChannel || 'chat:ufc:live',
   }
 }
 

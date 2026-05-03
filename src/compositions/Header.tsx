@@ -32,9 +32,8 @@ type HeaderProps = {
   canOpenAuthModal: boolean
   connectErrorMessage?: string
   onTitleClick?: () => void
-  onNewsClick: () => void
-  onPlayerRankingsClick: () => void
-  onForumClick: () => void
+  gameSearchQuery: string
+  onGameSearchQueryChange: (value: string) => void
   onRankingClick: () => void
   onGuideClick: () => void
   onOpenAuthModal: () => void
@@ -66,9 +65,8 @@ export function Header({
   canOpenAuthModal,
   connectErrorMessage,
   onTitleClick,
-  onNewsClick,
-  onPlayerRankingsClick,
-  onForumClick,
+  gameSearchQuery,
+  onGameSearchQueryChange,
   onRankingClick,
   onGuideClick,
   onOpenAuthModal,
@@ -150,13 +148,7 @@ export function Header({
             </h1>
           </div>
         </div>
-        <PreviewFeatureNav
-          onNewsClick={onNewsClick}
-          onPlayerRankingsClick={onPlayerRankingsClick}
-          onForumClick={onForumClick}
-          onGuideClick={controller.handleGuideNavigation}
-          onLeaderboardClick={controller.handleRankingNavigation}
-        />
+        <HeaderGameSearch value={gameSearchQuery} onChange={onGameSearchQueryChange} />
         <div className="flex shrink-0 items-center justify-end">
           {!isConnected ? (
             <div className="flex flex-col items-end gap-2">
@@ -170,7 +162,6 @@ export function Header({
                 onDisconnect={onDisconnect}
                 onGuideClick={controller.handleGuideNavigation}
                 onRankingClick={controller.handleRankingNavigation}
-                onToggleLocale={controller.handleToggleLocale}
               />
               {isAuthenticated && isWalletStatusReady && !isConnecting && !isReconnecting && (
                 <p className="ui-text-muted m-0 text-right text-xs">
@@ -185,7 +176,6 @@ export function Header({
                 onGuideClick={controller.handleGuideNavigation}
                 onRankingClick={controller.handleRankingNavigation}
                 onWalletClick={controller.handleWalletAction}
-                onToggleLocale={controller.handleToggleLocale}
                 showGuideButton={false}
                 showRankingButton={false}
                 showRankingOnMobile
@@ -251,6 +241,55 @@ export function Header({
   )
 }
 
+function HeaderGameSearch({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (value: string) => void
+}) {
+  const { t } = useI18n()
+
+  return (
+    <form className="hidden min-w-0 justify-self-start md:flex md:w-[min(100%,19rem)]" onSubmit={(event) => event.preventDefault()}>
+      <label className="group flex h-12 w-full min-w-0 items-center gap-3 rounded-full border border-[color:color-mix(in_srgb,var(--app-border)_105%,transparent)] bg-black/15 px-5 transition focus-within:border-[color:color-mix(in_srgb,var(--app-accent)_55%,transparent)] focus-within:bg-black/20">
+        <span className="sr-only">{t('common.search')}</span>
+        <svg
+          aria-hidden="true"
+          className="h-6 w-6 shrink-0 text-[color:var(--app-text-muted)] transition group-focus-within:text-[color:var(--app-text-body)]"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="M16.5 16.5 21 21" strokeLinecap="round" />
+        </svg>
+        <input
+          className="min-w-0 flex-1 border-0 bg-transparent text-lg font-semibold text-[color:var(--app-text-strong)] outline-none placeholder:text-[color:var(--app-text-muted)]"
+          placeholder={t('games.searchPlaceholder')}
+          type="search"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+        {value ? (
+          <button
+            aria-label={t('common.close')}
+            className="ui-text-muted inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-0 bg-transparent transition hover:text-[color:var(--app-text-strong)]"
+            onClick={() => onChange('')}
+            type="button"
+          >
+            <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M6 6l12 12" strokeLinecap="round" />
+              <path d="M18 6 6 18" strokeLinecap="round" />
+            </svg>
+          </button>
+        ) : null}
+      </label>
+    </form>
+  )
+}
+
 function HeaderActions({
   secondaryButtonClass,
   isConnecting,
@@ -261,7 +300,6 @@ function HeaderActions({
   onDisconnect,
   onGuideClick,
   onRankingClick,
-  onToggleLocale,
 }: {
   secondaryButtonClass: string
   isConnecting: boolean
@@ -272,7 +310,6 @@ function HeaderActions({
   onDisconnect: () => void
   onGuideClick: () => void
   onRankingClick: () => void
-  onToggleLocale: () => void
 }) {
   const { t } = useI18n()
   const primaryButtonClass =
@@ -284,7 +321,6 @@ function HeaderActions({
         onGuideClick={onGuideClick}
         onRankingClick={onRankingClick}
         onWalletClick={onWalletClick}
-        onToggleLocale={onToggleLocale}
         showGuideButton={false}
         showRankingButton={false}
         showRankingOnMobile
@@ -299,43 +335,5 @@ function HeaderActions({
         </button>
       )}
     </div>
-  )
-}
-
-function PreviewFeatureNav({
-  onNewsClick,
-  onPlayerRankingsClick,
-  onForumClick,
-  onGuideClick,
-  onLeaderboardClick,
-}: {
-  onNewsClick: () => void
-  onPlayerRankingsClick: () => void
-  onForumClick: () => void
-  onGuideClick: () => void
-  onLeaderboardClick: () => void
-}) {
-  const { t } = useI18n()
-  const previewNavButtonClass =
-    'ui-text-strong hidden border-0 bg-transparent px-0 py-1 text-[15px] font-black uppercase tracking-[0.08em] transition hover:text-[color:var(--app-accent)] md:inline-flex'
-
-  return (
-    <nav aria-label={t('nav.previewFeatures')} className="hidden min-w-0 items-center justify-between md:flex">
-      <button className={previewNavButtonClass} onClick={onNewsClick} type="button">
-        {t('nav.news')}
-      </button>
-      <button className={previewNavButtonClass} onClick={onPlayerRankingsClick} type="button">
-        {t('nav.playerRankings')}
-      </button>
-      <button className={previewNavButtonClass} onClick={onForumClick} type="button">
-        {t('nav.forum')}
-      </button>
-      <button className={previewNavButtonClass} onClick={onLeaderboardClick} type="button">
-        {t('nav.leaderboard')}
-      </button>
-      <button className={previewNavButtonClass} onClick={onGuideClick} type="button">
-        {t('nav.guide')}
-      </button>
-    </nav>
   )
 }

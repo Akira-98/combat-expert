@@ -52,8 +52,6 @@ export function useAppShellState({
       !isStaticPageRoute && navigation.mobileView === 'explore',
     shouldShowMobileBetsPanel:
       !isStaticPageRoute && navigation.mobileView === 'bets',
-    shouldShowMobileChatPanel:
-      !isStaticPageRoute && navigation.mobileView === 'chat',
     openMobileBetslip: () => setIsMobileBetslipOpen(true),
     closeMobileBetslip,
     openMobileMenu: () => {
@@ -65,17 +63,9 @@ export function useAppShellState({
       closeMobileMenu()
       navigation.handleNavigateToGuide()
     },
-    openNewsFromMobileMenu: () => {
-      closeMobileMenu()
-      navigation.handleNavigateToPreviewPage('news')
-    },
     openPlayerRankingsFromMobileMenu: () => {
       closeMobileMenu()
       navigation.handleNavigateToPreviewPage('player-rankings')
-    },
-    openForumFromMobileMenu: () => {
-      closeMobileMenu()
-      navigation.handleNavigateToPreviewPage('forum')
     },
   }
 }

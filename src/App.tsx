@@ -4,11 +4,9 @@ import { AppGameFiltersContainer } from './compositions/AppGameFiltersContainer'
 import { AppHeaderContainer } from './compositions/AppHeaderContainer'
 import { ComingSoonPage } from './compositions/ComingSoonPage'
 import { GuidePage } from './compositions/GuidePage'
-import { NewsPage } from './compositions/NewsPage'
 import { RankingPage } from './compositions/RankingPage'
 import { MobileBetslipSheet } from './compositions/MobileBetslipSheet'
-import { LiveChatPanel } from './compositions/LiveChatPanel'
-import { DesktopChatRail } from './compositions/app/DesktopChatRail'
+import { DesktopMenuRail } from './compositions/app/DesktopMenuRail'
 import { DesktopSidebar } from './compositions/app/DesktopSidebar'
 import { ExploreContent } from './compositions/app/ExploreContent'
 import { MobileMenuSheet } from './compositions/app/MobileMenuSheet'
@@ -85,9 +83,8 @@ function App() {
             totalPoints={points.totalPoints}
             isPointsLoading={points.isLoading}
             onTitleClick={shell.handleNavigateToExplore}
-            onNewsClick={() => shell.handleNavigateToPreviewPage('news')}
-            onPlayerRankingsClick={() => shell.handleNavigateToPreviewPage('player-rankings')}
-            onForumClick={() => shell.handleNavigateToPreviewPage('forum')}
+            gameSearchQuery={filters.gameSearchQuery}
+            onGameSearchQueryChange={filters.setGameSearchQuery}
             onRankingClick={shell.handleNavigateToRanking}
             onGuideClick={shell.handleNavigateToGuide}
           />
@@ -106,7 +103,16 @@ function App() {
       <main
         className="mt-0 grid items-start gap-2 px-0 md:grid-cols-[240px_minmax(0,1fr)_316px] md:gap-4 md:px-0"
       >
-        <DesktopChatRail address={wallet.address} profile={profile} />
+        <DesktopMenuRail
+          isExploreActive={shell.shouldShowExploreContent}
+          isRankingActive={shell.shouldShowRankingContent}
+          isGuideActive={shell.shouldShowGuideContent}
+          previewPage={shell.previewPage}
+          onOpenExplore={shell.handleNavigateToExplore}
+          onOpenPlayerRankings={() => shell.handleNavigateToPreviewPage('player-rankings')}
+          onOpenLeaderboard={shell.handleNavigateToRanking}
+          onOpenGuide={shell.handleNavigateToGuide}
+        />
 
         <section className="min-w-0">
           {shell.shouldShowGuideContent ? (
@@ -120,8 +126,6 @@ function App() {
               onRetry={() => void rankings.refetch()}
               isConnected={wallet.isConnected}
             />
-          ) : shell.previewPage === 'news' ? (
-            <NewsPage />
           ) : shell.shouldShowPreviewContent ? (
             <ComingSoonPage />
           ) : (
@@ -139,10 +143,6 @@ function App() {
 
           <div className={`${shell.shouldShowMobileBetsPanel ? 'md:hidden' : 'hidden'}`}>
             <BetsAndTransferPanel wallet={wallet} betting={betting} />
-          </div>
-
-          <div className={`${shell.shouldShowMobileChatPanel ? 'md:hidden' : 'hidden'}`}>
-            <LiveChatPanel address={wallet.address} profile={profile} className="h-[calc(100dvh-13rem)]" />
           </div>
         </section>
 
@@ -200,9 +200,7 @@ function App() {
       <MobileMenuSheet
         isOpen={shell.isMobileMenuOpen}
         onClose={shell.closeMobileMenu}
-        onOpenNews={shell.openNewsFromMobileMenu}
         onOpenPlayerRankings={shell.openPlayerRankingsFromMobileMenu}
-        onOpenForum={shell.openForumFromMobileMenu}
         onOpenGuide={shell.openGuideFromMobileMenu}
       />
     </div>

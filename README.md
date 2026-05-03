@@ -1,6 +1,6 @@
 # CombatExpert
 
-CombatExpert is a community-centric prediction platform for combat sports fans, built on the Azuro Protocol. We bridge the gap between decentralized betting and social engagement by combining Azuro’s liquidity layer with native community features, including an expert ranking system, live event chat, and market-specific discussions.
+CombatExpert is a community-centric prediction platform for combat sports fans, built on the Azuro Protocol. We bridge the gap between decentralized betting and social engagement by combining Azuro’s liquidity layer with native community features, including an expert ranking system.
 
 ## Overview
 
@@ -25,7 +25,7 @@ CombatExpert is positioned as an Azuro affiliate product, not just a protocol de
 2. Browse UFC and MMA games
 3. Select outcomes and build a betslip
 4. Place bets through the Azuro-integrated flow
-5. Track activity through My Bets, rankings, comments, and chat
+5. Track activity through My Bets, rankings, and chat
 
 ## Azuro Integration
 
@@ -48,14 +48,12 @@ Implemented or in active progress:
 - UFC/MMA game and market browsing
 - Betslip and betting flow integration
 - My Bets experience
-- Live chat with Ably
-- Market comments
 - User profiles
 - Rankings backed by Supabase
 
 ## Stack
 
-React, TypeScript, Vite, Tailwind, Azuro SDK, Privy, wagmi, Ably, Supabase, and serverless API routes.
+React, TypeScript, Vite, Tailwind, Azuro SDK, Privy, wagmi, Supabase, and serverless API routes.
 
 ## Local Run
 

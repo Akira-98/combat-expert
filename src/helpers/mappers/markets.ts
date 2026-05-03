@@ -28,11 +28,11 @@ const outcomeOrderPriority = (selectionName: string) => {
 const marketGroupPriority = (market: Pick<MarketLike, 'marketKey' | 'name'>) => {
   const key = `${market.marketKey} ${market.name}`.toLowerCase()
 
-  if (/1x2|winner|match result|full time result|결과/.test(key)) return 0
-  if (/double chance|더블 찬스/.test(key)) return 1
-  if (/total|over\/under|totals|언더오버|오버\/언더/.test(key)) return 2
+  if (/1x2|winner|match result|full time result/.test(key)) return 0
+  if (/double chance/.test(key)) return 1
+  if (/total|over\/under|totals/.test(key)) return 2
   if (/both teams to score|btts/.test(key)) return 3
-  if (/handicap|spread|핸디캡/.test(key)) return 4
+  if (/handicap|spread/.test(key)) return 4
   return 10
 }
 
@@ -41,7 +41,7 @@ export const mapMarketsToSections = (markets: MarketLike[]): MarketSection[] =>
     .sort((a, b) => {
       const priorityDiff = marketGroupPriority(a) - marketGroupPriority(b)
       if (priorityDiff !== 0) return priorityDiff
-      return (a.name || a.marketKey).localeCompare(b.name || b.marketKey, 'ko')
+      return (a.name || a.marketKey).localeCompare(b.name || b.marketKey, 'en')
     })
     .map((market, index) => ({
       id: `${market.marketKey}-${index}`,
@@ -61,7 +61,7 @@ export const mapMarketsToSections = (markets: MarketLike[]): MarketSection[] =>
         .sort((a, b) => {
           const priorityDiff = outcomeOrderPriority(a.selectionName) - outcomeOrderPriority(b.selectionName)
           if (priorityDiff !== 0) return priorityDiff
-          return a.selectionName.localeCompare(b.selectionName, 'ko')
+          return a.selectionName.localeCompare(b.selectionName, 'en')
         }),
     }))
 

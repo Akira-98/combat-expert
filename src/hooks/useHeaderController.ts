@@ -29,7 +29,7 @@ export function useHeaderController({
   isUsdtBalanceLoading,
   isUsdtSupportedChain,
 }: UseHeaderControllerParams) {
-  const { locale, setLocale, t } = useI18n()
+  const { t } = useI18n()
   const [copyLabel, setCopyLabel] = useState<'idle' | 'copied' | 'failed'>('idle')
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false)
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false)
@@ -123,6 +123,5 @@ export function useHeaderController({
     handleRankingNavigation,
     handleWalletAction,
     handleToggleAccountModal: () => setIsAccountModalOpen((current) => !current),
-    handleToggleLocale: () => setLocale(locale === 'ko' ? 'en' : 'ko'),
   }
 }

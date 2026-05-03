@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import type { GameItem } from '../types/ui'
 
-export type MobileView = 'explore' | 'bets' | 'chat'
+export type MobileView = 'explore' | 'bets'
 export type DesktopSidePanelTab = 'myBets' | 'betslip'
 export type MarketPageMode = 'games' | 'markets'
-export type RoutedPage = 'guide' | 'ranking' | 'news' | 'player-rankings' | 'forum'
+export type RoutedPage = 'guide' | 'ranking' | 'player-rankings'
 
 const GAME_ROUTE_QUERY_KEY = 'game'
 const PAGE_ROUTE_QUERY_KEY = 'page'
@@ -12,13 +12,11 @@ const MARKET_ROUTE_PREFIX = '/markets/'
 const PAGE_ROUTES: Record<RoutedPage, string> = {
   guide: '/guide',
   ranking: '/ranking',
-  news: '/news',
   'player-rankings': '/player-rankings',
-  forum: '/forum',
 }
 
 function parseRoutedPage(value: string | null) {
-  return value === 'guide' || value === 'ranking' || value === 'news' || value === 'player-rankings' || value === 'forum' ? value : undefined
+  return value === 'guide' || value === 'ranking' || value === 'player-rankings' ? value : undefined
 }
 
 function readRoutedGameId() {
@@ -125,7 +123,7 @@ export function useAppNavigation({
     : undefined
   const isGuideRoute = routedPage === 'guide'
   const isRankingRoute = routedPage === 'ranking'
-  const previewPage = routedPage === 'news' || routedPage === 'player-rankings' || routedPage === 'forum' ? routedPage : undefined
+  const previewPage = routedPage === 'player-rankings' ? routedPage : undefined
   const marketPageMode: MarketPageMode = routedGameId ? 'markets' : 'games'
   const activeGameId = marketPageMode === 'markets' ? routedGameId : visibleSelectedGameId
 

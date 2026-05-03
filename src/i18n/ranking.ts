@@ -1,29 +1,5 @@
 import type { LocaleMessages } from './types'
 
-export const koRankingMessages: LocaleMessages = {
-  'ranking.pageTitle': 'Top 격잘알 랭킹',
-  'ranking.pageDescription': '정산된 예측 기준으로 순위와 점수를 확인하세요.',
-  'ranking.myStanding': '내 순위',
-  'ranking.totalScore': '총점',
-  'ranking.record': '전적',
-  'ranking.hitRate': '적중률',
-  'ranking.underdog': '언더독',
-  'ranking.events': '경기수',
-  'ranking.noViewerData': '내 랭킹 데이터가 아직 없습니다.',
-  'ranking.noViewerDataDesc': '정산된 예측이 누적되면 여기서 내 순위와 점수를 바로 볼 수 있습니다.',
-  'ranking.noData': '아직 랭킹 데이터가 없습니다.',
-  'ranking.noDataDesc': '예측 정산 후 점수와 순위를 여기서 확인할 수 있습니다.',
-  'ranking.loading': '랭킹을 불러오는 중...',
-  'ranking.predictions': '{count}경기 예측',
-  'ranking.loadingFailed': '랭킹을 불러오지 못했습니다.',
-  'ranking.winsLosses': '{wins}승 {losses}패',
-  'ranking.void': '무효 {count}',
-  'ranking.hit': '적중 {count}',
-  'ranking.miss': '미적중 {count}',
-  'ranking.underdogCount': '언더독 {count}',
-  'ranking.totalCount': '총 {count}건',
-}
-
 export const enRankingMessages: LocaleMessages = {
   'ranking.pageTitle': 'Leaderboard',
   'ranking.pageDescription': 'Track rankings and scores from settled predictions.',

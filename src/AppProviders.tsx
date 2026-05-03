@@ -9,7 +9,6 @@ import { AzuroSdkSocialAaConnectorProvider } from './azuroSdkSocialAaConnectorPr
 import { AppConfigProvider } from './config/AppConfigContext'
 import type { loadRuntimeConfig } from './config/runtimeConfig'
 import { getPrivyIntlConfig } from './helpers/privyUi'
-import { useI18n } from './i18n'
 import { createWagmiConfig } from './wagmi'
 
 const queryClient = new QueryClient({
@@ -37,14 +36,12 @@ function createPrivyPolygonChain(rpcUrl: string) {
 type RuntimeConfig = Awaited<ReturnType<typeof loadRuntimeConfig>>
 
 export function AppProviders({ runtimeConfig }: { runtimeConfig: RuntimeConfig }) {
-  const { locale } = useI18n()
   const privyPolygonChain = createPrivyPolygonChain(runtimeConfig.rpcUrl)
   const wagmiConfig = createWagmiConfig(runtimeConfig.rpcUrl)
 
   return (
     <AppConfigProvider config={runtimeConfig}>
       <PrivyProvider
-        key={locale}
         appId={runtimeConfig.privyAppId}
         config={{
           defaultChain: privyPolygonChain,
@@ -58,7 +55,7 @@ export function AppProviders({ runtimeConfig }: { runtimeConfig: RuntimeConfig }
             showWalletLoginFirst: true,
             walletList: ['metamask'],
           },
-          intl: getPrivyIntlConfig(locale),
+          intl: getPrivyIntlConfig(),
           loginMethods: ['google', 'wallet'],
         }}
       >

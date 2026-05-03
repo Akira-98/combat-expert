@@ -31,15 +31,7 @@
       "destination": "/index.html"
     },
     {
-      "source": "/news",
-      "destination": "/index.html"
-    },
-    {
       "source": "/player-rankings",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/forum",
       "destination": "/index.html"
     },
     {

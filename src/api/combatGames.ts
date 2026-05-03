@@ -27,7 +27,7 @@ export async function fetchPreferredCombatGames({
     apiBaseUrl,
     environment,
     extraParams: { leagueSlug: 'ufc' },
-    fallbackMessage: 'UFC 경기 목록 요청 실패',
+    fallbackMessage: 'Failed to load UFC games',
     perPage: pageSize,
   })
 
@@ -35,7 +35,7 @@ export async function fetchPreferredCombatGames({
     apiBaseUrl,
     environment,
     extraParams: { sportSlug: 'mma' },
-    fallbackMessage: 'MMA 경기 목록 요청 실패',
+    fallbackMessage: 'Failed to load MMA games',
     perPage: pageSize,
   })
 

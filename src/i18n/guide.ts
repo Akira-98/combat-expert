@@ -1,31 +1,5 @@
 import type { LocaleMessages } from './types'
 
-export const koGuideMessages: LocaleMessages = {
-  'guide.eyebrow': 'Guide',
-  'guide.title': '이용 가이드',
-  'guide.step1.title': 'USDT 구매 후 해외 거래소로 이동',
-  'guide.step1.summary': '국내 거래소에서 USDT를 준비합니다.',
-  'guide.step1.point1': '해외 거래소 예시: 바이낸스, OKX, 코인베이스',
-  'guide.step1.point2': '출금 네트워크: Tron 권장',
-  'guide.step2.title': '세기의 격잘알 지갑으로 입금',
-  'guide.step2.summary': '해외 거래소에서 프로필의 0x 주소로 USDT를 보냅니다.',
-  'guide.step2.point1': '구글 로그인 후 프로필에서 주소 복사',
-  'guide.step2.point2': '입금 네트워크: Polygon 필수',
-  'guide.step3.title': '베팅 제출 후 정산 확인',
-  'guide.step3.summary': '금액 확인 후 제출하고 결과를 기다립니다.',
-  'guide.step3.point1': '내 베팅에서 상태 확인',
-  'guide.step3.point2': "결과 전에는 '정산 대기' 표시",
-  'guide.important': 'Important',
-  'guide.checkpoints': '체크 포인트',
-  'guide.checkpoint1': '베팅 통화는 USDT입니다.',
-  'guide.checkpoint2': '세기의 격잘알 입금은 Polygon만 사용합니다.',
-  'guide.checkpoint3': '메타마스크 로그인 시 POL 가스비가 필요할 수 있습니다.',
-  'guide.contactTitle': '궁금한 점, 제안, 잡담 모두 환영합니다!',
-  'guide.telegram': '텔레그램 1:1 문의',
-  'guide.discord': '디스코드 커뮤니티',
-  'guide.x': '공식 X',
-}
-
 export const enGuideMessages: LocaleMessages = {
   'guide.eyebrow': 'Guide',
   'guide.title': 'How It Works',

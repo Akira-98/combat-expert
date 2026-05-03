@@ -63,13 +63,11 @@ export function ExploreContent({
         marketSections={activeGameId ? market.marketSections : []}
         selectedOutcomes={betting.selectedOutcomes}
         selectedOutcomePriceChanges={betting.selectedOutcomePriceChanges}
-        gameSearchQuery={filters.gameSearchQuery}
         leagueFilter={filters.leagueFilter}
         leagueOptions={filters.leagueOptions}
         totalGamesCount={market.games.length}
         onSelectGame={onOpenGameMarkets}
         onConnectWallet={wallet.openAuthModal}
-        onGameSearchQueryChange={filters.setGameSearchQuery}
         onLeagueFilterChange={filters.setLeagueFilter}
         onSelectOutcome={betting.selectOutcome}
         onRetryGames={market.retryGames}

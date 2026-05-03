@@ -16,9 +16,8 @@ type AppHeaderContainerProps = {
   totalPoints: number
   isPointsLoading: boolean
   onTitleClick: () => void
-  onNewsClick: () => void
-  onPlayerRankingsClick: () => void
-  onForumClick: () => void
+  gameSearchQuery: string
+  onGameSearchQueryChange: (value: string) => void
   onRankingClick: () => void
   onGuideClick: () => void
 }
@@ -35,9 +34,8 @@ export function AppHeaderContainer({
   totalPoints,
   isPointsLoading,
   onTitleClick,
-  onNewsClick,
-  onPlayerRankingsClick,
-  onForumClick,
+  gameSearchQuery,
+  onGameSearchQueryChange,
   onRankingClick,
   onGuideClick,
 }: AppHeaderContainerProps) {
@@ -67,9 +65,8 @@ export function AppHeaderContainer({
       canOpenAuthModal={wallet.canOpenAuthModal}
       connectErrorMessage={wallet.connectErrorMessage}
       onTitleClick={onTitleClick}
-      onNewsClick={onNewsClick}
-      onPlayerRankingsClick={onPlayerRankingsClick}
-      onForumClick={onForumClick}
+      gameSearchQuery={gameSearchQuery}
+      onGameSearchQueryChange={onGameSearchQueryChange}
       onRankingClick={onRankingClick}
       onGuideClick={onGuideClick}
       onOpenAuthModal={wallet.openAuthModal}

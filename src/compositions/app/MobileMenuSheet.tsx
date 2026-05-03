@@ -1,21 +1,18 @@
 import { createPortal } from 'react-dom'
 import { useI18n } from '../../i18n'
+import { SocialLinks } from '../SocialLinks'
 
 type MobileMenuSheetProps = {
   isOpen: boolean
   onClose: () => void
-  onOpenNews: () => void
   onOpenPlayerRankings: () => void
-  onOpenForum: () => void
   onOpenGuide: () => void
 }
 
 export function MobileMenuSheet({
   isOpen,
   onClose,
-  onOpenNews,
   onOpenPlayerRankings,
-  onOpenForum,
   onOpenGuide,
 }: MobileMenuSheetProps) {
   const { t } = useI18n()
@@ -45,19 +42,14 @@ export function MobileMenuSheet({
           </button>
         </div>
         <div className="mt-5 grid gap-2">
-          <button className={menuButtonClass} onClick={onOpenNews} type="button">
-            {t('nav.news')}
-          </button>
           <button className={menuButtonClass} onClick={onOpenPlayerRankings} type="button">
             {t('nav.playerRankings')}
-          </button>
-          <button className={menuButtonClass} onClick={onOpenForum} type="button">
-            {t('nav.forum')}
           </button>
           <button className={menuButtonClass} onClick={onOpenGuide} type="button">
             {t('nav.guide')}
           </button>
         </div>
+        <SocialLinks className="mt-auto border-t border-[color:var(--app-border)] pt-4" iconClassName="h-10 w-10" />
       </aside>
     </div>,
     document.body,
