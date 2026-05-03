@@ -12,11 +12,24 @@ type TopEventsShowcaseProps = {
   onSelectOutcome: (outcome: OutcomeItem) => void
 }
 
-const FEATURED_EVENT_MATCHERS = ['della maddalena', 'carlos prates']
+const FEATURED_EVENT_MATCHER_GROUPS = [
+  ['khamzat chimaev', 'sean strickland'],
+  ['tatsuro taira', 'joshua van'],
+  ['della maddalena', 'carlos prates'],
+]
 
-function matchesFeaturedEvent(game: GameItem) {
+function matchesFeaturedEventGroup(game: GameItem, matchers: string[]) {
   const haystack = `${game.title} ${game.participants.join(' ')}`.toLowerCase()
-  return FEATURED_EVENT_MATCHERS.every((matcher) => haystack.includes(matcher))
+  return matchers.every((matcher) => haystack.includes(matcher))
+}
+
+function getFeaturedEvent(games: GameItem[]) {
+  for (const matchers of FEATURED_EVENT_MATCHER_GROUPS) {
+    const game = games.find((candidate) => matchesFeaturedEventGroup(candidate, matchers))
+    if (game) return game
+  }
+
+  return games.length > 0 ? games[games.length - 1] : undefined
 }
 
 function formatEventDateParts(startsAt: string) {
@@ -37,7 +50,7 @@ export function TopEventsShowcase({
   onOpenGameMarkets,
   onSelectOutcome,
 }: TopEventsShowcaseProps) {
-  const game = useMemo(() => games.find(matchesFeaturedEvent), [games])
+  const game = useMemo(() => getFeaturedEvent(games), [games])
 
   if (!game) return null
 
@@ -91,10 +104,10 @@ function TopEventCard({
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/10 to-black/45" />
           <img
             alt=""
-            className="absolute inset-x-0 bottom-0 mx-auto h-[78%] w-full max-w-[28rem] object-contain object-bottom drop-shadow-[0_22px_28px_rgba(0,0,0,0.6)] md:h-[84%] md:max-w-[34rem]"
-            src="/images/perth.png"
+            className="absolute inset-x-0 bottom-0 z-0 mx-auto h-[72%] w-full max-w-[28rem] object-contain object-bottom drop-shadow-[0_22px_28px_rgba(0,0,0,0.6)] md:h-[82%] md:max-w-[34rem]"
+            src="/images/328.png"
           />
-          <div className="relative grid gap-6 p-4 md:p-6">
+          <div className="relative z-10 grid gap-6 p-4 md:p-6">
             <p className="m-0 text-center text-sm font-semibold text-white/75">{game.leagueName}</p>
 
             <div className="grid min-h-[190px] items-end md:min-h-[210px]">
