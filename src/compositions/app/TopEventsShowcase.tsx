@@ -105,7 +105,7 @@ function TopEventCard({
           <img
             alt=""
             className="absolute inset-x-0 bottom-0 z-0 mx-auto h-[72%] w-full max-w-[28rem] object-contain object-bottom drop-shadow-[0_22px_28px_rgba(0,0,0,0.6)] md:h-[82%] md:max-w-[34rem]"
-            src="/images/328.png"
+            src="/images/ufc328.png"
           />
           <div className="relative z-10 grid gap-6 p-4 md:p-6">
             <p className="m-0 text-center text-sm font-semibold text-white/75">{game.leagueName}</p>
