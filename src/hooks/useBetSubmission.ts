@@ -54,11 +54,7 @@ export function useBetSubmission({
       const meta = currentOutcomeStateMap.get(key)
 
       if (!meta) {
-        setErrorNotice({
-          title: translate('betSubmission.selectionReviewTitle'),
-          message: translate('betSubmission.selectionReviewMessage'),
-        })
-        return
+        continue
       }
 
       if (meta.conditionState !== 'Active' || !Number.isFinite(meta.odds) || meta.odds <= 1) {

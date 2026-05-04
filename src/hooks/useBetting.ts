@@ -22,6 +22,7 @@ type UseBettingParams = {
   marketSections: MarketSection[]
   isBetHistoryPollingEnabled?: boolean
   refreshMarkets?: () => void
+  onReferralGameSelected?: (gameId: string) => void
   onBetPointsClaimed?: () => void
 }
 
@@ -91,6 +92,7 @@ export function useBetting({
   marketSections,
   isBetHistoryPollingEnabled = false,
   refreshMarkets,
+  onReferralGameSelected,
   onBetPointsClaimed,
 }: UseBettingParams) {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
@@ -176,6 +178,10 @@ export function useBetting({
         clear()
         selectionState.resetSelectionMeta()
         selectionState.rememberSharedSelectionMeta(share.selections)
+        const sharedGameId = share.selections.find((selection) => selection.gameId)?.gameId
+        if (sharedGameId) {
+          onReferralGameSelected?.(sharedGameId)
+        }
         for (const selection of share.selections) {
           addItem({
             conditionId: selection.conditionId,
@@ -196,7 +202,7 @@ export function useBetting({
     return () => {
       isCanceled = true
     }
-  }, [addItem, clear, selectionState])
+  }, [addItem, clear, onReferralGameSelected, selectionState])
 
   const approvePending = transactions.approveTx.isPending || transactions.approveTx.isProcessing
   const betPending = transactions.betTx.isPending || transactions.betTx.isProcessing

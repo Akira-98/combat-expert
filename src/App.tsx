@@ -52,6 +52,7 @@ function App() {
     marketSections,
     isBetHistoryPollingEnabled: shell.isMyBetsViewActive,
     refreshMarkets: market.retryMarkets,
+    onReferralGameSelected: setSelectedGameId,
     onBetPointsClaimed: () => void points.refetch(),
   })
   const usdtTransfer = useUsdtTransfer({
