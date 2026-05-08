@@ -66,9 +66,9 @@
   }
 
   .ui-preview-chip-active {
-    border-color: color-mix(in oklab, var(--state-success) 70%, transparent);
-    background-color: color-mix(in oklab, var(--state-success-soft) 70%, var(--app-surface));
-    color: color-mix(in oklab, var(--state-success) 76%, #fff);
+    border-color: color-mix(in oklab, var(--app-accent) 70%, transparent);
+    background-color: color-mix(in oklab, var(--app-accent-soft) 70%, var(--app-surface));
+    color: color-mix(in oklab, var(--app-accent) 76%, #fff);
   }
 
   .ui-preview-chip-disabled {

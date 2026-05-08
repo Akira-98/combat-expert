@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { BetsAndTransferPanel } from './compositions/BetsAndTransferPanel'
 import { AppBottomNav } from './compositions/AppBottomNav'
-import { AppGameFiltersContainer } from './compositions/AppGameFiltersContainer'
 import { AppHeaderContainer } from './compositions/AppHeaderContainer'
 import { ComingSoonPage } from './compositions/ComingSoonPage'
 import { GuidePage } from './compositions/GuidePage'
@@ -139,12 +138,6 @@ function App() {
             onGuideClick={shell.handleNavigateToGuide}
           />
         </div>
-
-        {shell.shouldShowFilters && (
-          <div className="md:hidden">
-            <AppGameFiltersContainer filters={filters} games={games} />
-          </div>
-        )}
       </div>
       <div className="hidden px-3 md:block md:px-4 xl:px-0">
         <div className="ui-divider-subtle h-px" />
@@ -245,8 +238,10 @@ function App() {
         isOpen={shell.isMobileMenuOpen}
         gameStatusFilter={filters.gameStatusFilter}
         sportFilter={filters.sportFilter}
+        gameSearchQuery={filters.gameSearchQuery}
         sports={sportsNavigationItems}
         liveSports={liveSportsNavigationItems}
+        onGameSearchQueryChange={filters.setGameSearchQuery}
         onClose={shell.closeMobileMenu}
         onSelectGameStatus={handleGameStatusNavigation}
         onSelectSport={handleSportNavigation}
