@@ -248,8 +248,8 @@ export function useBetting({
 
       if (navigator.share) {
         const shareData: ShareData = {
-          title: 'Combat Expert picks',
-          text: 'Check out this Combat Expert betslip.',
+          title: 'BETAKER picks',
+          text: 'Check out this BETAKER betslip.',
           url: result.shareUrl,
         }
         const urlOnlyShareData: ShareData = { url: result.shareUrl }

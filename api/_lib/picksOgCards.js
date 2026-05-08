@@ -9,7 +9,7 @@ import {
   normalizeNameKey,
 } from './picksOgHelpers.js'
 
-function FighterFace({ name, imageUrl, size = 132 }) {
+function ParticipantFace({ name, imageUrl, size = 132 }) {
   return h(
     'div',
     {
@@ -54,8 +54,8 @@ function FighterFace({ name, imageUrl, size = 132 }) {
 
 export function PickCard({ selection, game, index, imageUrlByName, variant }) {
   const participants = getParticipantNames(game)
-  const leftName = participants[0] || 'Fighter A'
-  const rightName = participants[1] || 'Fighter B'
+  const leftName = participants[0] || 'Competitor A'
+  const rightName = participants[1] || 'Competitor B'
   const isFeature = variant === 'feature'
   const faceSize = isFeature ? 188 : 120
   const cardWidth = isFeature ? 1088 : 532
@@ -90,7 +90,7 @@ export function PickCard({ selection, game, index, imageUrlByName, variant }) {
           gap: isFeature ? 26 : 14,
         },
       },
-      h(FighterFace, { name: leftName, imageUrl: leftImage, size: faceSize }),
+      h(ParticipantFace, { name: leftName, imageUrl: leftImage, size: faceSize }),
       h(
         'div',
         {
@@ -151,7 +151,7 @@ export function PickCard({ selection, game, index, imageUrlByName, variant }) {
           'vs',
         ),
       ),
-      h(FighterFace, { name: rightName, imageUrl: rightImage, size: faceSize }),
+      h(ParticipantFace, { name: rightName, imageUrl: rightImage, size: faceSize }),
     ),
     h(
       'div',

@@ -147,8 +147,8 @@ export function AccountPanel({
               </p>
             ) : (
               <>
-                <p className="ui-text-strong mt-1 mb-0 text-sm font-semibold">{t('ranking.noData')}</p>
-                <p className="ui-text-muted mt-1 mb-0 text-xs">{t('ranking.noDataDesc')}</p>
+                <p className="ui-text-strong mt-1 mb-0 text-sm font-semibold">{t('ranking.comingSoonTitle')}</p>
+                <p className="ui-text-muted mt-1 mb-0 text-xs">{t('ranking.comingSoonDescription')}</p>
               </>
             )}
           </div>

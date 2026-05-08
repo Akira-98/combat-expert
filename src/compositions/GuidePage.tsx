@@ -49,8 +49,8 @@ export function GuidePage() {
       </div>
 
       <div className="grid gap-2.5 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-        <article className="card-surface-soft card-shell-lg border-amber-400/30 p-4">
-          <p className="m-0 text-xs font-semibold uppercase tracking-[0.14em] text-amber-600">{t('guide.important')}</p>
+        <article className="card-surface-soft card-shell-lg border-[color:color-mix(in_srgb,var(--app-accent)_34%,transparent)] p-4">
+          <p className="m-0 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--app-accent)]">{t('guide.important')}</p>
           <h3 className="ui-text-strong mt-2 text-base font-semibold">{t('guide.checkpoints')}</h3>
           <ul className="ui-text-muted mt-3 grid gap-2 pl-5 text-sm">
             <li>{t('guide.checkpoint1')}</li>

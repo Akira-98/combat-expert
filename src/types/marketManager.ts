@@ -3,16 +3,33 @@ export type MarketManagerGame = {
   title: string
   startsAt: string
   state?: string
+  turnover?: string
+  sport?: {
+    sportId?: string
+    slug?: string
+    name?: string
+    sporthub?: {
+      slug?: 'sports' | 'esports' | string
+    }
+  }
   league: {
     name: string
+    slug?: string
+  }
+  country?: {
+    name?: string
+    slug?: string
   }
   participants: Array<{
+    image?: string | null
     name: string
   }>
 }
 
 export type MarketManagerGamesResponse = {
   games?: MarketManagerGame[]
+  page?: number
+  totalPages?: number
 }
 
 export type MarketManagerCondition = {

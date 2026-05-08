@@ -1,4 +1,3 @@
-import { fetchFightersByAzuroNames } from './fighterStore.js'
 import { h } from './ogImage.js'
 
 export function getParticipantNames(game) {
@@ -7,6 +6,16 @@ export function getParticipantNames(game) {
   return game.participants
     .map((participant) => participant?.name)
     .filter((name) => typeof name === 'string' && name.trim())
+}
+
+export function getParticipantImageUrls(game) {
+  if (!Array.isArray(game?.participants)) return []
+
+  return game.participants.map((participant) => (
+    typeof participant?.image === 'string' && participant.image.trim()
+      ? participant.image.trim()
+      : undefined
+  ))
 }
 
 function getInitials(name) {
@@ -21,35 +30,6 @@ function getInitials(name) {
     .slice(0, 2)
     .map((token) => token[0]?.toUpperCase() ?? '')
     .join('')
-}
-
-function normalizeFighterNameKey(name) {
-  return String(name || '').trim().replace(/\s+/g, ' ').toLowerCase()
-}
-
-export async function fetchFighterImages({ supabaseUrl, serviceRoleKey, names }) {
-  const normalizedNames = Array.isArray(names) ? names.filter(Boolean) : []
-  const imageUrlByName = new Map()
-
-  if (supabaseUrl && serviceRoleKey && normalizedNames.length > 0) {
-    try {
-      const fighters = await fetchFightersByAzuroNames({
-        supabaseUrl,
-        serviceRoleKey,
-        names: normalizedNames,
-      })
-
-      for (const fighter of fighters) {
-        if (fighter?.azuroName && fighter?.imageUrl) {
-          imageUrlByName.set(normalizeFighterNameKey(fighter.azuroName), fighter.imageUrl)
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to fetch OG fighter images from storage', error)
-    }
-  }
-
-  return normalizedNames.map((name) => imageUrlByName.get(normalizeFighterNameKey(name)))
 }
 
 const COLORS = {
@@ -69,7 +49,7 @@ function formatOdds(odds) {
   return Number.isFinite(value) && value > 0 ? value.toFixed(2) : '-'
 }
 
-function FighterBadge({ name, align, imageUrl }) {
+function ParticipantBadge({ name, align, imageUrl }) {
   const isRight = align === 'right'
 
   return h(
@@ -183,12 +163,12 @@ function OutcomeTile({ label, odds }) {
   )
 }
 
-export function MarketOgImage({ game, marketPreview, fighterImages = [] }) {
+export function MarketOgImage({ game, marketPreview, participantImages = [] }) {
   const participants = getParticipantNames(game)
-  const leftName = participants[0] || 'Fighter A'
-  const rightName = participants[1] || 'Fighter B'
+  const leftName = participants[0] || 'Competitor A'
+  const rightName = participants[1] || 'Competitor B'
   const title = game?.title || `${leftName} vs ${rightName}`
-  const leagueName = game?.league?.name || 'MMA'
+  const leagueName = game?.league?.name || 'Sports'
   const startsAt = game?.startsAt ? new Date(game.startsAt) : undefined
   const formattedStart = startsAt && Number.isFinite(startsAt.getTime())
     ? new Intl.DateTimeFormat('en', {
@@ -283,7 +263,7 @@ export function MarketOgImage({ game, marketPreview, fighterImages = [] }) {
           gap: 34,
         },
       },
-      h(FighterBadge, { name: leftName, align: 'left', imageUrl: fighterImages[0] }),
+      h(ParticipantBadge, { name: leftName, align: 'left', imageUrl: participantImages[0] }),
       h(
         'div',
         {
@@ -337,7 +317,7 @@ export function MarketOgImage({ game, marketPreview, fighterImages = [] }) {
           `${leftName} - ${rightName}`,
         ),
       ),
-      h(FighterBadge, { name: rightName, align: 'right', imageUrl: fighterImages[1] }),
+      h(ParticipantBadge, { name: rightName, align: 'right', imageUrl: participantImages[1] }),
     ),
     h(
       'div',

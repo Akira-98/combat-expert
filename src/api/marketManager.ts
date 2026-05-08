@@ -7,6 +7,9 @@ type FetchGamesByFiltersParams = {
   apiBaseUrl: string
   environment: string
   fallbackMessage: string
+  gameState?: 'Prematch' | 'Live'
+  orderBy?: 'startsAt' | 'turnover'
+  orderDirection?: 'asc' | 'desc'
   extraParams?: Record<string, string>
   page?: number
   perPage?: number
@@ -27,16 +30,19 @@ export async function fetchMarketManagerGamesByFilters({
   apiBaseUrl,
   environment,
   fallbackMessage,
+  gameState = 'Prematch',
+  orderBy = 'startsAt',
+  orderDirection = 'asc',
   extraParams = {},
   page = 1,
   perPage = 30,
 }: FetchGamesByFiltersParams) {
   const params = new URLSearchParams({
     environment,
-    gameState: 'Prematch',
+    gameState,
     conditionState: 'Active',
-    orderBy: 'startsAt',
-    orderDirection: 'asc',
+    orderBy,
+    orderDirection,
     page: String(page),
     perPage: String(perPage),
     ...extraParams,
@@ -47,8 +53,7 @@ export async function fetchMarketManagerGamesByFilters({
     throw new Error(`${fallbackMessage} (${response.status})`)
   }
 
-  const payload = (await response.json()) as MarketManagerGamesResponse
-  return payload.games ?? []
+  return (await response.json()) as MarketManagerGamesResponse
 }
 
 export async function fetchMarketManagerConditionsByGameIds({

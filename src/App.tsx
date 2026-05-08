@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { BetsAndTransferPanel } from './compositions/BetsAndTransferPanel'
 import { AppBottomNav } from './compositions/AppBottomNav'
 import { AppGameFiltersContainer } from './compositions/AppGameFiltersContainer'
@@ -11,6 +12,7 @@ import { DesktopSidebar } from './compositions/app/DesktopSidebar'
 import { ExploreContent } from './compositions/app/ExploreContent'
 import { MobileMenuSheet } from './compositions/app/MobileMenuSheet'
 import { buildBetslipPanelProps } from './helpers/buildBetslipPanelProps'
+import { getGamePhase } from './helpers/gameTiming'
 import { useAppShellState } from './hooks/useAppShellState'
 import { useGameFilters } from './hooks/useGameFilters'
 import { useWalletConnection } from './hooks/useWalletConnection'
@@ -18,7 +20,6 @@ import { useMarketData } from './hooks/useMarketData'
 import { useBetting } from './hooks/useBetting'
 import { useProfile } from './hooks/useProfile'
 import { usePoints } from './hooks/usePoints'
-import { useRankings } from './hooks/useRankings'
 import { useUsdtTransfer } from './hooks/useUsdtTransfer'
 
 function App() {
@@ -37,6 +38,42 @@ function App() {
     marketSections,
   } = market
   const filters = useGameFilters(games)
+  const sportsNavigationItems = useMemo(
+    () =>
+      Array.from(
+        games.reduce((counts, game) => {
+          const current = counts.get(game.sportName)
+          counts.set(game.sportName, {
+            name: game.sportName,
+            count: (current?.count ?? 0) + 1,
+            hub: game.sportHub,
+          })
+          return counts
+        }, new Map<string, { name: string; count: number; hub: 'sports' | 'esports' }>()),
+      )
+        .map(([, item]) => item)
+        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'en')),
+    [games],
+  )
+  const liveSportsNavigationItems = useMemo(
+    () =>
+      Array.from(
+        games
+          .filter((game) => getGamePhase(game.startsAt, game.state) === 'live')
+          .reduce((counts, game) => {
+            const current = counts.get(game.sportName)
+            counts.set(game.sportName, {
+              name: game.sportName,
+              count: (current?.count ?? 0) + 1,
+              hub: game.sportHub,
+            })
+            return counts
+          }, new Map<string, { name: string; count: number; hub: 'sports' | 'esports' }>()),
+      )
+        .map(([, item]) => item)
+        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'en')),
+    [games],
+  )
   const shell = useAppShellState({
     filteredGames: filters.filteredGames,
     selectedGameId,
@@ -61,9 +98,21 @@ function App() {
     isConnected: wallet.isConnected,
     isAAWallet: wallet.isAAWallet,
   })
-  const rankings = useRankings(wallet.address)
 
   const betslipPanelProps = buildBetslipPanelProps({ wallet, betting })
+  const handleSportNavigation = (sportName: string) => {
+    shell.handleNavigateToExplore()
+    filters.setSportFilter(sportName)
+  }
+  const handleGameStatusNavigation = (status: 'all' | 'live' | 'upcoming') => {
+    shell.handleNavigateToExplore()
+    filters.setGameStatusFilter(status)
+  }
+  const handleLiveSportNavigation = (sportName: string) => {
+    shell.handleNavigateToExplore()
+    filters.setGameStatusFilter('live')
+    filters.setSportFilter(sportName)
+  }
 
   return (
     <div className="w-full max-w-[1440px] px-0 pb-36 pt-0 lg:pb-10 xl:max-w-none">
@@ -79,8 +128,8 @@ function App() {
             usdtBalance={usdtTransfer.balance}
             isUsdtBalanceLoading={usdtTransfer.isBalanceLoading}
             isUsdtSupportedChain={usdtTransfer.isSupportedChain}
-            rankingViewer={rankings.viewer}
-            isRankingLoading={rankings.isLoading}
+            rankingViewer={null}
+            isRankingLoading={false}
             totalPoints={points.totalPoints}
             isPointsLoading={points.isLoading}
             onTitleClick={shell.handleNavigateToExplore}
@@ -105,28 +154,22 @@ function App() {
         className="mt-0 grid items-start gap-2 px-0 md:grid-cols-[240px_minmax(0,1fr)_316px] md:gap-4 md:px-0"
       >
         <DesktopMenuRail
-          isExploreActive={shell.shouldShowExploreContent}
+          gameStatusFilter={filters.gameStatusFilter}
+          sportFilter={filters.sportFilter}
+          sports={sportsNavigationItems}
+          liveSports={liveSportsNavigationItems}
           isRankingActive={shell.shouldShowRankingContent}
-          isGuideActive={shell.shouldShowGuideContent}
-          previewPage={shell.previewPage}
-          onOpenExplore={shell.handleNavigateToExplore}
-          onOpenPlayerRankings={() => shell.handleNavigateToPreviewPage('player-rankings')}
+          onSelectGameStatus={handleGameStatusNavigation}
+          onSelectSport={handleSportNavigation}
+          onSelectLiveSport={handleLiveSportNavigation}
           onOpenLeaderboard={shell.handleNavigateToRanking}
-          onOpenGuide={shell.handleNavigateToGuide}
         />
 
         <section className="min-w-0">
           {shell.shouldShowGuideContent ? (
             <GuidePage />
           ) : shell.shouldShowRankingContent ? (
-            <RankingPage
-              rankings={rankings.rankings}
-              viewer={rankings.viewer}
-              isLoading={rankings.isLoading}
-              errorMessage={rankings.errorMessage}
-              onRetry={() => void rankings.refetch()}
-              isConnected={wallet.isConnected}
-            />
+            <RankingPage />
           ) : shell.shouldShowPreviewContent ? (
             <ComingSoonPage />
           ) : (
@@ -200,9 +243,14 @@ function App() {
 
       <MobileMenuSheet
         isOpen={shell.isMobileMenuOpen}
+        gameStatusFilter={filters.gameStatusFilter}
+        sportFilter={filters.sportFilter}
+        sports={sportsNavigationItems}
+        liveSports={liveSportsNavigationItems}
         onClose={shell.closeMobileMenu}
-        onOpenPlayerRankings={shell.openPlayerRankingsFromMobileMenu}
-        onOpenGuide={shell.openGuideFromMobileMenu}
+        onSelectGameStatus={handleGameStatusNavigation}
+        onSelectSport={handleSportNavigation}
+        onSelectLiveSport={handleLiveSportNavigation}
       />
     </div>
   )

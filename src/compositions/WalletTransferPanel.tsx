@@ -104,7 +104,7 @@ export function WalletTransferPanel({
       )}
 
       <button
-        className="mt-5 w-full rounded-md border border-transparent bg-gradient-to-r from-cyan-300 via-blue-300 to-fuchsia-400 px-3 py-3 text-sm font-black uppercase text-black transition disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-5 w-full rounded-md border border-transparent bg-[linear-gradient(135deg,color-mix(in_oklab,var(--app-accent)_78%,white)_0%,var(--app-accent)_55%,color-mix(in_oklab,var(--app-accent)_74%,black)_100%)] px-3 py-3 text-sm font-black uppercase text-white transition disabled:cursor-not-allowed disabled:opacity-50"
         disabled={isSending}
         onClick={onSend}
         type="button"

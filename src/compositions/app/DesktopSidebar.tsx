@@ -6,7 +6,7 @@ import { BetslipPanel } from '../BetslipPanel'
 import { BetsAndTransferPanel } from '../BetsAndTransferPanel'
 import { DesktopStickyPanel } from './DesktopSidebarLayout'
 
-const DESKTOP_SIDEBAR_MAX_HEIGHT_CLASS = 'max-h-[calc(100dvh-69px)]'
+const DESKTOP_SIDEBAR_MAX_HEIGHT_CLASS = 'max-h-[calc(100dvh-61px)]'
 const DESKTOP_SIDEBAR_SCROLL_AREA_CLASS = 'overflow-y-auto p-3'
 
 type DesktopSidebarProps = {

@@ -3,6 +3,8 @@ import type { LocaleMessages } from './types'
 export const enRankingMessages: LocaleMessages = {
   'ranking.pageTitle': 'Leaderboard',
   'ranking.pageDescription': 'Track rankings and scores from settled predictions.',
+  'ranking.comingSoonTitle': 'Coming Soon',
+  'ranking.comingSoonDescription': "We're rebuilding rankings for multi-sport betting.",
   'ranking.myStanding': 'My Standing',
   'ranking.totalScore': 'Score',
   'ranking.record': 'Record',

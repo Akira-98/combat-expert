@@ -1,22 +1,24 @@
 @layer base {
   :root {
-    --app-bg: #000000;
-    --app-bg-glow: #000000;
-    --app-surface: #0b0f14;
-    --app-surface-soft: #0f141c;
-    --app-border: #1f2937;
-    --app-text-strong: #e6eef8;
-    --app-text-body: #b5c2d2;
-    --app-text-muted: #8090a4;
-    --app-accent: #ff6b00;
-    --app-accent-soft: #3a2519;
-    --app-glow-cool: rgba(191, 219, 254, 0.08);
-    --app-glow-warm: rgba(245, 158, 11, 0.1);
-    --app-glow-cyan: rgba(34, 211, 238, 0.08);
-    --state-success: #3eff8b;
-    --state-success-soft: #13251b;
-    --state-warning: #efb72a;
-    --state-warning-soft: #2c2414;
+    --app-bg: #030306;
+    --app-bg-glow: #06000a;
+    --app-surface: #0c0b12;
+    --app-surface-soft: #14121d;
+    --app-border: #292230;
+    --app-text-strong: #ffffff;
+    --app-text-body: #e5e7eb;
+    --app-text-muted: #9ca3af;
+    --app-accent: #d35aab;
+    --app-accent-soft: #24111f;
+    --app-magenta: #c957a0;
+    --app-cyan: #7aa8ff;
+    --app-glow-cool: rgba(122, 168, 255, 0.08);
+    --app-glow-warm: rgba(211, 90, 171, 0.07);
+    --app-glow-cyan: rgba(122, 168, 255, 0.09);
+    --state-success: #39c989;
+    --state-success-soft: #0f241b;
+    --state-warning: #e4ad4f;
+    --state-warning-soft: #2a2012;
     --state-danger: #f45a6c;
     --state-danger-soft: #2e1a20;
   }

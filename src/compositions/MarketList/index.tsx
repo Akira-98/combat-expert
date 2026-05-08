@@ -13,11 +13,8 @@ export function MarketList({
   marketSections,
   selectedOutcomes,
   selectedOutcomePriceChanges,
-  leagueFilter,
-  leagueOptions,
   totalGamesCount,
   onSelectGame,
-  onLeagueFilterChange,
   onSelectOutcome,
   onRetryGames,
   onRetryMarkets,
@@ -26,22 +23,17 @@ export function MarketList({
 
   if (pageMode === 'games') {
     return (
-      <section className="panel ui-section-sheen section-shell p-2 md:rounded-2xl md:border md:px-4 md:py-4">
-          <GamesPane
-            isGamesLoading={isGamesLoading}
-            gamesErrorMessage={gamesErrorMessage}
-            selectedGameId={selectedGameId}
-            games={games}
-            selectedOutcomes={selectedOutcomes}
-            leagueFilter={leagueFilter}
-            leagueOptions={leagueOptions}
-            totalGamesCount={totalGamesCount}
-            onSelectGame={onSelectGame}
-            onLeagueFilterChange={onLeagueFilterChange}
-            onSelectOutcome={onSelectOutcome}
-            onRetryGames={onRetryGames}
-          />
-      </section>
+      <GamesPane
+        isGamesLoading={isGamesLoading}
+        gamesErrorMessage={gamesErrorMessage}
+        selectedGameId={selectedGameId}
+        games={games}
+        selectedOutcomes={selectedOutcomes}
+        totalGamesCount={totalGamesCount}
+        onSelectGame={onSelectGame}
+        onSelectOutcome={onSelectOutcome}
+        onRetryGames={onRetryGames}
+      />
     )
   }
 

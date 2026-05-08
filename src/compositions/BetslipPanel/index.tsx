@@ -68,7 +68,7 @@ export function BetslipPanel({
   const iconButtonClass =
     'ui-ghost-icon inline-flex h-8 w-8 items-center justify-center rounded-full text-sm transition disabled:cursor-not-allowed disabled:opacity-60'
   const shareButtonClass =
-    'inline-flex h-8 items-center justify-center rounded-full bg-[linear-gradient(135deg,#ff8a1f_0%,var(--app-accent)_48%,#ffb000_100%)] px-3 text-xs font-bold text-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--app-accent)_42%,transparent),0_8px_18px_-14px_var(--app-accent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60'
+    'inline-flex h-8 items-center justify-center rounded-full bg-[linear-gradient(135deg,color-mix(in_oklab,var(--app-accent)_70%,white)_0%,var(--app-accent)_58%,color-mix(in_oklab,var(--app-accent)_72%,black)_100%)] px-3 text-xs font-bold text-white shadow-[0_0_0_1px_color-mix(in_srgb,var(--app-accent)_34%,transparent),0_8px_18px_-14px_var(--app-accent)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60'
   const dangerIconButtonClass =
     'inline-flex h-8 w-8 items-center justify-center rounded-full bg-transparent text-sm text-[color:var(--app-danger)] transition hover:bg-[color:color-mix(in_srgb,var(--app-danger)_10%,transparent)] disabled:cursor-not-allowed disabled:opacity-60'
   const noticeClass = 'm-0 rounded-md border p-2 text-sm md:rounded-lg'

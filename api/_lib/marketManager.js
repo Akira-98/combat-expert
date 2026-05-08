@@ -46,8 +46,8 @@ function normalizeOutcomeLabel(selectionName, participants) {
   const raw = String(selectionName || '').trim()
   const normalized = raw.toLowerCase()
 
-  if (raw === '1') return participants[0] || 'Fighter A'
-  if (raw === '2') return participants[1] || 'Fighter B'
+  if (raw === '1') return participants[0] || 'Competitor A'
+  if (raw === '2') return participants[1] || 'Competitor B'
   if (normalized === 'x' || normalized === 'draw') return 'Draw'
   return raw || 'Outcome'
 }

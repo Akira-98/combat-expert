@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useChain } from '@azuro-org/sdk'
 import { useQuery } from '@tanstack/react-query'
-import { COMBAT_GAMES_PAGE_SIZE, fetchPreferredCombatGames } from '../api/combatGames'
+import { SPORTSBOOK_GAMES_PAGE_SIZE, fetchSportsbookGames, fetchTopSportsbookGames } from '../api/combatGames'
 import { translate } from '../i18n'
 import { mapGamesToItems, mapMarketsToSections } from '../helpers/mappers'
 import { useMarketManagerConditions } from './useMarketManagerConditions'
@@ -25,6 +25,8 @@ const ACTIVE_MARKETS_QUERY_POLICY = {
   refetchIntervalInBackground: false,
 } as const
 
+const TOP_EVENTS_PAGE_SIZE = 12
+
 const getErrorMessage = (error: unknown, fallback: string) => {
   if (error instanceof Error && error.message) return error.message
   return fallback
@@ -35,12 +37,23 @@ export function useMarketData() {
   const { api, environment } = useChain()
 
   const gamesQuery = useQuery({
-    queryKey: ['combat-expert-games', api, environment, COMBAT_GAMES_PAGE_SIZE],
+    queryKey: ['sportsbook-games', api, environment, SPORTSBOOK_GAMES_PAGE_SIZE],
     queryFn: async () => {
-      return fetchPreferredCombatGames({
+      return fetchSportsbookGames({
         apiBaseUrl: api,
         environment,
-        pageSize: COMBAT_GAMES_PAGE_SIZE,
+        pageSize: SPORTSBOOK_GAMES_PAGE_SIZE,
+      })
+    },
+    ...GAMES_QUERY_POLICY,
+  })
+  const topEventsQuery = useQuery({
+    queryKey: ['sportsbook-top-events', api, environment, TOP_EVENTS_PAGE_SIZE],
+    queryFn: async () => {
+      return fetchTopSportsbookGames({
+        apiBaseUrl: api,
+        environment,
+        pageSize: TOP_EVENTS_PAGE_SIZE,
       })
     },
     ...GAMES_QUERY_POLICY,
@@ -64,6 +77,7 @@ export function useMarketData() {
   const { data: markets = [], isLoading: isMarketsLoading } = marketsQuery
 
   const gameItems = useMemo(() => mapGamesToItems(games), [games])
+  const topEventItems = useMemo(() => mapGamesToItems(topEventsQuery.data ?? []), [topEventsQuery.data])
   const marketSections = useMemo(() => mapMarketsToSections(markets), [markets])
 
   const gamesErrorMessage = useMemo(() => {
@@ -89,6 +103,7 @@ export function useMarketData() {
     retryGames,
     retryMarkets,
     games: gameItems,
+    topEventGames: topEventItems,
     marketConditions: marketsQuery.rawConditions,
     marketSections,
   }

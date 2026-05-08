@@ -1,8 +1,8 @@
 import type { LocaleMessages } from './types'
 
 export const enCommonMessages: LocaleMessages = {
-  'app.title': 'Combat Expert',
-  'app.title.short': 'CombatX',
+  'app.title': 'BETAKER',
+  'app.title.short': 'BETAKER',
   'common.close': 'Close',
   'common.save': 'Save',
   'common.saving': 'Saving...',
@@ -24,7 +24,7 @@ export const enCommonMessages: LocaleMessages = {
   'header.authNeedsWallet': 'Logged in, but wallet is not connected. Please connect your wallet.',
   'header.connecting': 'Connecting...',
   'header.connectWallet': 'Connect Wallet',
-  'header.login': 'Log in',
+  'header.login': 'SIGN IN',
   'header.logout': 'Log out',
   'account.balance': 'Balance',
   'account.points': 'Points',

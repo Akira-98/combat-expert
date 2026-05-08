@@ -16,12 +16,9 @@ export type MarketListProps = {
   marketSections: MarketSection[]
   selectedOutcomes: Set<SelectionKey>
   selectedOutcomePriceChanges: Map<SelectionKey, OutcomePriceChange>
-  leagueFilter: string
-  leagueOptions: string[]
   totalGamesCount: number
   onSelectGame: (gameId: string) => void
   onConnectWallet: () => void
-  onLeagueFilterChange: (value: string) => void
   onSelectOutcome: (outcome: OutcomeItem) => void
   onRetryGames: () => void
   onRetryMarkets: () => void
@@ -33,11 +30,8 @@ export type GamesPaneProps = {
   selectedGameId?: string
   games: GameItem[]
   selectedOutcomes: Set<SelectionKey>
-  leagueFilter: string
-  leagueOptions: string[]
   totalGamesCount: number
   onSelectGame: (gameId: string) => void
-  onLeagueFilterChange: (value: string) => void
   onSelectOutcome: (outcome: OutcomeItem) => void
   onRetryGames: () => void
 }

@@ -9,7 +9,7 @@ import {
   shortenWallet,
 } from './picksOgHelpers.js'
 
-export function PicksOgImage({ share, games = [], fighterImages = [] }) {
+export function PicksOgImage({ share, games = [], participantImages = [] }) {
   const selections = Array.isArray(share?.selections) ? share.selections : []
   const visibleSelections = selections.slice(0, 4)
   const hiddenCount = Math.max(0, selections.length - visibleSelections.length)
@@ -24,9 +24,9 @@ export function PicksOgImage({ share, games = [], fighterImages = [] }) {
     if (gameId) gameById.set(gameId, game)
   }
 
-  for (const fighter of fighterImages) {
-    if (fighter?.name && fighter?.imageUrl) {
-      imageUrlByName.set(normalizeNameKey(fighter.name), fighter.imageUrl)
+  for (const participant of participantImages) {
+    if (participant?.name && participant?.imageUrl) {
+      imageUrlByName.set(normalizeNameKey(participant.name), participant.imageUrl)
     }
   }
 

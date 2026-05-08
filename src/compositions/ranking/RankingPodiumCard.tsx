@@ -3,9 +3,9 @@ import type { RankingEntry } from '../../hooks/useRankings'
 import { useI18n } from '../../i18n'
 
 const trophyColorClassNames: Record<number, string> = {
-  1: 'text-[#f5c84c]',
-  2: 'text-[#c7d0d9]',
-  3: 'text-[#c9854a]',
+  1: 'text-[color:var(--app-accent)]',
+  2: 'text-[color:var(--app-magenta)]',
+  3: 'text-[#9d7cff]',
 }
 
 export function RankingPodiumCard({ entry, rank }: { entry: RankingEntry; rank: number }) {

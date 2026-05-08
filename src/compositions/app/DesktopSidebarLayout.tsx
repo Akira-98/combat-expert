@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
-const DESKTOP_RAIL_TOP_OFFSET_CLASS = 'md:top-[69px]'
-const DESKTOP_RAIL_HEIGHT_CLASS = 'md:h-[calc(100dvh-69px)]'
+const DESKTOP_RAIL_TOP_OFFSET_CLASS = 'md:top-[61px]'
+const DESKTOP_RAIL_HEIGHT_CLASS = 'md:h-[calc(100dvh-61px)]'
 
 type DesktopStickyRailProps = {
   children: ReactNode

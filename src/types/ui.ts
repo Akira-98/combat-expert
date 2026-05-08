@@ -8,13 +8,25 @@ export type OutcomeItem = {
   odds: number
 }
 
+export type GameParticipantItem = {
+  name: string
+  image?: string | null
+}
+
 export type GameItem = {
   gameId: string
   title: string
   startsAt: string
   state?: string
+  turnover?: string
+  sportName: string
+  sportSlug: string
+  sportHub: 'sports' | 'esports'
   leagueName: string
-  participants: string[]
+  leagueSlug?: string
+  countryName?: string
+  countrySlug?: string
+  participants: GameParticipantItem[]
 }
 
 export type MarketSection = {
@@ -32,3 +44,9 @@ export type SelectionItem = {
 }
 
 export type SelectionKey = `${string}-${string}`
+
+export type SportFilterItem = {
+  name: string
+  count: number
+  hub: 'sports' | 'esports'
+}

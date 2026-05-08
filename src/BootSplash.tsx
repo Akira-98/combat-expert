@@ -14,9 +14,11 @@ export function BootSplash() {
         >
           <div className="section-shell flex min-h-[68px] items-center justify-between gap-2.5 bg-transparent px-2.5 py-1.5 md:gap-4 md:p-4">
             <div className="min-w-0 self-center py-0 md:py-0.5">
-              <div className="ui-text-strong ui-mma-logo whitespace-nowrap pt-0.5 text-[22px] leading-[1.18] md:pt-0 md:text-[27px] md:leading-[1.15]">
-                Combat Expert
-              </div>
+              <img
+                alt="BETAKER"
+                className="block h-12 w-auto max-w-[160px] object-contain md:h-14 md:max-w-[220px]"
+                src="/logo.png"
+              />
             </div>
             <div className="ui-border-contrast-soft ui-skeleton-soft h-8 w-24 animate-pulse rounded-full border md:h-10 md:w-32" />
           </div>

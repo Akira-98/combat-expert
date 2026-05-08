@@ -50,7 +50,7 @@ export function getGameTitle(selection, game) {
   if (selection?.gameTitle) return selection.gameTitle
 
   const participantTitle = getParticipantNames(game).join(' vs ')
-  return participantTitle || 'MMA Market'
+  return participantTitle || 'Sports Market'
 }
 
 export function getShortGameTitle(selection, game) {

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { formatGameStartTime } from '../../helpers/formatters'
+import { getGameParticipantNames } from '../../helpers/participants'
 import { useI18n } from '../../i18n'
 import { selectionKey } from '../../helpers/mappers'
-import { useFighterImages } from '../../hooks/useFighterImages'
 import { EmptyState, ErrorState, MarketsSkeleton } from './PaneStates'
 import { OutcomeButton } from './OutcomeButton'
 import type { MarketsPaneProps } from './types'
@@ -45,7 +45,7 @@ export function MarketsPane({
                     <OutcomeButton
                       key={key}
                       outcome={outcome}
-                      selectedGameParticipants={selectedGame?.participants ?? []}
+                      selectedGameParticipants={selectedGame ? getGameParticipantNames(selectedGame) : []}
                       isSelected={selectedOutcomes.has(key)}
                       priceChange={selectedOutcomePriceChanges.get(key)}
                       onSelectOutcome={onSelectOutcome}
@@ -72,8 +72,9 @@ export function MarketsPane({
 export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<MarketsPaneProps['selectedGame']> }) {
   const { t } = useI18n()
   const [shareFeedback, setShareFeedback] = useState<{ gameId: string; status: 'copied' | 'failed' }>()
-  const [leftName = 'Fighter A', rightName = 'Fighter B'] = selectedGame.participants
-  const { getImageUrlByName } = useFighterImages([leftName, rightName])
+  const [leftParticipant, rightParticipant] = selectedGame.participants
+  const leftName = leftParticipant?.name ?? 'Competitor A'
+  const rightName = rightParticipant?.name ?? 'Competitor B'
   const matchupLabel = [leftName, rightName].filter(Boolean).join(' - ')
   const shareUrl = typeof window === 'undefined'
     ? ''
@@ -107,8 +108,8 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
     if (!shareUrl) return
 
     const shareData: ShareData = {
-      title: selectedGame.title || matchupLabel || 'Combat Expert',
-      text: `${selectedGame.leagueName} market on Combat Expert`,
+      title: selectedGame.title || matchupLabel || 'Sports pick',
+      text: `${selectedGame.leagueName} market`,
       url: shareUrl,
     }
     const urlOnlyShareData: ShareData = { url: shareUrl }
@@ -141,7 +142,7 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 md:gap-5">
       <CompetitorProfile
-        imageUrl={getImageUrlByName(leftName)}
+        imageUrl={leftParticipant?.image ?? undefined}
         initials={getCompetitorInitials(leftName)}
         name={leftName}
         align="left"
@@ -174,7 +175,7 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
       </div>
 
       <CompetitorProfile
-        imageUrl={getImageUrlByName(rightName)}
+        imageUrl={rightParticipant?.image ?? undefined}
         initials={getCompetitorInitials(rightName)}
         name={rightName}
         align="right"

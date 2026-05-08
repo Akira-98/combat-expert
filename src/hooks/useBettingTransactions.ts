@@ -13,11 +13,17 @@ import { translate } from '../i18n'
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const POINT_CLAIM_RETRY_DELAYS_MS = [0, 3_000, 10_000]
 const REFERRAL_REWARD_RETRY_DELAYS_MS = [0, 3_000, 10_000]
+const SDK_FALLBACK_BET_AMOUNT = '1'
 
 function wait(ms: number) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms)
   })
+}
+
+function getSdkBetAmount(betAmount: string) {
+  const parsedAmount = Number(betAmount)
+  return Number.isFinite(parsedAmount) && parsedAmount > 0 ? betAmount : SDK_FALLBACK_BET_AMOUNT
 }
 
 async function claimBetParticipationPointsWithRetry({ txHash, walletAddress }: { txHash: string; walletAddress: string }) {
@@ -102,7 +108,7 @@ export function useBettingTransactions({
   })
 
   const { submit, isApproveRequired, approveTx, betTx } = useBet({
-    betAmount: betAmount || '1',
+    betAmount: getSdkBetAmount(betAmount),
     slippage,
     affiliate: affiliateAddress,
     selections: items,

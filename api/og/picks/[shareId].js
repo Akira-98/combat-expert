@@ -1,6 +1,6 @@
 import { fetchGamesByIds } from '../../_lib/azuro.js'
 import { loadServerEnv } from '../../_lib/env.js'
-import { fetchFighterImages, getParticipantNames } from '../../_lib/marketOgImage.js'
+import { getParticipantImageUrls, getParticipantNames } from '../../_lib/marketOgImage.js'
 import { firstQueryValue, h, sendPngImage } from '../../_lib/ogImage.js'
 import { PicksOgImage } from '../../_lib/picksOgImage.js'
 import { fetchReferralShareById } from '../../_lib/referralStore.js'
@@ -18,13 +18,13 @@ function uniqueValues(values) {
   return [...new Set(values.filter(Boolean))]
 }
 
-async function sendPicksImage(res, { share = FALLBACK_SHARE, games = [], fighterImages = [] }) {
+async function sendPicksImage(res, { share = FALLBACK_SHARE, games = [], participantImages = [] }) {
   await sendPngImage(
     res,
     h(PicksOgImage, {
       share,
       games,
-      fighterImages,
+      participantImages,
     }),
   )
 }
@@ -55,25 +55,21 @@ export default async function handler(req, res) {
     const gameIds = uniqueValues(visibleSelections.map((selection) => selection?.gameId))
     const games = await fetchGamesByIds(gameIds)
     const visibleGameIds = new Set(gameIds)
-    const fighterNames = uniqueValues(
-      games
-        .filter((game) => visibleGameIds.has(getGameId(game)))
-        .flatMap((game) => getParticipantNames(game).slice(0, 2)),
-    )
-    const fighterImageUrls = await fetchFighterImages({
-      supabaseUrl,
-      serviceRoleKey,
-      names: fighterNames,
-    })
-    const fighterImages = fighterNames.map((name, index) => ({
-      name,
-      imageUrl: fighterImageUrls[index],
-    }))
+    const participantImages = games
+      .filter((game) => visibleGameIds.has(getGameId(game)))
+      .flatMap((game) => {
+        const names = getParticipantNames(game)
+        const imageUrls = getParticipantImageUrls(game)
+        return names.slice(0, 2).map((name, index) => ({
+          name,
+          imageUrl: imageUrls[index],
+        }))
+      })
 
     await sendPicksImage(res, {
       share,
       games,
-      fighterImages,
+      participantImages,
     })
   } catch (error) {
     console.error(error)
