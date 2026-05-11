@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://combatexpert.xyz'
+export const SITE_URL = 'https://betaker.xyz'
 
 export function escapeHtml(value) {
   return String(value ?? '')

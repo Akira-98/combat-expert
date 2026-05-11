@@ -10,7 +10,7 @@ import { useBettingTransactions } from './useBettingTransactions'
 
 const DEFAULT_SLIPPAGE = 3
 const REFERRAL_SHARE_ROUTE_PREFIX = '/share/picks/'
-const ACTIVE_REFERRAL_SHARE_STORAGE_KEY = 'combatexpert.activeReferralShareId'
+const ACTIVE_REFERRAL_SHARE_STORAGE_KEY = 'betaker.activeReferralShareId'
 const SHARE_MESSAGE_TIMEOUT_MS = 3000
 
 type ShareMessage = 'copied' | 'shared' | 'failed'

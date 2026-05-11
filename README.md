@@ -67,7 +67,7 @@ Required configuration is listed in [`.env.example`](./.env.example).
 
 ## Live Experience
 
-- Official Website: [combatexpert.xyz](https://combatexpert.xyz)
+- Official Website: [betaker.xyz](https://betaker.xyz)
 
 ## Product Interface
 

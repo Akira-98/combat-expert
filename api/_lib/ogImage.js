@@ -8,7 +8,7 @@ export function firstQueryValue(value) {
 }
 
 export function getRequestOrigin(req) {
-  const host = req.headers['x-forwarded-host'] || req.headers.host || 'combatexpert.xyz'
+  const host = req.headers['x-forwarded-host'] || req.headers.host || 'betaker.xyz'
   const proto = req.headers['x-forwarded-proto'] || 'https'
   return `${proto}://${host}`
 }
