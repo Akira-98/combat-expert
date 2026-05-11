@@ -20,7 +20,7 @@ const socialLinks = [
   },
   {
     key: 'x',
-    href: 'https://x.com/combatexpertXYZ',
+    href: 'https://x.com/betaker_xyz',
     imageSrc: '/Desktop/logo-white.png',
     labelKey: 'guide.x',
   },

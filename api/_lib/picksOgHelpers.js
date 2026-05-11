@@ -1,15 +1,15 @@
 import { getParticipantNames } from './marketOgImage.js'
 
 export const PICKS_OG_COLORS = {
-  bg: '#030405',
-  surface: '#0b0f14',
-  surfaceSoft: '#111821',
-  border: '#2d3949',
-  textStrong: '#f4f7fb',
-  textBody: '#c7d0dd',
-  textMuted: '#7f8da1',
-  accent: '#ff6b00',
-  accentDark: '#522511',
+  bg: '#030306',
+  surface: '#0c0b12',
+  surfaceSoft: '#14121d',
+  border: '#292230',
+  textStrong: '#ffffff',
+  textBody: '#e5e7eb',
+  textMuted: '#9ca3af',
+  accent: '#d35aab',
+  accentDark: '#24111f',
 }
 
 export function shortenWallet(wallet) {

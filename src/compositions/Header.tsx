@@ -80,7 +80,7 @@ export function Header({
   const primaryButtonClass = `ui-btn-primary ${actionButtonClass}`
   const iconButtonClass =
     'ui-btn-secondary btn-shell inline-flex h-8 w-8 items-center justify-center text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 md:btn-shell-lg'
-  const logoClass = 'block h-10 w-auto max-w-[150px] object-contain md:h-10 md:max-w-[190px]'
+  const logoClass = 'block h-10 w-auto max-w-[112px] object-contain md:h-10 md:max-w-[190px]'
   const titleWrapperClass = 'min-w-0 self-center py-0 md:py-0.5'
   const connectErrorClass = 'ui-state-danger m-0 rounded-md border px-2 py-1 text-right text-xs font-medium'
   const accountTriggerClass =
@@ -128,7 +128,7 @@ export function Header({
 
   return (
     <>
-      <header className="section-shell grid min-h-[56px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5 bg-transparent px-2.5 py-1 shadow-none md:min-h-0 md:grid-cols-[240px_minmax(0,1fr)_316px] md:gap-4 md:px-4 md:py-2 desktop-surface-fill desktop-surface-variant">
+      <header className="section-shell grid min-h-[56px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1.5 bg-transparent px-2.5 py-1 shadow-none md:min-h-0 md:grid-cols-[240px_minmax(0,1fr)_316px] md:gap-4 md:px-4 md:py-2 desktop-surface-fill desktop-surface-variant">
         <div className="flex min-w-0 items-center">
           <div className={titleWrapperClass}>
             <h1 className="m-0">
@@ -250,12 +250,12 @@ function HeaderGameSearch({
   const { t } = useI18n()
 
   return (
-    <form className="hidden min-w-0 justify-self-start md:flex md:w-[min(100%,19rem)]" onSubmit={(event) => event.preventDefault()}>
-      <label className="group flex h-10 w-full min-w-0 items-center gap-2.5 rounded-full border border-[color:color-mix(in_srgb,var(--app-border)_105%,transparent)] bg-black/15 px-4 transition focus-within:border-[color:color-mix(in_srgb,var(--app-accent)_55%,transparent)] focus-within:bg-black/20">
+    <form className="flex min-w-0 justify-self-stretch md:justify-self-start md:w-[min(100%,19rem)]" onSubmit={(event) => event.preventDefault()}>
+      <label className="group flex h-9 w-full min-w-0 items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--app-border)_105%,transparent)] bg-black/15 px-3 transition focus-within:border-[color:color-mix(in_srgb,var(--app-accent)_55%,transparent)] focus-within:bg-black/20 md:h-10 md:gap-2.5 md:px-4">
         <span className="sr-only">{t('common.search')}</span>
         <svg
           aria-hidden="true"
-          className="h-5 w-5 shrink-0 text-[color:var(--app-text-muted)] transition group-focus-within:text-[color:var(--app-text-body)]"
+          className="h-4 w-4 shrink-0 text-[color:var(--app-text-muted)] transition group-focus-within:text-[color:var(--app-text-body)] md:h-5 md:w-5"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -265,7 +265,7 @@ function HeaderGameSearch({
           <path d="M16.5 16.5 21 21" strokeLinecap="round" />
         </svg>
         <input
-          className="min-w-0 flex-1 border-0 bg-transparent text-base font-semibold text-[color:var(--app-text-strong)] outline-none placeholder:text-[color:var(--app-text-muted)]"
+          className="min-w-0 flex-1 border-0 bg-transparent text-sm font-semibold text-[color:var(--app-text-strong)] outline-none placeholder:text-[color:var(--app-text-muted)] md:text-base"
           placeholder={t('games.searchPlaceholder')}
           type="search"
           value={value}

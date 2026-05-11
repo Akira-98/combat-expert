@@ -33,15 +33,15 @@ function getInitials(name) {
 }
 
 const COLORS = {
-  bg: '#000000',
-  surface: '#0b0f14',
-  surfaceSoft: '#0f141c',
-  border: '#1f2937',
-  textStrong: '#e6eef8',
-  textBody: '#b5c2d2',
-  textMuted: '#8090a4',
-  accent: '#ff6b00',
-  accentSoft: '#3a2519',
+  bg: '#030306',
+  surface: '#0c0b12',
+  surfaceSoft: '#14121d',
+  border: '#292230',
+  textStrong: '#ffffff',
+  textBody: '#e5e7eb',
+  textMuted: '#9ca3af',
+  accent: '#d35aab',
+  accentSoft: '#24111f',
 }
 
 function formatOdds(odds) {
@@ -83,9 +83,9 @@ function ParticipantBadge({ name, align, imageUrl }) {
           style: {
             width: '100%',
             height: '100%',
-            border: '1px solid rgba(255, 107, 0, 0.24)',
+            border: '1px solid rgba(211, 90, 171, 0.24)',
             borderRadius: 999,
-            background: `linear-gradient(180deg, rgba(255, 107, 0, 0.22), ${COLORS.surface})`,
+            background: `linear-gradient(180deg, rgba(211, 90, 171, 0.22), ${COLORS.surface})`,
             alignItems: 'center',
             justifyContent: 'center',
           },
@@ -232,11 +232,11 @@ export function MarketOgImage({ game, marketPreview, participantImages = [] }) {
               height: 36,
               borderRadius: 999,
               background: COLORS.accent,
-              boxShadow: '0 0 0 5px rgba(255, 107, 0, 0.14)',
+              boxShadow: '0 0 0 5px rgba(211, 90, 171, 0.14)',
             },
           },
         ),
-        'Combat Expert',
+        'BETAKER',
       ),
       h(
         'div',
@@ -428,7 +428,7 @@ export function MarketOgImage({ game, marketPreview, participantImages = [] }) {
             },
           },
         ),
-        'combatexpert.xyz',
+        'BETAKER',
       ),
     ),
   )

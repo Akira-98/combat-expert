@@ -39,7 +39,7 @@ function ParticipantFace({ name, imageUrl, size = 132 }) {
             style: {
               width: '100%',
               height: '100%',
-              background: 'radial-gradient(circle at 35% 28%, rgba(255, 107, 0, 0.28), rgba(17, 24, 33, 0.98))',
+              background: 'radial-gradient(circle at 35% 28%, rgba(211, 90, 171, 0.28), rgba(20, 18, 29, 0.98))',
               color: COLORS.textStrong,
               alignItems: 'center',
               justifyContent: 'center',
@@ -109,8 +109,8 @@ export function PickCard({ selection, game, index, imageUrlByName, variant }) {
             style: {
               minWidth: isFeature ? 72 : 54,
               height: isFeature ? 44 : 34,
-              border: '1px solid rgba(255, 107, 0, 0.42)',
-              background: 'rgba(82, 37, 17, 0.9)',
+              border: '1px solid rgba(211, 90, 171, 0.42)',
+              background: 'rgba(36, 17, 31, 0.9)',
               color: COLORS.accent,
               alignItems: 'center',
               justifyContent: 'center',
@@ -158,10 +158,10 @@ export function PickCard({ selection, game, index, imageUrlByName, variant }) {
       {
         style: {
           minHeight: isFeature ? 76 : 54,
-          border: '1px solid rgba(255, 107, 0, 0.28)',
+          border: '1px solid rgba(211, 90, 171, 0.28)',
           borderRadius: 12,
           padding: isFeature ? '0 22px' : '0 14px',
-          background: 'rgba(82, 37, 17, 0.76)',
+          background: 'rgba(36, 17, 31, 0.76)',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 14,
@@ -213,7 +213,7 @@ export function PickCard({ selection, game, index, imageUrlByName, variant }) {
             height: isFeature ? 54 : 40,
             borderRadius: 999,
             background: COLORS.accent,
-            color: '#100804',
+            color: '#ffffff',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: isFeature ? 31 : 22,

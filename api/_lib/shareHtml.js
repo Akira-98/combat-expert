@@ -35,7 +35,7 @@ export function sendShareHtml(
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${escapeHtml(description)}" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Combat Expert" />
+    <meta property="og:site_name" content="BETAKER" />
     <meta property="og:title" content="${escapeHtml(title)}" />
     <meta property="og:description" content="${escapeHtml(description)}" />
     <meta property="og:url" content="${escapeHtml(shareUrl)}" />
@@ -50,7 +50,7 @@ export function sendShareHtml(
     <script>location.replace(${JSON.stringify(appUrl)})</script>
   </head>
   <body>
-    <a href="${escapeHtml(appUrl)}">Open Combat Expert</a>
+    <a href="${escapeHtml(appUrl)}">Open BETAKER</a>
   </body>
 </html>`)
 }

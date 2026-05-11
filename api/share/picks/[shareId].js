@@ -2,8 +2,8 @@ import { loadServerEnv } from '../../_lib/env.js'
 import { fetchReferralShareById } from '../../_lib/referralStore.js'
 import { firstQueryValue, sendShareHtml, SITE_URL } from '../../_lib/shareHtml.js'
 
-const DEFAULT_TITLE = 'Combat Expert Picks'
-const DEFAULT_DESCRIPTION = 'Open this shared Combat Expert betslip.'
+const DEFAULT_TITLE = 'BETAKER Picks'
+const DEFAULT_DESCRIPTION = 'Open this shared BETAKER betslip.'
 
 function shortenWallet(wallet) {
   const value = String(wallet || '').trim()
@@ -13,7 +13,7 @@ function shortenWallet(wallet) {
 function buildDescription(share) {
   const count = Array.isArray(share?.selections) ? share.selections.length : 0
   const wallet = shortenWallet(share?.referrerWallet)
-  const prefix = count > 0 ? `${count}-pick Combat Expert betslip` : DEFAULT_DESCRIPTION
+  const prefix = count > 0 ? `${count}-pick BETAKER betslip` : DEFAULT_DESCRIPTION
   return wallet ? `${prefix} shared by ${wallet}.` : prefix
 }
 

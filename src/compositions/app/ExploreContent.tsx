@@ -72,7 +72,7 @@ function ExploreBanner() {
         <img
           alt=""
           aria-hidden="true"
-          className="block h-[136px] w-full object-cover object-center sm:h-[164px] md:h-[180px] xl:h-[210px]"
+          className="block h-[152px] w-full object-cover object-center sm:h-[180px] md:h-[180px] xl:h-[210px]"
           src="/images/baner.jpg"
         />
       </div>

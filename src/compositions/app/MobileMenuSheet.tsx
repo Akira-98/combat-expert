@@ -9,10 +9,8 @@ type MobileMenuSheetProps = {
   isOpen: boolean
   gameStatusFilter: 'all' | 'live' | 'upcoming'
   sportFilter: string
-  gameSearchQuery: string
   sports: SportFilterItem[]
   liveSports: SportFilterItem[]
-  onGameSearchQueryChange: (value: string) => void
   onClose: () => void
   onSelectGameStatus: (value: 'all' | 'live' | 'upcoming') => void
   onSelectSport: (value: string) => void
@@ -31,10 +29,8 @@ export function MobileMenuSheet({
   isOpen,
   gameStatusFilter,
   sportFilter,
-  gameSearchQuery,
   sports,
   liveSports,
-  onGameSearchQueryChange,
   onClose,
   onSelectGameStatus,
   onSelectSport,
@@ -100,35 +96,7 @@ export function MobileMenuSheet({
       />
       <aside className="ui-surface-soft absolute inset-y-0 right-0 flex w-[min(84vw,340px)] flex-col border-l p-4 shadow-2xl">
         <div className="flex items-center gap-2">
-          <p className="ui-text-strong m-0 shrink-0 text-base font-semibold">{t('games.sports')}</p>
-          <div className="flex h-8 min-w-0 flex-1 items-center gap-2 rounded-md border border-[color:var(--app-border)] bg-[color:var(--app-surface)] px-2 transition focus-within:border-[color:color-mix(in_srgb,var(--app-accent)_55%,transparent)]">
-            <label className="sr-only" htmlFor="mobile-menu-game-search">{t('common.search')}</label>
-            <svg aria-hidden="true" className="ui-text-muted h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="6.5" />
-              <path d="M16 16L21 21" />
-            </svg>
-            <input
-              id="mobile-menu-game-search"
-              className="ui-text-strong min-w-0 flex-1 border-0 bg-transparent text-xs font-semibold outline-none placeholder:text-[color:var(--app-text-muted)]"
-              placeholder={t('games.searchPlaceholder')}
-              type="search"
-              value={gameSearchQuery}
-              onChange={(event) => onGameSearchQueryChange(event.target.value)}
-            />
-            {gameSearchQuery ? (
-              <button
-                aria-label={t('common.close')}
-                className="ui-text-muted inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-0 bg-transparent transition hover:text-[color:var(--app-text-strong)]"
-                onClick={() => onGameSearchQueryChange('')}
-                type="button"
-              >
-                <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path d="M6 6l12 12" strokeLinecap="round" />
-                  <path d="M18 6 6 18" strokeLinecap="round" />
-                </svg>
-              </button>
-            ) : null}
-          </div>
+          <p className="ui-text-strong m-0 min-w-0 flex-1 text-base font-semibold">{t('games.sports')}</p>
           <button className="ui-btn-secondary btn-shell inline-flex h-8 w-8 items-center justify-center" onClick={onClose} type="button">
             <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
               <path d="M6 6L18 18" stroke="currentColor" strokeWidth="1.8" />

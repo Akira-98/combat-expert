@@ -238,10 +238,8 @@ function App() {
         isOpen={shell.isMobileMenuOpen}
         gameStatusFilter={filters.gameStatusFilter}
         sportFilter={filters.sportFilter}
-        gameSearchQuery={filters.gameSearchQuery}
         sports={sportsNavigationItems}
         liveSports={liveSportsNavigationItems}
-        onGameSearchQueryChange={filters.setGameSearchQuery}
         onClose={shell.closeMobileMenu}
         onSelectGameStatus={handleGameStatusNavigation}
         onSelectSport={handleSportNavigation}

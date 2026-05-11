@@ -1,8 +1,8 @@
 import { fetchGamesByIds } from '../../_lib/azuro.js'
 import { firstQueryValue, sendShareHtml, SITE_URL } from '../../_lib/shareHtml.js'
 
-const DEFAULT_TITLE = 'Combat Expert'
-const DEFAULT_DESCRIPTION = 'Explore MMA fights, markets, and betting trends in real time.'
+const DEFAULT_TITLE = 'BETAKER'
+const DEFAULT_DESCRIPTION = 'Decentralized betting, share your picks, take your bets.'
 
 function getParticipantNames(game) {
   if (!Array.isArray(game?.participants)) return []
@@ -25,7 +25,7 @@ function buildDescription(game) {
       }).format(startsAt)
     : ''
 
-  return [leagueName, formattedStart, 'Market is live on Combat Expert.'].filter(Boolean).join(' · ')
+  return [leagueName, formattedStart, 'Market is live on BETAKER.'].filter(Boolean).join(' · ')
 }
 
 export default async function handler(req, res) {
