@@ -21,7 +21,7 @@ export const getChainName = (chainId: number | undefined) => {
 }
 
 export const getWalletAvatarUrl = (address?: string) => {
-  const seed = address?.toLowerCase() ?? 'combat-expert-guest'
+  const seed = address?.toLowerCase() ?? 'betaker-guest'
   return `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(seed)}&backgroundType=gradientLinear`
 }
 

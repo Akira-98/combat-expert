@@ -52,7 +52,7 @@ export function MyBets({
   isEmbedded = false,
 }: MyBetsProps) {
   const { t } = useI18n()
-  const storageKey = address ? `combat-expert:hidden-bets:${address.toLowerCase()}` : undefined
+  const storageKey = address ? `betaker:hidden-bets:${address.toLowerCase()}` : undefined
   const { hiddenBetTokenIds, hideBet } = useHiddenBets(storageKey)
 
   const visibleBets = useMemo(

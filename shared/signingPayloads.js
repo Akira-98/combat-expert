@@ -1,4 +1,4 @@
-export const PROFILE_MESSAGE_PREFIX = 'Combat Expert nickname update'
+export const PROFILE_MESSAGE_PREFIX = 'BETAKER nickname update'
 export const PROFILE_MAX_NICKNAME_LENGTH = 24
 export const PROFILE_MESSAGE_TTL_MS = 5 * 60 * 1000
 

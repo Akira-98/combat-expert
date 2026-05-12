@@ -1,10 +1,10 @@
-# CombatExpert
+# BETAKER
 
-CombatExpert is a community-centric prediction platform for combat sports fans, built on the Azuro Protocol. We bridge the gap between decentralized betting and social engagement by combining Azuro’s liquidity layer with native community features, including an expert ranking system.
+BETAKER is a community-centric prediction platform for combat sports fans, built on the Azuro Protocol. We bridge the gap between decentralized betting and social engagement by combining Azuro's liquidity layer with native community features, including an expert ranking system.
 
 ## Overview
 
-CombatExpert is a niche product for combat sports users rather than a generic sportsbook frontend.
+BETAKER is a niche product for combat sports users rather than a generic sportsbook frontend.
 
 - UFC and MMA-focused market discovery
 - Community layer around live events and markets
@@ -12,7 +12,7 @@ CombatExpert is a niche product for combat sports users rather than a generic sp
 
 ## Why It Fits Azuro Affiliate Onboarding
 
-CombatExpert is positioned as an Azuro affiliate product, not just a protocol demo.
+BETAKER is positioned as an Azuro affiliate product, not just a protocol demo.
 
 - Azuro is used as the core betting and market layer
 - The product targets a defined user niche: combat sports fans
@@ -32,7 +32,7 @@ CombatExpert is positioned as an Azuro affiliate product, not just a protocol de
 - `@azuro-org/sdk` is used for market and betting integration
 - Affiliate configuration is served through `GET /api/public-config`
 - The current setup is built around Polygon + USDT flows
-- CombatExpert fetches preferred UFC and MMA games for a focused experience
+- BETAKER fetches preferred UFC and MMA games for a focused experience
 
 Relevant files:
 
