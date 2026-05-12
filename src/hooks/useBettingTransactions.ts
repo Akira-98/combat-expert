@@ -2,7 +2,7 @@ import { useBet, useBetTokenBalance } from '@azuro-org/sdk'
 import type { Address } from 'viem'
 import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
 import { claimBetParticipationPoints } from '../api/points'
-import { recordReferralReward } from '../api/referrals'
+import { awardPickSharePoints } from '../api/pickShares'
 import { useAppConfig } from '../config/useAppConfig'
 import { useBetHistory } from './useBetHistory'
 import { useBetRedeem } from './useBetRedeem'
@@ -12,7 +12,7 @@ import { translate } from '../i18n'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const POINT_CLAIM_RETRY_DELAYS_MS = [0, 3_000, 10_000]
-const REFERRAL_REWARD_RETRY_DELAYS_MS = [0, 3_000, 10_000]
+const PICK_SHARE_POINTS_RETRY_DELAYS_MS = [0, 3_000, 10_000]
 const SDK_FALLBACK_BET_AMOUNT = '1'
 
 function wait(ms: number) {
@@ -40,7 +40,7 @@ async function claimBetParticipationPointsWithRetry({ txHash, walletAddress }: {
   return lastResult
 }
 
-async function recordReferralRewardWithRetry({
+async function awardPickSharePointsWithRetry({
   shareId,
   txHash,
   bettorWallet,
@@ -51,12 +51,12 @@ async function recordReferralRewardWithRetry({
 }) {
   let lastResult
 
-  for (const [index, delay] of REFERRAL_REWARD_RETRY_DELAYS_MS.entries()) {
+  for (const [index, delay] of PICK_SHARE_POINTS_RETRY_DELAYS_MS.entries()) {
     if (delay > 0) await wait(delay)
 
-    lastResult = await recordReferralReward({ shareId, txHash, bettorWallet })
+    lastResult = await awardPickSharePoints({ shareId, txHash, bettorWallet })
     if (lastResult.status !== 'pending_indexing') return lastResult
-    if (index === REFERRAL_REWARD_RETRY_DELAYS_MS.length - 1) return lastResult
+    if (index === PICK_SHARE_POINTS_RETRY_DELAYS_MS.length - 1) return lastResult
   }
 
   return lastResult
@@ -75,10 +75,10 @@ type UseBettingTransactionsParams = {
   odds: Record<string, number>
   totalOdds: number
   slippage: number
-  activeReferralShareId?: string
+  activePickShareId?: string
   onBetSuccess: (receiptHash?: `0x${string}`) => void
   onBetPointsClaimed?: () => void
-  onReferralRewardRecorded?: () => void
+  onPickSharePointsAwarded?: () => void
 }
 
 export function useBettingTransactions({
@@ -90,10 +90,10 @@ export function useBettingTransactions({
   odds,
   totalOdds,
   slippage,
-  activeReferralShareId,
+  activePickShareId,
   onBetSuccess,
   onBetPointsClaimed,
-  onReferralRewardRecorded,
+  onPickSharePointsAwarded,
 }: UseBettingTransactionsParams) {
   const { transactionNotice, clearTransactionNotice, setSuccessNotice, setErrorNotice } = useTransactionNotice({
     mapErrorMessage: getFriendlyTransactionErrorMessage,
@@ -128,17 +128,17 @@ export function useBettingTransactions({
             console.warn('Failed to claim bet participation points', error)
           })
 
-        if (activeReferralShareId) {
-          void recordReferralRewardWithRetry({
-            shareId: activeReferralShareId,
+        if (activePickShareId) {
+          void awardPickSharePointsWithRetry({
+            shareId: activePickShareId,
             bettorWallet: address,
             txHash: receipt.transactionHash,
           })
             .then((result) => {
-              if (result?.ok) onReferralRewardRecorded?.()
+              if (result?.ok) onPickSharePointsAwarded?.()
             })
             .catch((error) => {
-              console.warn('Failed to record referral reward', error)
+              console.warn('Failed to award pick share points', error)
             })
         }
       }

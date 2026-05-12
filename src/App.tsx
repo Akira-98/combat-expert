@@ -88,7 +88,7 @@ function App() {
     marketSections,
     isBetHistoryPollingEnabled: shell.isMyBetsViewActive,
     refreshMarkets: market.retryMarkets,
-    onReferralGameSelected: setSelectedGameId,
+    onPickShareGameSelected: setSelectedGameId,
     onBetPointsClaimed: () => void points.refetch(),
   })
   const usdtTransfer = useUsdtTransfer({

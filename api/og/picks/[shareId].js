@@ -3,7 +3,7 @@ import { loadServerEnv } from '../../_lib/env.js'
 import { getParticipantImageUrls, getParticipantNames } from '../../_lib/marketOgImage.js'
 import { firstQueryValue, h, sendPngImage } from '../../_lib/ogImage.js'
 import { PicksOgImage } from '../../_lib/picksOgImage.js'
-import { fetchReferralShareById } from '../../_lib/referralStore.js'
+import { fetchPickShareById } from '../../_lib/pickShareStore.js'
 
 const FALLBACK_SHARE = {
   referrerWallet: '',
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 
   try {
     const { supabaseUrl, serviceRoleKey } = loadServerEnv()
-    const shareResult = await fetchReferralShareById({ supabaseUrl, serviceRoleKey, shareId })
+    const shareResult = await fetchPickShareById({ supabaseUrl, serviceRoleKey, shareId })
     if (!shareResult.ok) {
       await sendPicksImage(res, {})
       return

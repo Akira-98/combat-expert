@@ -1,10 +1,4 @@
 {
-  "crons": [
-    {
-      "path": "/api/referrals/rewards/sync",
-      "schedule": "0 3 * * *"
-    }
-  ],
   "rewrites": [
     {
       "source": "/share/market/:gameId",

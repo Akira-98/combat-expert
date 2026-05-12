@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Address } from 'viem'
 import { useBaseBetslip, useDetailedBetslip } from '@azuro-org/sdk'
-import { createReferralShare, fetchReferralShare } from '../api/referrals'
+import { createPickShare, fetchPickShare } from '../api/pickShares'
 import type { GameItem, MarketSection, OutcomeItem } from '../types/ui'
 import { buildBettingDerivedState, clampSlippage } from './useBetting.helpers'
 import { useBetSubmission } from './useBetSubmission'
@@ -9,8 +9,9 @@ import { useBettingSelectionState } from './useBettingSelectionState'
 import { useBettingTransactions } from './useBettingTransactions'
 
 const DEFAULT_SLIPPAGE = 3
-const REFERRAL_SHARE_ROUTE_PREFIX = '/share/picks/'
-const ACTIVE_REFERRAL_SHARE_STORAGE_KEY = 'betaker.activeReferralShareId'
+const PICK_SHARE_ROUTE_PREFIX = '/share/picks/'
+const ACTIVE_PICK_SHARE_STORAGE_KEY = 'betaker.activePickShareId'
+const LEGACY_ACTIVE_REFERRAL_SHARE_STORAGE_KEY = 'betaker.activeReferralShareId'
 const SHARE_MESSAGE_TIMEOUT_MS = 3000
 
 type ShareMessage = 'copied' | 'shared' | 'failed'
@@ -22,7 +23,7 @@ type UseBettingParams = {
   marketSections: MarketSection[]
   isBetHistoryPollingEnabled?: boolean
   refreshMarkets?: () => void
-  onReferralGameSelected?: (gameId: string) => void
+  onPickShareGameSelected?: (gameId: string) => void
   onBetPointsClaimed?: () => void
 }
 
@@ -54,17 +55,17 @@ function isShareAbortError(error: unknown) {
   return error instanceof DOMException && error.name === 'AbortError'
 }
 
-function getReferralShareIdFromLocation(location: Location) {
+function getPickShareIdFromLocation(location: Location) {
   const pathname = location.pathname
-  if (pathname.startsWith(REFERRAL_SHARE_ROUTE_PREFIX)) {
-    const encodedShareId = pathname.slice(REFERRAL_SHARE_ROUTE_PREFIX.length).split('/')[0]
+  if (pathname.startsWith(PICK_SHARE_ROUTE_PREFIX)) {
+    const encodedShareId = pathname.slice(PICK_SHARE_ROUTE_PREFIX.length).split('/')[0]
     return encodedShareId ? decodeURIComponent(encodedShareId) : ''
   }
 
   return new URLSearchParams(location.search).get('shareId') || ''
 }
 
-function buildReferralSelections(
+function buildPickShareSelections(
   items: { conditionId: string; outcomeId: string; gameId: string; isExpressForbidden?: boolean }[],
   selectionItems: { conditionId: string; outcomeId: string; gameTitle: string; label: string; odds: number }[],
 ) {
@@ -92,13 +93,15 @@ export function useBetting({
   marketSections,
   isBetHistoryPollingEnabled = false,
   refreshMarkets,
-  onReferralGameSelected,
+  onPickShareGameSelected,
   onBetPointsClaimed,
 }: UseBettingParams) {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
-  const [activeReferralShareId, setActiveReferralShareId] = useState<string | undefined>(() => {
+  const [activePickShareId, setActivePickShareId] = useState<string | undefined>(() => {
     if (typeof window === 'undefined') return undefined
-    return window.localStorage.getItem(ACTIVE_REFERRAL_SHARE_STORAGE_KEY) || undefined
+    return window.localStorage.getItem(ACTIVE_PICK_SHARE_STORAGE_KEY)
+      || window.localStorage.getItem(LEGACY_ACTIVE_REFERRAL_SHARE_STORAGE_KEY)
+      || undefined
   })
   const [shareState, setShareState] = useState<{ isPending: boolean; message?: ShareMessage }>({ isPending: false })
   const { items, addItem, clear, removeItem } = useBaseBetslip()
@@ -128,12 +131,13 @@ export function useBetting({
     odds,
     totalOdds,
     slippage,
-    activeReferralShareId,
+    activePickShareId,
     onBetPointsClaimed,
-    onReferralRewardRecorded: () => {
-      setActiveReferralShareId(undefined)
+    onPickSharePointsAwarded: () => {
+      setActivePickShareId(undefined)
       if (typeof window !== 'undefined') {
-        window.localStorage.removeItem(ACTIVE_REFERRAL_SHARE_STORAGE_KEY)
+        window.localStorage.removeItem(ACTIVE_PICK_SHARE_STORAGE_KEY)
+        window.localStorage.removeItem(LEGACY_ACTIVE_REFERRAL_SHARE_STORAGE_KEY)
       }
     },
     onBetSuccess: () => {
@@ -166,12 +170,12 @@ export function useBetting({
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const shareId = getReferralShareIdFromLocation(window.location)
+    const shareId = getPickShareIdFromLocation(window.location)
     if (!shareId) return
 
     let isCanceled = false
 
-    void fetchReferralShare(shareId)
+    void fetchPickShare(shareId)
       .then((share) => {
         if (isCanceled) return
 
@@ -180,7 +184,7 @@ export function useBetting({
         selectionState.rememberSharedSelectionMeta(share.selections)
         const sharedGameId = share.selections.find((selection) => selection.gameId)?.gameId
         if (sharedGameId) {
-          onReferralGameSelected?.(sharedGameId)
+          onPickShareGameSelected?.(sharedGameId)
         }
         for (const selection of share.selections) {
           addItem({
@@ -191,18 +195,19 @@ export function useBetting({
           })
         }
 
-        setActiveReferralShareId(share.id)
-        window.localStorage.setItem(ACTIVE_REFERRAL_SHARE_STORAGE_KEY, share.id)
+        setActivePickShareId(share.id)
+        window.localStorage.setItem(ACTIVE_PICK_SHARE_STORAGE_KEY, share.id)
+        window.localStorage.removeItem(LEGACY_ACTIVE_REFERRAL_SHARE_STORAGE_KEY)
         window.history.replaceState({}, '', '/')
       })
       .catch((error) => {
-        console.warn('Failed to load referral share', error)
+        console.warn('Failed to load pick share', error)
       })
 
     return () => {
       isCanceled = true
     }
-  }, [addItem, clear, onReferralGameSelected, selectionState])
+  }, [addItem, clear, onPickShareGameSelected, selectionState])
 
   const approvePending = transactions.approveTx.isPending || transactions.approveTx.isProcessing
   const betPending = transactions.betTx.isPending || transactions.betTx.isProcessing
@@ -241,9 +246,9 @@ export function useBetting({
     setShareState({ isPending: true })
 
     try {
-      const result = await createReferralShare({
-        referrerWallet: address,
-        selections: buildReferralSelections(items, selectionState.selectionItems),
+      const result = await createPickShare({
+        sharerWallet: address,
+        selections: buildPickShareSelections(items, selectionState.selectionItems),
       })
 
       if (navigator.share) {
@@ -276,7 +281,7 @@ export function useBetting({
       await copyTextToClipboard(result.shareUrl)
       setShareState({ isPending: false, message: 'copied' })
     } catch (error) {
-      console.warn('Failed to create referral share', error)
+      console.warn('Failed to create pick share', error)
       setShareState({ isPending: false, message: 'failed' })
     }
   }

@@ -1,5 +1,5 @@
 import { loadServerEnv } from '../../_lib/env.js'
-import { fetchReferralShareById } from '../../_lib/referralStore.js'
+import { fetchPickShareById } from '../../_lib/pickShareStore.js'
 import { firstQueryValue, sendShareHtml, SITE_URL } from '../../_lib/shareHtml.js'
 
 const DEFAULT_TITLE = 'BETAKER Picks'
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
 
   try {
     const { supabaseUrl, serviceRoleKey } = loadServerEnv()
-    const result = await fetchReferralShareById({ supabaseUrl, serviceRoleKey, shareId })
+    const result = await fetchPickShareById({ supabaseUrl, serviceRoleKey, shareId })
     if (result.ok) description = buildDescription(result.share)
   } catch (error) {
     console.error(error)

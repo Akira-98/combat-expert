@@ -376,3 +376,40 @@ export async function createPendingReferralReward({
     reward: mapReferralReward(firstRow(rows)),
   }
 }
+
+export function validatePickShareBet({
+  share,
+  bettorWallet,
+  txHash,
+  bet,
+}) {
+  const normalizedBettorWallet = normalizeAddress(bettorWallet)
+  const normalizedTxHash = normalizeTxHash(txHash)
+
+  if (!share?.id || !share.referrerWallet) {
+    return { ok: false, status: 'invalid_share', error: 'Invalid pick share' }
+  }
+
+  if (!normalizedBettorWallet) {
+    return { ok: false, status: 'invalid_bettor_wallet', error: 'Invalid bettor wallet' }
+  }
+
+  if (!normalizedTxHash) {
+    return { ok: false, status: 'invalid_tx_hash', error: 'Invalid transaction hash' }
+  }
+
+  if (share.referrerWallet === normalizedBettorWallet) {
+    return { ok: false, status: 'self_share', error: 'Self share points are not allowed' }
+  }
+
+  if (!doSelectionsMatch(share.selections, bet.selections)) {
+    return { ok: false, status: 'selection_mismatch', error: 'Bet selections do not match the shared picks' }
+  }
+
+  return {
+    ok: true,
+    referrerWallet: share.referrerWallet,
+    bettorWallet: normalizedBettorWallet,
+    txHash: normalizedTxHash,
+  }
+}
