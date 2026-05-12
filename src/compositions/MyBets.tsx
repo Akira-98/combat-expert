@@ -116,9 +116,9 @@ function MyBetListItem({
   const summary = getBetSummary(bet, t)
 
   return (
-    <li className="card-surface-soft card-shell ui-text-body p-2 text-sm md:p-2.5">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 space-y-1">
+    <li className="card-surface-soft card-shell ui-text-body min-w-0 p-2 text-sm md:p-2.5">
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1 basis-44 space-y-1">
           <p className="ui-text-strong m-0 truncate text-sm font-semibold">{gameTitle}</p>
           <p className="ui-text-body m-0 truncate text-xs">{summary}</p>
           <p className="ui-text-strong m-0 text-base font-semibold">{t('myBets.amount', { amount: bet.amount })}</p>
@@ -126,12 +126,13 @@ function MyBetListItem({
             #{bet.tokenId} | {t('myBets.status', { status: bet.status ?? '-' })}
           </p>
         </div>
-        <div className="grid shrink-0 gap-1.5">
+        <div className="grid min-w-0 shrink-0 gap-1.5 max-[380px]:w-full">
           <button
-            className="ui-btn-primary whitespace-nowrap rounded-md border px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
+            className="ui-btn-primary min-w-0 truncate rounded-md border px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!canRedeem || isRedeemDisabled}
             onClick={() => onRedeemBet(bet)}
             type="button"
+            title={actionLabel}
           >
             {actionLabel}
           </button>
