@@ -147,7 +147,6 @@ export function AccountPanel({
                     {t('account.freebetsEarliestExpiry', { date: freebetSummary.earliestExpiry })}
                   </p>
                 )}
-                <p className="ui-text-muted mt-1 mb-0 text-xs">{t('account.freebetsUseHint')}</p>
               </>
             ) : (
               <p className="ui-text-muted mt-1 mb-0 text-xs">{t('account.freebetsEmpty')}</p>

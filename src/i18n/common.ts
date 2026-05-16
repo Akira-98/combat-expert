@@ -34,7 +34,6 @@ export const enCommonMessages: LocaleMessages = {
   'account.freebetsEmpty': 'No available freebets.',
   'account.freebetsSummary': '{count} available - {amount} USDT',
   'account.freebetsEarliestExpiry': 'Earliest expires {date}',
-  'account.freebetsUseHint': 'Select a market to use eligible freebets in the betslip.',
   'points.total': '{count}P',
   'points.loadingFailed': 'Failed to load points.',
   'points.claimFailed': 'Failed to claim points.',
