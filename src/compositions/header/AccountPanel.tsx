@@ -1,8 +1,13 @@
 import { useState } from 'react'
+import { useBonuses } from '@azuro-org/sdk'
+import { BonusStatus } from '@azuro-org/toolkit'
+import type { Address } from 'viem'
+import { useAppConfig } from '../../config/useAppConfig'
 import { normalizeProfileNickname } from '../../helpers/profile'
 import { shortenAddress } from '../../helpers/walletUi'
-import type { RankingViewer } from '../../hooks/useRankings'
 import { useI18n } from '../../i18n'
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 type AccountPanelProps = {
   address?: `0x${string}`
@@ -12,8 +17,6 @@ type AccountPanelProps = {
   isProfileSaving: boolean
   profileErrorMessage?: string
   onSaveNickname: (nickname: string) => Promise<unknown>
-  rankingViewer: RankingViewer | null
-  isRankingLoading: boolean
   totalPoints: number
   isPointsLoading: boolean
   usdtBalanceLabel: string
@@ -23,7 +26,6 @@ type AccountPanelProps = {
   onCopyAddress: () => void
   onDisconnect: () => void
   onClose: () => void
-  onOpenRanking: () => void
 }
 
 export function AccountPanel({
@@ -34,8 +36,6 @@ export function AccountPanel({
   isProfileSaving,
   profileErrorMessage,
   onSaveNickname,
-  rankingViewer,
-  isRankingLoading,
   totalPoints,
   isPointsLoading,
   usdtBalanceLabel,
@@ -45,16 +45,24 @@ export function AccountPanel({
   onCopyAddress,
   onDisconnect,
   onClose,
-  onOpenRanking,
 }: AccountPanelProps) {
   const { t } = useI18n()
-  void onOpenRanking
+  const { affiliateAddress } = useAppConfig()
+  const { data: freebets = [], isLoading: isFreebetsLoading } = useBonuses({
+    account: (address || ZERO_ADDRESS) as Address,
+    affiliate: affiliateAddress as Address,
+    bonusStatus: BonusStatus.Available,
+    query: {
+      enabled: Boolean(address && affiliateAddress),
+    },
+  })
   const smallIconButtonClass = `${iconButtonClass} h-7 w-7 rounded-full border`
   const rowClass = 'ui-divider-faint flex items-start justify-between gap-3 border-b py-3 last:border-b-0 last:pb-0'
   const copyToastClass =
     copyLabel === 'copied'
       ? 'ui-state-success absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border px-2 py-1 text-[10px] font-semibold shadow-lg'
       : 'ui-state-danger absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border px-2 py-1 text-[10px] font-semibold shadow-lg'
+  const freebetSummary = getFreebetSummary(freebets)
 
   return (
     <section className="grid gap-4">
@@ -126,30 +134,23 @@ export function AccountPanel({
 
         <section className={rowClass}>
           <div className="min-w-0">
-            <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('account.myRanking')}</p>
-            {isRankingLoading ? (
-              <p className="ui-text-muted mt-1 mb-0 text-xs">{t('ranking.loading')}</p>
-            ) : rankingViewer ? (
-              <p className="ui-text-strong mt-2 mb-0 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold">
-                <span>{`#${rankingViewer.rank}`}</span>
-                <span aria-hidden="true" className="ui-text-muted text-xs font-medium">
-                  |
-                </span>
-                <span>{`${formatRankingScore(rankingViewer.totalScore)} ${t('ranking.totalScore')}`}</span>
-                <span aria-hidden="true" className="ui-text-muted text-xs font-medium">
-                  |
-                </span>
-                <span>{t('ranking.winsLosses', { wins: rankingViewer.winCount, losses: rankingViewer.loseCount })}</span>
-                <span aria-hidden="true" className="ui-text-muted text-xs font-medium">
-                  |
-                </span>
-                <span>{t('ranking.predictions', { count: rankingViewer.eventCount })}</span>
-              </p>
-            ) : (
+            <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('account.freebets')}</p>
+            {isFreebetsLoading ? (
+              <p className="ui-text-muted mt-1 mb-0 text-xs">{t('account.freebetsChecking')}</p>
+            ) : freebetSummary.count > 0 ? (
               <>
-                <p className="ui-text-strong mt-1 mb-0 text-sm font-semibold">{t('ranking.comingSoonTitle')}</p>
-                <p className="ui-text-muted mt-1 mb-0 text-xs">{t('ranking.comingSoonDescription')}</p>
+                <p className="ui-text-strong mt-1 mb-0 text-sm font-semibold">
+                  {t('account.freebetsSummary', { count: freebetSummary.count, amount: freebetSummary.totalAmount })}
+                </p>
+                {freebetSummary.earliestExpiry && (
+                  <p className="ui-text-muted mt-1 mb-0 text-xs">
+                    {t('account.freebetsEarliestExpiry', { date: freebetSummary.earliestExpiry })}
+                  </p>
+                )}
+                <p className="ui-text-muted mt-1 mb-0 text-xs">{t('account.freebetsUseHint')}</p>
               </>
+            ) : (
+              <p className="ui-text-muted mt-1 mb-0 text-xs">{t('account.freebetsEmpty')}</p>
             )}
           </div>
         </section>
@@ -158,8 +159,39 @@ export function AccountPanel({
   )
 }
 
-function formatRankingScore(score: number) {
-  return Math.round(score).toLocaleString('en-US')
+function getFreebetSummary(freebets: { amount: string; expiresAt: number }[]) {
+  const count = freebets.length
+  const total = freebets.reduce((sum, freebet) => {
+    const amount = Number(freebet.amount)
+    return Number.isFinite(amount) ? sum + amount : sum
+  }, 0)
+  const earliestExpiresAt = freebets.reduce<number | undefined>((earliest, freebet) => {
+    if (!Number.isFinite(freebet.expiresAt)) return earliest
+    if (earliest === undefined) return freebet.expiresAt
+    return Math.min(earliest, freebet.expiresAt)
+  }, undefined)
+
+  return {
+    count,
+    totalAmount: formatFreebetAmount(total),
+    earliestExpiry: earliestExpiresAt ? formatFreebetExpiry(earliestExpiresAt) : undefined,
+  }
+}
+
+function formatFreebetAmount(amount: number) {
+  return new Intl.NumberFormat(undefined, {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+  }).format(amount)
+}
+
+function formatFreebetExpiry(expiresAt: number) {
+  return new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(expiresAt))
 }
 
 type InlineNicknameEditorProps = {

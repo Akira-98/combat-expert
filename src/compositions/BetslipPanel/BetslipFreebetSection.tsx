@@ -36,11 +36,13 @@ export function BetslipFreebetSection({
   if (!isOpen) return null
 
   const availableFreebets = freebets ?? []
+  const actionButtonClass =
+    'btn-shell inline-flex h-7 shrink-0 items-center justify-center px-2.5 text-[11px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-60'
 
   return (
-    <div className="card-surface card-shell space-y-2 p-3 md:rounded-lg">
+    <div className="card-surface card-shell space-y-2 p-2.5 md:rounded-lg">
       <div className="flex items-center justify-between gap-3">
-        <span className="ui-text-strong text-sm font-semibold">{t('betslip.freebets')}</span>
+        <span className="ui-text-strong text-xs font-semibold uppercase tracking-[0.16em]">{t('betslip.freebets')}</span>
         {isLoading && <span className="ui-text-muted text-xs">{t('betslip.freebetsChecking')}</span>}
       </div>
 
@@ -49,7 +51,7 @@ export function BetslipFreebetSection({
       )}
 
       {availableFreebets.length > 0 && (
-        <div className="grid gap-2">
+        <div className="grid gap-1.5">
           {availableFreebets.map((freebet) => {
             const isSelected = selectedFreebet?.id === freebet.id
             const payoutMode = freebet.params.isSponsoredBetReturnable
@@ -57,23 +59,30 @@ export function BetslipFreebetSection({
               : t('betslip.freebetProfitOnly')
 
             return (
-              <button
+              <div
                 key={freebet.id}
-                className={`rounded-md border p-2 text-left transition md:rounded-lg ${
-                  isSelected ? 'ui-btn-primary' : 'ui-btn-secondary'
+                className={`flex items-center justify-between gap-2 rounded-md border px-2.5 py-2 ${
+                  isSelected
+                    ? 'border-[color:color-mix(in_srgb,var(--app-accent)_60%,transparent)] bg-[color:color-mix(in_srgb,var(--app-accent)_14%,transparent)] text-[color:var(--app-text-strong)]'
+                    : 'border-[color:var(--app-border)] bg-[color:color-mix(in_srgb,var(--app-surface-soft)_80%,transparent)]'
                 }`}
-                onClick={() => onSelectFreebet(isSelected ? undefined : freebet)}
-                type="button"
               >
-                <span className="flex items-center justify-between gap-2">
-                  <strong className="text-sm">{t('betslip.freebetAmount', { amount: formatAmount(freebet.amount) })}</strong>
-                  <span className="text-xs font-semibold">{isSelected ? t('betslip.freebetSelected') : t('betslip.freebetUse')}</span>
+                <span className="min-w-0">
+                  <strong className="ui-text-strong block truncate text-xs font-semibold">
+                    {t('betslip.freebetAmount', { amount: formatAmount(freebet.amount) })}
+                  </strong>
+                  <span className="ui-text-muted mt-0.5 block truncate text-[11px]">
+                    {payoutMode} · {t('betslip.freebetExpires', { date: formatExpiry(freebet.expiresAt) })}
+                  </span>
                 </span>
-                <span className="mt-1 flex flex-wrap gap-x-2 gap-y-1 text-xs opacity-80">
-                  <span>{payoutMode}</span>
-                  <span>{t('betslip.freebetExpires', { date: formatExpiry(freebet.expiresAt) })}</span>
-                </span>
-              </button>
+                <button
+                  className={`${actionButtonClass} ${isSelected ? 'ui-btn-primary' : 'ui-btn-secondary'}`}
+                  onClick={() => onSelectFreebet(isSelected ? undefined : freebet)}
+                  type="button"
+                >
+                  {isSelected ? t('betslip.freebetSelected') : t('betslip.freebetUse')}
+                </button>
+              </div>
             )
           })}
         </div>

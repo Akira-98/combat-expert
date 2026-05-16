@@ -127,8 +127,6 @@ function App() {
             usdtBalance={usdtTransfer.balance}
             isUsdtBalanceLoading={usdtTransfer.isBalanceLoading}
             isUsdtSupportedChain={usdtTransfer.isSupportedChain}
-            rankingViewer={null}
-            isRankingLoading={false}
             totalPoints={points.totalPoints}
             isPointsLoading={points.isLoading}
             onTitleClick={shell.handleNavigateToExplore}

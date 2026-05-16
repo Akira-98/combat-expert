@@ -81,6 +81,9 @@ export function BetslipPanel({
   const primarySubmitButtonClass =
     'ui-btn-primary btn-shell md:btn-shell-lg w-full px-3 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50'
   const selectionLabel = bet.selections.length <= 1 ? t('betslip.single') : t('betslip.combo', { count: bet.selections.length })
+  const shouldShowFreebets = wallet.isConnected
+    && bet.selections.length > 0
+    && (Boolean(bet.isFreebetsFetching) || Boolean(bet.freebets?.length) || Boolean(bet.selectedFreebet))
   const panelState = useBetslipPanelState({
     wallet,
     bet,
@@ -167,7 +170,7 @@ export function BetslipPanel({
             freebets={bet.freebets}
             selectedFreebet={bet.selectedFreebet}
             isLoading={bet.isFreebetsFetching}
-            isOpen={wallet.isConnected && bet.selections.length > 0}
+            isOpen={shouldShowFreebets}
             onSelectFreebet={actions.onSelectFreebet}
           />
 

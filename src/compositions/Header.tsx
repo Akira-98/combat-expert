@@ -1,6 +1,5 @@
 import { createPortal } from 'react-dom'
 import { useHeaderController } from '../hooks/useHeaderController'
-import type { RankingViewer } from '../hooks/useRankings'
 import type { useUsdtTransfer } from '../hooks/useUsdtTransfer'
 import { useI18n } from '../i18n'
 import { AccountPanel } from './header/AccountPanel'
@@ -25,8 +24,6 @@ type HeaderProps = {
   usdtBalance?: number
   isUsdtBalanceLoading?: boolean
   isUsdtSupportedChain?: boolean
-  rankingViewer: RankingViewer | null
-  isRankingLoading: boolean
   totalPoints: number
   isPointsLoading: boolean
   canOpenAuthModal: boolean
@@ -58,8 +55,6 @@ export function Header({
   usdtBalance,
   isUsdtBalanceLoading,
   isUsdtSupportedChain,
-  rankingViewer,
-  isRankingLoading,
   totalPoints,
   isPointsLoading,
   canOpenAuthModal,
@@ -111,8 +106,6 @@ export function Header({
       isProfileSaving={isProfileSaving}
       profileErrorMessage={profileErrorMessage}
       onSaveNickname={onSaveNickname}
-      rankingViewer={rankingViewer}
-      isRankingLoading={isRankingLoading}
       totalPoints={totalPoints}
       isPointsLoading={isPointsLoading}
       usdtBalanceLabel={controller.usdtBalanceLabel}
@@ -122,7 +115,6 @@ export function Header({
       onCopyAddress={controller.handleCopyAddress}
       onDisconnect={controller.handleDisconnect}
       onClose={controller.closeAccountModal}
-      onOpenRanking={controller.handleRankingNavigation}
     />
   )
 

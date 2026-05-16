@@ -1,6 +1,5 @@
 import { Header } from './Header'
 import type { useProfile } from '../hooks/useProfile'
-import type { RankingViewer } from '../hooks/useRankings'
 import type { useUsdtTransfer } from '../hooks/useUsdtTransfer'
 import type { useWalletConnection } from '../hooks/useWalletConnection'
 
@@ -11,8 +10,6 @@ type AppHeaderContainerProps = {
   usdtBalance: number
   isUsdtBalanceLoading: boolean
   isUsdtSupportedChain: boolean
-  rankingViewer: RankingViewer | null
-  isRankingLoading: boolean
   totalPoints: number
   isPointsLoading: boolean
   onTitleClick: () => void
@@ -29,8 +26,6 @@ export function AppHeaderContainer({
   usdtBalance,
   isUsdtBalanceLoading,
   isUsdtSupportedChain,
-  rankingViewer,
-  isRankingLoading,
   totalPoints,
   isPointsLoading,
   onTitleClick,
@@ -58,8 +53,6 @@ export function AppHeaderContainer({
       usdtBalance={usdtBalance}
       isUsdtBalanceLoading={isUsdtBalanceLoading}
       isUsdtSupportedChain={isUsdtSupportedChain}
-      rankingViewer={rankingViewer}
-      isRankingLoading={isRankingLoading}
       totalPoints={totalPoints}
       isPointsLoading={isPointsLoading}
       canOpenAuthModal={wallet.canOpenAuthModal}
