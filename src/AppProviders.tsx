@@ -63,7 +63,7 @@ export function AppProviders({ runtimeConfig }: { runtimeConfig: RuntimeConfig }
           <QueryClientProvider client={queryClient}>
             <WagmiProvider config={wagmiConfig}>
               <AzuroSdkSocialAaConnectorProvider>
-                <AzuroSDKProvider initialChainId={polygon.id}>
+                <AzuroSDKProvider initialChainId={polygon.id} affiliate={runtimeConfig.affiliateAddress as `0x${string}`}>
                   <App />
                 </AzuroSDKProvider>
               </AzuroSdkSocialAaConnectorProvider>

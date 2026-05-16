@@ -1,9 +1,11 @@
+import type { Freebet } from '@azuro-org/toolkit'
 import type { SelectionItem } from '../../types/ui'
 import type { TransactionNotice, TransactionStep } from '../../helpers/betslipUi'
 import { useI18n } from '../../i18n'
 import { selectionKey } from '../../helpers/mappers'
 import { useBetslipPanelState } from '../../hooks/useBetslipPanelState'
 import { BetslipAmountSection } from './BetslipAmountSection'
+import { BetslipFreebetSection } from './BetslipFreebetSection'
 import { BetslipSlippageSettings } from './BetslipSlippageSettings'
 import { BetslipSummarySection } from './BetslipSummarySection'
 
@@ -20,6 +22,9 @@ export type BetslipPanelBetState = {
   slippage: number
   totalOdds: number
   possibleWin: number
+  freebets?: Freebet[] | null
+  selectedFreebet?: Freebet
+  isFreebetsFetching?: boolean
   canBet: boolean
   isApproveRequired: boolean
   approvePending: boolean
@@ -40,6 +45,7 @@ export type BetslipPanelBetState = {
 export type BetslipPanelActions = {
   onConnectWallet: () => void
   onBetAmountChange: (value: string) => void
+  onSelectFreebet: (freebet?: Freebet) => void
   onSlippageChange: (value: number) => void
   onSubmit: () => void
   onShare: () => void
@@ -151,7 +157,19 @@ export function BetslipPanel({
         )}
 
         <div className={footerClassName}>
-          <BetslipAmountSection betAmount={bet.betAmount} onBetAmountChange={actions.onBetAmountChange} />
+          <BetslipAmountSection
+            betAmount={bet.betAmount}
+            onBetAmountChange={actions.onBetAmountChange}
+            isLocked={Boolean(bet.selectedFreebet)}
+          />
+
+          <BetslipFreebetSection
+            freebets={bet.freebets}
+            selectedFreebet={bet.selectedFreebet}
+            isLoading={bet.isFreebetsFetching}
+            isOpen={wallet.isConnected && bet.selections.length > 0}
+            onSelectFreebet={actions.onSelectFreebet}
+          />
 
           <BetslipSlippageSettings
             isOpen={panelState.isSettingsOpen}

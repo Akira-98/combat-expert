@@ -1,4 +1,5 @@
 import { useBet, useBetTokenBalance } from '@azuro-org/sdk'
+import type { Freebet } from '@azuro-org/toolkit'
 import type { Address } from 'viem'
 import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
 import { claimBetParticipationPoints } from '../api/points'
@@ -75,6 +76,7 @@ type UseBettingTransactionsParams = {
   odds: Record<string, number>
   totalOdds: number
   slippage: number
+  selectedFreebet?: Freebet
   activePickShareId?: string
   onBetSuccess: (receiptHash?: `0x${string}`) => void
   onBetPointsClaimed?: () => void
@@ -90,6 +92,7 @@ export function useBettingTransactions({
   odds,
   totalOdds,
   slippage,
+  selectedFreebet,
   activePickShareId,
   onBetSuccess,
   onBetPointsClaimed,
@@ -114,6 +117,7 @@ export function useBettingTransactions({
     selections: items,
     odds,
     totalOdds,
+    freebet: selectedFreebet,
     onSuccess: (receipt) => {
       onBetSuccess(receipt?.transactionHash)
       if (address && receipt?.transactionHash) {

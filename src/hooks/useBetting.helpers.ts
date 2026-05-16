@@ -8,6 +8,12 @@ import {
 type BuildBettingDerivedStateParams = {
   betAmount: string
   totalOdds: number
+  selectedFreebet?: {
+    amount: string
+    params?: {
+      isSponsoredBetReturnable?: boolean
+    }
+  }
   tokenBalanceRaw?: string
   minBet?: number
   maxBet?: number
@@ -44,11 +50,17 @@ export function buildBettingDerivedState({
   approveTxPending,
   betTxPending,
   betReceiptReady,
+  selectedFreebet,
 }: BuildBettingDerivedStateParams) {
   const amountNum = Number(betAmount || '0')
   const balance = Number(tokenBalanceRaw ?? '0')
   const tokenBalance = Number.isFinite(balance) ? balance : undefined
-  const possibleWin = Number.isFinite(amountNum) && amountNum > 0 ? amountNum * totalOdds : 0
+  const isFreebetSelected = Boolean(selectedFreebet)
+  const possibleWin = Number.isFinite(amountNum) && amountNum > 0
+    ? isFreebetSelected
+      ? amountNum * totalOdds - (selectedFreebet?.params?.isSponsoredBetReturnable ? 0 : amountNum)
+      : amountNum * totalOdds
+    : 0
 
   const canBet =
     isConnected && itemCount > 0 && isBetAllowed && amountNum > 0 && !approveTxPending && !betTxPending
@@ -65,6 +77,7 @@ export function buildBettingDerivedState({
       maxBet,
       balance: tokenBalance,
       isConnected,
+      isFreebetSelected,
     }),
     uiBlockHint: getUiBlockHint({
       isProcessing,
@@ -80,6 +93,7 @@ export function buildBettingDerivedState({
       selectionCount: itemCount,
       amountNum,
       isApproveRequired,
+      isFreebetSelected,
     }),
     transactionSteps: getTransactionSteps({
       isApproveRequired,

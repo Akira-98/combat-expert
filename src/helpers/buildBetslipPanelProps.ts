@@ -22,6 +22,9 @@ export function buildBetslipPanelProps({
       slippage: betting.slippage,
       totalOdds: betting.totalOdds,
       possibleWin: betting.possibleWin,
+      freebets: betting.freebets,
+      selectedFreebet: betting.selectedFreebet,
+      isFreebetsFetching: betting.isFreebetsFetching,
       canBet: betting.canBet,
       isApproveRequired: betting.isApproveRequired,
       approvePending: betting.approvePending,
@@ -41,6 +44,7 @@ export function buildBetslipPanelProps({
     actions: {
       onConnectWallet: wallet.openAuthModal,
       onBetAmountChange: betting.setBetAmount,
+      onSelectFreebet: betting.selectFreebet,
       onSlippageChange: betting.setSlippage,
       onSubmit: betting.submitBet,
       onShare: wallet.isConnected ? betting.shareBetslip : wallet.openAuthModal,

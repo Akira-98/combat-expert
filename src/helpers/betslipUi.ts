@@ -4,6 +4,7 @@ type AmountValidationParams = {
   maxBet?: number
   balance?: number
   isConnected: boolean
+  isFreebetSelected?: boolean
 }
 
 type UiBlockHintParams = {
@@ -21,6 +22,7 @@ type SubmitLabelParams = {
   selectionCount: number
   amountNum: number
   isApproveRequired: boolean
+  isFreebetSelected?: boolean
 }
 
 export type TransactionStepId = 'approve' | 'bet'
@@ -46,6 +48,7 @@ export const getAmountValidationMessage = ({
   maxBet,
   balance,
   isConnected,
+  isFreebetSelected,
 }: AmountValidationParams) => {
   const hasAmountInput = betAmount.trim().length > 0
   if (!hasAmountInput) return undefined
@@ -60,7 +63,7 @@ export const getAmountValidationMessage = ({
   if (typeof maxBet === 'number' && parsedAmount > maxBet) {
     return translate('betslip.error.maxBet', { amount: maxBet.toFixed(4) })
   }
-  if (isConnected && typeof balance === 'number' && Number.isFinite(balance) && balance > 0 && parsedAmount > balance) {
+  if (!isFreebetSelected && isConnected && typeof balance === 'number' && Number.isFinite(balance) && balance > 0 && parsedAmount > balance) {
     return translate('betslip.error.insufficientBalance', { amount: balance.toFixed(4) })
   }
 
@@ -89,11 +92,13 @@ export const getSubmitLabel = ({
   selectionCount,
   amountNum,
   isApproveRequired,
+  isFreebetSelected,
 }: SubmitLabelParams) => {
   if (isProcessing) return translate('common.processing')
   if (!isConnected) return translate('header.connectWallet')
   if (selectionCount === 0) return translate('betslip.submit.bet')
   if (!(amountNum > 0)) return translate('betslip.submit.enterAmount')
+  if (isFreebetSelected) return translate('betslip.submit.freebet')
   if (isApproveRequired) return translate('betslip.submit.approve')
   return translate('betslip.submit.bet')
 }

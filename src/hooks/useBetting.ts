@@ -113,6 +113,10 @@ export function useBetting({
     disableReason,
     minBet,
     maxBet,
+    freebets,
+    selectedFreebet,
+    selectFreebet,
+    isFreebetsFetching,
     isMaxBetFetching,
   } = useDetailedBetslip()
   const selectionState = useBettingSelectionState({
@@ -131,6 +135,7 @@ export function useBetting({
     odds,
     totalOdds,
     slippage,
+    selectedFreebet,
     activePickShareId,
     onBetPointsClaimed,
     onPickSharePointsAwarded: () => {
@@ -156,6 +161,12 @@ export function useBetting({
 
     return () => window.clearTimeout(timeoutId)
   }, [shareState.message])
+
+  useEffect(() => {
+    if (!selectedFreebet || !Array.isArray(freebets)) return
+    if (freebets.some((freebet) => freebet.id === selectedFreebet.id)) return
+    selectFreebet(undefined)
+  }, [freebets, selectFreebet, selectedFreebet])
 
   useEffect(() => {
     if (!selectionState.sdkConditionStateMismatch) {
@@ -215,6 +226,7 @@ export function useBetting({
     buildBettingDerivedState({
       betAmount,
       totalOdds,
+      selectedFreebet,
       tokenBalanceRaw: transactions.betTokenBalanceData?.balance,
       minBet,
       maxBet,
@@ -304,6 +316,9 @@ export function useBetting({
     betAmount,
     totalOdds,
     possibleWin,
+    freebets,
+    selectedFreebet,
+    isFreebetsFetching,
     canBet,
     isApproveRequired: transactions.isApproveRequired,
     approvePending,
@@ -323,6 +338,7 @@ export function useBetting({
     selectOutcome,
     shareBetslip,
     setBetAmount: changeBetAmount,
+    selectFreebet,
     setSlippage: (value: number) => {
       const next = clampSlippage(value)
       if (next === undefined) return

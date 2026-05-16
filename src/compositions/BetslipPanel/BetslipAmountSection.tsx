@@ -3,12 +3,13 @@ import { useI18n } from '../../i18n'
 type BetslipAmountSectionProps = {
   betAmount: string
   onBetAmountChange: (value: string) => void
+  isLocked?: boolean
 }
 
 const chipClass =
   'ui-chip-secondary btn-pill px-3 py-1.5 text-xs font-semibold transition'
 
-export function BetslipAmountSection({ betAmount, onBetAmountChange }: BetslipAmountSectionProps) {
+export function BetslipAmountSection({ betAmount, onBetAmountChange, isLocked = false }: BetslipAmountSectionProps) {
   const { t } = useI18n()
   const currentAmount = Number(betAmount || '0')
 
@@ -27,10 +28,12 @@ export function BetslipAmountSection({ betAmount, onBetAmountChange }: BetslipAm
           onChange={(e) => onBetAmountChange(e.target.value)}
           placeholder={t('betslip.amountPlaceholder')}
           inputMode="decimal"
+          disabled={isLocked}
         />
+        {isLocked && <span className="ui-text-muted text-xs">{t('betslip.amountFreebetLocked')}</span>}
       </label>
 
-      <div className="flex flex-wrap gap-2">
+      {!isLocked && <div className="flex flex-wrap gap-2">
         {[1, 5, 10, 25].map((chip) => (
           <button key={chip} className={chipClass} onClick={() => applyChip(chip)} type="button">
             +{chip}
@@ -39,7 +42,7 @@ export function BetslipAmountSection({ betAmount, onBetAmountChange }: BetslipAm
         <button className={chipClass} onClick={() => onBetAmountChange('')} type="button">
           {t('betslip.reset')}
         </button>
-      </div>
+      </div>}
     </>
   )
 }
