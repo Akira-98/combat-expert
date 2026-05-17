@@ -63,7 +63,7 @@ export const getAmountValidationMessage = ({
   if (typeof maxBet === 'number' && parsedAmount > maxBet) {
     return translate('betslip.error.maxBet', { amount: maxBet.toFixed(4) })
   }
-  if (!isFreebetSelected && isConnected && typeof balance === 'number' && Number.isFinite(balance) && balance > 0 && parsedAmount > balance) {
+  if (!isFreebetSelected && isConnected && typeof balance === 'number' && Number.isFinite(balance) && parsedAmount > balance) {
     return translate('betslip.error.insufficientBalance', { amount: balance.toFixed(4) })
   }
 

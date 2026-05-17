@@ -1,8 +1,9 @@
 import { normalizeAddress } from './env.js'
 import { supabaseRpc, supabaseSelect } from './supabase.js'
 
-const DEFAULT_BET_PARTICIPATION_POINTS = 100
+const DEFAULT_BET_PARTICIPATION_POINTS = 0
 const DEFAULT_PICK_SHARE_BET_POINTS = 500
+const BET_PLACED_SOURCE_TYPE = 'bet_placed'
 const PICK_SHARE_BET_SOURCE_TYPE = 'pick_share_bet'
 
 function toNonNegativeInteger(value, fallback = 0) {
@@ -31,11 +32,22 @@ export async function awardBetParticipationPoints({
   walletAddress,
   bet,
   txHash,
-  points = DEFAULT_BET_PARTICIPATION_POINTS,
+  points,
 }) {
   const normalizedWalletAddress = normalizeAddress(walletAddress)
   if (!normalizedWalletAddress) {
     return { inserted: false, totalPoints: 0 }
+  }
+
+  const pointValue = points ?? await fetchPointRulePoints({
+    supabaseUrl,
+    serviceRoleKey,
+    sourceType: BET_PLACED_SOURCE_TYPE,
+    fallback: DEFAULT_BET_PARTICIPATION_POINTS,
+  })
+  if (pointValue <= 0) {
+    const currentPoints = await fetchUserPoints({ supabaseUrl, serviceRoleKey, walletAddress: normalizedWalletAddress })
+    return { inserted: false, totalPoints: currentPoints.totalPoints }
   }
 
   const rows = await supabaseRpc({
@@ -45,9 +57,9 @@ export async function awardBetParticipationPoints({
     errorMessage: 'Failed to award point event',
     body: {
       p_wallet_address: normalizedWalletAddress,
-      p_source_type: 'bet_placed',
+      p_source_type: BET_PLACED_SOURCE_TYPE,
       p_source_id: bet.betId,
-      p_points: points,
+      p_points: pointValue,
       p_bet_token_id: bet.betId,
       p_tx_hash: txHash,
       p_metadata: {
