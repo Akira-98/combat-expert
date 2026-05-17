@@ -13,7 +13,7 @@ type UseBetHistoryParams = {
 export function useBetHistory({ address, isPollingEnabled = false }: UseBetHistoryParams) {
   const bettorAddress = (address || ZERO_ADDRESS) as Address
 
-  const { data: betsPages } = useBets({
+  const { data: betsPages, refetch } = useBets({
     filter: { bettor: bettorAddress },
     query: {
       enabled: Boolean(address),
@@ -34,5 +34,5 @@ export function useBetHistory({ address, isPollingEnabled = false }: UseBetHisto
     return betsPages.pages.flatMap((page) => page.bets)
   }, [betsPages])
 
-  return { bets }
+  return { bets, refetch }
 }

@@ -14,6 +14,7 @@ import { translate } from '../i18n'
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const POINT_CLAIM_RETRY_DELAYS_MS = [0, 3_000, 10_000]
 const PICK_SHARE_POINTS_RETRY_DELAYS_MS = [0, 3_000, 10_000]
+const BET_HISTORY_REFETCH_RETRY_DELAYS_MS = [0, 3_000, 10_000]
 const SDK_FALLBACK_BET_AMOUNT = '1'
 
 function wait(ms: number) {
@@ -63,6 +64,17 @@ async function awardPickSharePointsWithRetry({
   return lastResult
 }
 
+async function refetchBetHistoryWithRetry(refetchBetHistory: () => Promise<unknown>) {
+  for (const delay of BET_HISTORY_REFETCH_RETRY_DELAYS_MS) {
+    if (delay > 0) await wait(delay)
+    try {
+      await refetchBetHistory()
+    } catch (error) {
+      console.warn('Failed to refetch bet history', error)
+    }
+  }
+}
+
 type UseBettingTransactionsParams = {
   address?: Address
   isConnected: boolean
@@ -110,6 +122,8 @@ export function useBettingTransactions({
     },
   })
 
+  const { bets, refetch: refetchBetHistory } = useBetHistory({ address, isPollingEnabled: isBetHistoryPollingEnabled })
+
   const { submit, isApproveRequired, approveTx, betTx } = useBet({
     betAmount: getSdkBetAmount(betAmount),
     slippage,
@@ -120,6 +134,7 @@ export function useBettingTransactions({
     freebet: selectedFreebet,
     onSuccess: (receipt) => {
       onBetSuccess(receipt?.transactionHash)
+      void refetchBetHistoryWithRetry(refetchBetHistory)
       if (address && receipt?.transactionHash) {
         void claimBetParticipationPointsWithRetry({
           txHash: receipt.transactionHash,
@@ -156,7 +171,6 @@ export function useBettingTransactions({
     onError: (error) => setErrorNotice({ title: translate('betting.betErrorTitle'), error }),
   })
 
-  const { bets } = useBetHistory({ address, isPollingEnabled: isBetHistoryPollingEnabled })
   const { betSettlementSyncStateByTokenId } = useBetSettlementSync({
     bets,
     enabled: Boolean(address),

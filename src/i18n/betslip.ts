@@ -20,7 +20,7 @@ export const enBetslipMessages: LocaleMessages = {
   'betslip.freebets': 'Freebets',
   'betslip.freebetsChecking': 'Checking freebets...',
   'betslip.useFreebet': 'Use Freebet',
-  'betslip.freebetApplied': 'Freebet Applied',
+  'betslip.freebetApplied': 'Freebet Applied ✓',
   'betslip.totalOdds': 'Total Odds',
   'betslip.possibleWin': 'Potential Payout',
   'betslip.minBet': 'Min Bet',
