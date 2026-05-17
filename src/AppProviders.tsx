@@ -56,7 +56,7 @@ export function AppProviders({ runtimeConfig }: { runtimeConfig: RuntimeConfig }
             walletList: ['metamask'],
           },
           intl: getPrivyIntlConfig(),
-          loginMethods: ['google', 'wallet'],
+          loginMethods: ['google', 'twitter', 'wallet'],
         }}
       >
         <SmartWalletsProvider>
