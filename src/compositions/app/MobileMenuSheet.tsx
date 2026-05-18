@@ -56,7 +56,7 @@ export function MobileMenuSheet({
   const sectionButtonClass =
     'ui-text-strong flex min-h-11 w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left text-base font-black transition hover:bg-[color:var(--app-surface)]'
   const selectSport = (value: string) => {
-    onSelectGameStatus('all')
+    onSelectGameStatus('upcoming')
     onSelectSport(value)
     onClose()
   }
@@ -68,7 +68,7 @@ export function MobileMenuSheet({
     items.map((sport) => {
       const isActive = mode === 'live'
         ? gameStatusFilter === 'live' && sportFilter === sport.name
-        : gameStatusFilter !== 'live' && sportFilter === sport.name
+        : gameStatusFilter === 'upcoming' && sportFilter === sport.name
       return (
         <button
           key={sport.name}

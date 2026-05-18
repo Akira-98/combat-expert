@@ -55,7 +55,7 @@ export function DesktopMenuRail({
   const idleClass = 'ui-text-body bg-transparent hover:bg-[color:var(--app-surface-soft)] hover:text-[color:var(--app-text-strong)]'
 
   const handleSelectSport = (sportName: string) => {
-    onSelectGameStatus('all')
+    onSelectGameStatus('upcoming')
     onSelectSport(sportName)
   }
   const handleSelectLiveSport = (sportName: string) => {
@@ -66,7 +66,7 @@ export function DesktopMenuRail({
     items.map((sport) => {
       const isActive = mode === 'live'
         ? gameStatusFilter === 'live' && sportFilter === sport.name
-        : gameStatusFilter !== 'live' && sportFilter === sport.name
+        : gameStatusFilter === 'upcoming' && sportFilter === sport.name
       return (
         <button
           key={sport.name}
