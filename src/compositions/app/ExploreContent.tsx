@@ -27,11 +27,13 @@ export function ExploreContent({
   betting,
   onOpenGameMarkets,
 }: ExploreContentProps) {
-  const shouldShowTopEvents = marketPageMode === 'games' && filters.sportFilter === 'all'
+  const hasGameSearchQuery = filters.gameSearchQuery.trim().length > 0
+  const shouldShowExploreBanner = marketPageMode === 'games' && filters.sportFilter === 'all'
+  const shouldShowTopEvents = shouldShowExploreBanner && !hasGameSearchQuery
 
   return (
     <div className={shouldShowExploreContent ? 'grid gap-3 md:gap-4' : 'hidden xl:grid xl:gap-4'}>
-      {shouldShowTopEvents ? <ExploreBanner /> : null}
+      {shouldShowExploreBanner ? <ExploreBanner /> : null}
       {shouldShowTopEvents ? (
         <TopEventsShowcase
           games={market.topEventGames}
