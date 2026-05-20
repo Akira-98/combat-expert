@@ -19,6 +19,7 @@ type ShareMessage = 'copied' | 'shared' | 'failed'
 type UseBettingParams = {
   address?: Address
   isConnected: boolean
+  isAAWallet?: boolean
   games: GameItem[]
   marketSections: MarketSection[]
   isBetHistoryPollingEnabled?: boolean
@@ -89,6 +90,7 @@ function buildPickShareSelections(
 export function useBetting({
   address,
   isConnected,
+  isAAWallet,
   games,
   marketSections,
   isBetHistoryPollingEnabled = false,
@@ -129,6 +131,7 @@ export function useBetting({
   const transactions = useBettingTransactions({
     address,
     isConnected,
+    isAAWallet,
     isBetHistoryPollingEnabled,
     items,
     betAmount,

@@ -43,7 +43,7 @@ export function DesktopStickyPanel({ children, className }: DesktopStickyPanelPr
         className,
       )}
     >
-      <section className="card-surface md:w-full md:overflow-hidden md:border md:border-[color:var(--app-border)]">
+      <section className="card-surface md:flex md:max-h-[calc(100dvh-61px)] md:w-full md:flex-col md:overflow-hidden md:border md:border-[color:var(--app-border)]">
         {children}
       </section>
     </aside>

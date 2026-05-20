@@ -84,6 +84,7 @@ function App() {
   const betting = useBetting({
     address: wallet.address,
     isConnected: wallet.isConnected,
+    isAAWallet: wallet.isAAWallet,
     games,
     marketSections,
     isBetHistoryPollingEnabled: shell.isMyBetsViewActive,

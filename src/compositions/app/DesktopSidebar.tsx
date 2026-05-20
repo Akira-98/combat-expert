@@ -6,8 +6,7 @@ import { BetslipPanel } from '../BetslipPanel'
 import { BetsAndTransferPanel } from '../BetsAndTransferPanel'
 import { DesktopStickyPanel } from './DesktopSidebarLayout'
 
-const DESKTOP_SIDEBAR_MAX_HEIGHT_CLASS = 'max-h-[calc(100dvh-61px)]'
-const DESKTOP_SIDEBAR_SCROLL_AREA_CLASS = 'overflow-y-auto p-3'
+const DESKTOP_SIDEBAR_SCROLL_AREA_CLASS = 'min-h-0 flex-1 overflow-y-auto p-3'
 
 type DesktopSidebarProps = {
   desktopSidePanelTab: 'myBets' | 'betslip'
@@ -50,7 +49,7 @@ export function DesktopSidebar({
         </div>
       </div>
 
-      <div className={`${DESKTOP_SIDEBAR_MAX_HEIGHT_CLASS} ${DESKTOP_SIDEBAR_SCROLL_AREA_CLASS}`}>
+      <div className={DESKTOP_SIDEBAR_SCROLL_AREA_CLASS}>
         {desktopSidePanelTab === 'myBets' ? (
           <BetsAndTransferPanel wallet={wallet} betting={betting} isEmbedded />
         ) : (

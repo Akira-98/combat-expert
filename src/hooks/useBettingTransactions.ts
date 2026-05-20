@@ -2,6 +2,7 @@ import { useBet, useBetTokenBalance } from '@azuro-org/sdk'
 import type { Freebet } from '@azuro-org/toolkit'
 import type { Address } from 'viem'
 import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
+import { trackBetDebugEvent } from '../api/betDebugEvents'
 import { claimBetParticipationPoints } from '../api/points'
 import { awardPickSharePoints } from '../api/pickShares'
 import { useAppConfig } from '../config/useAppConfig'
@@ -16,6 +17,7 @@ const POINT_CLAIM_RETRY_DELAYS_MS = [0, 3_000, 10_000]
 const PICK_SHARE_POINTS_RETRY_DELAYS_MS = [0, 3_000, 10_000]
 const BET_HISTORY_REFETCH_RETRY_DELAYS_MS = [0, 3_000, 10_000]
 const SDK_FALLBACK_BET_AMOUNT = '1'
+const BET_DEBUG_TIMEOUT_MS = 60_000
 
 function wait(ms: number) {
   return new Promise((resolve) => {
@@ -26,6 +28,18 @@ function wait(ms: number) {
 function getSdkBetAmount(betAmount: string) {
   const parsedAmount = Number(betAmount)
   return Number.isFinite(parsedAmount) && parsedAmount > 0 ? betAmount : SDK_FALLBACK_BET_AMOUNT
+}
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message
+  if (typeof error === 'string') return error
+  return String(error ?? '')
+}
+
+function getOrderValue(order: unknown, key: string) {
+  if (!order || typeof order !== 'object' || !(key in order)) return undefined
+  const value = (order as Record<string, unknown>)[key]
+  return typeof value === 'string' || typeof value === 'number' ? String(value) : undefined
 }
 
 async function claimBetParticipationPointsWithRetry({ txHash, walletAddress }: { txHash: string; walletAddress: string }) {
@@ -78,6 +92,7 @@ async function refetchBetHistoryWithRetry(refetchBetHistory: () => Promise<unkno
 type UseBettingTransactionsParams = {
   address?: Address
   isConnected: boolean
+  isAAWallet?: boolean
   isBetHistoryPollingEnabled: boolean
   items: {
     conditionId: string
@@ -98,6 +113,7 @@ type UseBettingTransactionsParams = {
 export function useBettingTransactions({
   address,
   isConnected,
+  isAAWallet,
   isBetHistoryPollingEnabled,
   items,
   betAmount,
@@ -124,7 +140,15 @@ export function useBettingTransactions({
 
   const { bets, refetch: refetchBetHistory } = useBetHistory({ address, isPollingEnabled: isBetHistoryPollingEnabled })
 
-  const { submit, isApproveRequired, approveTx, betTx } = useBet({
+  const betDebugBase = {
+    walletAddress: address,
+    isAAWallet: Boolean(isAAWallet),
+    selectionCount: items.length,
+    hasFreebet: Boolean(selectedFreebet),
+    betAmount: getSdkBetAmount(betAmount),
+  }
+
+  const { submit: sdkSubmit, isApproveRequired, approveTx, betTx } = useBet({
     betAmount: getSdkBetAmount(betAmount),
     slippage,
     affiliate: affiliateAddress,
@@ -132,7 +156,21 @@ export function useBettingTransactions({
     odds,
     totalOdds,
     freebet: selectedFreebet,
+    onBetOrderCreated: (order) => {
+      void trackBetDebugEvent({
+        ...betDebugBase,
+        event: 'order_created',
+        orderId: getOrderValue(order, 'id'),
+        orderState: getOrderValue(order, 'state'),
+        errorCode: getOrderValue(order, 'error'),
+        errorMessage: getOrderValue(order, 'errorMessage'),
+      })
+    },
     onSuccess: (receipt) => {
+      void trackBetDebugEvent({
+        ...betDebugBase,
+        event: 'bet_success',
+      })
       onBetSuccess(receipt?.transactionHash)
       void refetchBetHistoryWithRetry(refetchBetHistory)
       if (address && receipt?.transactionHash) {
@@ -168,8 +206,39 @@ export function useBettingTransactions({
         txHash: receipt?.transactionHash,
       })
     },
-    onError: (error) => setErrorNotice({ title: translate('betting.betErrorTitle'), error }),
+    onError: (error) => {
+      void trackBetDebugEvent({
+        ...betDebugBase,
+        event: 'bet_error',
+        errorMessage: getErrorMessage(error),
+      })
+      setErrorNotice({ title: translate('betting.betErrorTitle'), error })
+    },
   })
+
+  const submit = async () => {
+    let isSettled = false
+
+    void trackBetDebugEvent({
+      ...betDebugBase,
+      event: 'submit_start',
+    })
+
+    const timeoutId = window.setTimeout(() => {
+      if (isSettled) return
+      void trackBetDebugEvent({
+        ...betDebugBase,
+        event: 'submit_timeout',
+      })
+    }, BET_DEBUG_TIMEOUT_MS)
+
+    try {
+      await sdkSubmit()
+    } finally {
+      isSettled = true
+      window.clearTimeout(timeoutId)
+    }
+  }
 
   const { betSettlementSyncStateByTokenId } = useBetSettlementSync({
     bets,
