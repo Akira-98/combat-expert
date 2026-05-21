@@ -18,6 +18,9 @@ export type BetDebugEvent = {
   orderState?: string
   errorCode?: string
   errorMessage?: string
+  errorName?: string
+  errorStack?: string
+  errorDetails?: Record<string, unknown>
 }
 
 export async function trackBetDebugEvent(event: BetDebugEvent) {

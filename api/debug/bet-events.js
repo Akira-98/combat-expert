@@ -26,6 +26,23 @@ function asInteger(value) {
   return Number.isInteger(value) ? value : undefined
 }
 
+function asJsonObject(value, maxLength = 4000) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined
+
+  try {
+    const json = JSON.stringify(value)
+    if (json.length > maxLength) {
+      return {
+        truncated: true,
+        preview: json.slice(0, maxLength),
+      }
+    }
+    return value
+  } catch {
+    return { serialization_error: true }
+  }
+}
+
 function getWalletTail(walletAddress) {
   const wallet = asString(walletAddress, 128)
   if (!wallet) return undefined
@@ -59,6 +76,9 @@ function buildEventRow(req) {
       order_state: asString(body.orderState, 80),
       error_code: asString(body.errorCode, 160),
       error_message: asString(body.errorMessage, 500),
+      error_name: asString(body.errorName, 160),
+      error_stack: asString(body.errorStack, 2000),
+      error_details: asJsonObject(body.errorDetails),
       user_agent: asString(req.headers['user-agent'], 500),
     },
   }
