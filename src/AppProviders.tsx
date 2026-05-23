@@ -53,7 +53,7 @@ export function AppProviders({ runtimeConfig }: { runtimeConfig: RuntimeConfig }
           },
           appearance: {
             showWalletLoginFirst: true,
-            walletList: ['metamask'],
+            walletList: ['metamask', 'coinbase_wallet', 'binance', 'okx_wallet'],
           },
           intl: getPrivyIntlConfig(),
           loginMethods: ['google', 'twitter', 'wallet'],
