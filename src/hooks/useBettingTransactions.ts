@@ -2,6 +2,7 @@ import { useBet, useBetTokenBalance } from '@azuro-org/sdk'
 import type { Freebet } from '@azuro-org/toolkit'
 import type { Address } from 'viem'
 import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
+import { getErrorCode, getErrorDetails, getErrorMessage, getErrorName, getErrorStack } from '../helpers/debugError'
 import { trackBetDebugEvent } from '../api/betDebugEvents'
 import { claimBetParticipationPoints } from '../api/points'
 import { awardPickSharePoints } from '../api/pickShares'
@@ -28,71 +29,6 @@ function wait(ms: number) {
 function getSdkBetAmount(betAmount: string) {
   const parsedAmount = Number(betAmount)
   return Number.isFinite(parsedAmount) && parsedAmount > 0 ? betAmount : SDK_FALLBACK_BET_AMOUNT
-}
-
-function getErrorMessage(error: unknown) {
-  if (error instanceof Error) return error.message
-  if (typeof error === 'string') return error
-  return String(error ?? '')
-}
-
-function getErrorCode(error: unknown) {
-  if (!error || typeof error !== 'object' || !('code' in error)) return undefined
-  const value = (error as Record<string, unknown>).code
-  return typeof value === 'string' || typeof value === 'number' ? String(value) : undefined
-}
-
-function getErrorName(error: unknown) {
-  if (error instanceof Error) return error.name
-  if (!error || typeof error !== 'object' || !('name' in error)) return undefined
-  const value = (error as Record<string, unknown>).name
-  return typeof value === 'string' ? value : undefined
-}
-
-function getErrorStack(error: unknown) {
-  return error instanceof Error ? error.stack : undefined
-}
-
-function getStringValue(record: Record<string, unknown>, key: string) {
-  const value = record[key]
-  return typeof value === 'string' ? value : undefined
-}
-
-function getSerializableCause(cause: unknown) {
-  if (cause instanceof Error) {
-    return {
-      name: cause.name,
-      message: cause.message,
-    }
-  }
-
-  if (!cause || typeof cause !== 'object') return cause
-
-  const record = cause as Record<string, unknown>
-  return {
-    name: getStringValue(record, 'name'),
-    code: typeof record.code === 'string' || typeof record.code === 'number' ? String(record.code) : undefined,
-    message: getStringValue(record, 'message'),
-    shortMessage: getStringValue(record, 'shortMessage'),
-    details: getStringValue(record, 'details'),
-  }
-}
-
-function getErrorDetails(error: unknown): Record<string, unknown> {
-  if (!error || typeof error !== 'object') {
-    return { raw: String(error ?? '') }
-  }
-
-  const record = error as Record<string, unknown>
-
-  return {
-    name: getErrorName(error),
-    code: getErrorCode(error),
-    message: getErrorMessage(error),
-    shortMessage: getStringValue(record, 'shortMessage'),
-    details: getStringValue(record, 'details'),
-    cause: getSerializableCause(record.cause),
-  }
 }
 
 function getOrderValue(order: unknown, key: string) {

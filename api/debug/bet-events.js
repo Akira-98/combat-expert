@@ -26,7 +26,7 @@ function asInteger(value) {
   return Number.isInteger(value) ? value : undefined
 }
 
-function asJsonObject(value, maxLength = 4000) {
+function asJsonObject(value, maxLength = 12000) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined
 
   try {
