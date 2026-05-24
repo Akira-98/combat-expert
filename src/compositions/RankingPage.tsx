@@ -12,11 +12,10 @@ export function RankingPage({ address }: RankingPageProps) {
 
   return (
     <section className="mt-2.5 grid gap-4 px-3">
-      <div className="min-w-0 px-1 text-center md:text-left">
-        <h2 className="ui-text-strong m-0 text-[30px] font-semibold tracking-[0.14em] md:text-[40px]">
+      <div className="min-w-0 px-1 text-center">
+        <h2 className="ui-text-strong m-0 text-[38px] font-black tracking-[0.14em] md:text-[56px]">
           {t('ranking.pageTitle')}
         </h2>
-        <p className="ui-text-muted mt-1 mb-0 text-sm font-medium">{t('ranking.pageDescription')}</p>
       </div>
 
       {isLoading ? (

@@ -108,7 +108,7 @@ function ProfileStats({
           <AccountDetail label={t('account.freebets')} value={freebetLabel} />
         </div>
 
-        <div className="grid grid-cols-3 gap-2 md:gap-4">
+        <div className="ui-profile-stat-group grid grid-cols-3 gap-2 md:gap-4">
           <HeroStat label={t('ranking.hitRate')} value={formatPercentRatio(viewer.winRate)} />
           <HeroStat label={t('ranking.pnl')} value={formatSignedUsdt(viewer.netPnl)} />
           <HeroStat label={t('ranking.events')} value={String(viewer.eventCount)} />
@@ -117,7 +117,7 @@ function ProfileStats({
 
       <div className="ui-divider-faint border-t" />
 
-      <section className="grid grid-cols-3 gap-2 md:gap-3">
+      <section className="ui-profile-stat-group grid grid-cols-3 gap-2 md:gap-3">
         <StatCard label={t('ranking.record')} value={t('ranking.winsLosses', { wins: viewer.winCount, losses: viewer.loseCount })} />
         <StatCard label={t('ranking.totalPayout')} value={`${viewer.totalPayout.toFixed(2)} USDT`} />
         <StatCard label={t('ranking.totalWagered')} value={`${viewer.totalWagered.toFixed(2)} USDT`} />
@@ -137,7 +137,7 @@ function ProfileEmptyState({ title, description }: { title: string; description:
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="card-surface-soft card-shell-lg ui-border min-w-0 border px-2 py-3 text-center md:px-5 md:py-4">
+    <div className="ui-profile-stat-card min-w-0 px-1 text-center md:px-5 md:py-4">
       <p className="ui-text-muted m-0 truncate text-xs font-semibold md:text-sm">{label}</p>
       <p className="ui-text-strong mt-1 mb-0 truncate text-base font-semibold md:mt-2 md:text-2xl">{value}</p>
     </div>
@@ -155,7 +155,7 @@ function AccountDetail({ label, value }: { label: string; value: string }) {
 
 function HeroStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="card-surface-soft card-shell-lg ui-border min-w-0 border px-2 py-3 text-center md:px-5 md:py-4">
+    <div className="ui-profile-stat-card min-w-0 px-1 text-center md:px-5 md:py-4">
       <p className="ui-text-muted m-0 truncate text-xs font-semibold md:text-sm">{label}</p>
       <p className="ui-text-strong mt-1 mb-0 truncate text-lg font-semibold md:mt-2 md:text-4xl">{value}</p>
     </div>

@@ -66,6 +66,16 @@ function EntryMetric({ label, value }: { label: string; value: string }) {
 }
 
 function RankBadge({ rank }: { rank: number }) {
+  const medal = getRankMedal(rank)
+
+  if (medal) {
+    return (
+      <div aria-label={`Rank ${rank}`} className="flex h-11 w-11 shrink-0 items-center justify-center text-4xl leading-none md:h-16 md:w-16 md:text-5xl" title={`Rank ${rank}`}>
+        {medal}
+      </div>
+    )
+  }
+
   return (
     <div
       aria-label={`Rank ${rank}`}
@@ -77,9 +87,9 @@ function RankBadge({ rank }: { rank: number }) {
   )
 }
 
-function getRankDisplay(rank: number) {
+function getRankMedal(rank: number) {
   if (rank === 1) return '🥇'
   if (rank === 2) return '🥈'
   if (rank === 3) return '🥉'
-  return rank
+  return undefined
 }
