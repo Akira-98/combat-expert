@@ -16,6 +16,16 @@ export type BetDebugEvent = {
   betAmount?: string
   orderId?: string
   orderState?: string
+  isApproveRequired?: boolean
+  approveIsPending?: boolean
+  approveIsProcessing?: boolean
+  approveTxHash?: string
+  approveErrorDetails?: Record<string, unknown>
+  betIsPending?: boolean
+  betIsProcessing?: boolean
+  betTxHash?: string
+  betReceiptStatus?: string
+  freebetId?: string
   errorCode?: string
   errorMessage?: string
   errorName?: string

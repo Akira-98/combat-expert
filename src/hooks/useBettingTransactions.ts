@@ -37,6 +37,34 @@ function getOrderValue(order: unknown, key: string) {
   return typeof value === 'string' || typeof value === 'number' ? String(value) : undefined
 }
 
+function getRecordValue(value: unknown, key: string) {
+  if (!value || typeof value !== 'object' || !(key in value)) return undefined
+  return (value as Record<string, unknown>)[key]
+}
+
+function getStringRecordValue(value: unknown, key: string) {
+  const item = getRecordValue(value, key)
+  return typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean' ? String(item) : undefined
+}
+
+function getTxHash(tx: unknown, fallback?: string) {
+  return getStringRecordValue(tx, 'hash')
+    ?? getStringRecordValue(tx, 'txHash')
+    ?? getStringRecordValue(tx, 'transactionHash')
+    ?? getStringRecordValue(getRecordValue(tx, 'receipt'), 'transactionHash')
+    ?? fallback
+}
+
+function getTxReceiptStatus(tx: unknown, fallbackReceipt?: unknown) {
+  return getStringRecordValue(getRecordValue(tx, 'receipt'), 'status')
+    ?? getStringRecordValue(fallbackReceipt, 'status')
+}
+
+function getTxErrorDetails(tx: unknown) {
+  const error = getRecordValue(tx, 'error') ?? getRecordValue(tx, 'failureReason')
+  return error === undefined ? undefined : getErrorDetails(error)
+}
+
 async function claimBetParticipationPointsWithRetry({ txHash, walletAddress }: { txHash: string; walletAddress: string }) {
   let lastResult
 
@@ -141,6 +169,7 @@ export function useBettingTransactions({
     selectionCount: items.length,
     hasFreebet: Boolean(selectedFreebet),
     betAmount: getSdkBetAmount(betAmount),
+    freebetId: getStringRecordValue(selectedFreebet, 'id'),
   }
 
   const { submit: sdkSubmit, isApproveRequired, approveTx, betTx } = useBet({
@@ -154,6 +183,7 @@ export function useBettingTransactions({
     onBetOrderCreated: (order) => {
       void trackBetDebugEvent({
         ...betDebugBase,
+        ...getBetDebugState(),
         event: 'order_created',
         orderId: getOrderValue(order, 'id'),
         orderState: getOrderValue(order, 'state'),
@@ -164,6 +194,7 @@ export function useBettingTransactions({
     onSuccess: (receipt) => {
       void trackBetDebugEvent({
         ...betDebugBase,
+        ...getBetDebugState(receipt),
         event: 'bet_success',
       })
       onBetSuccess(receipt?.transactionHash)
@@ -204,6 +235,7 @@ export function useBettingTransactions({
     onError: (error) => {
       void trackBetDebugEvent({
         ...betDebugBase,
+        ...getBetDebugState(),
         event: 'bet_error',
         errorCode: getErrorCode(error),
         errorMessage: getErrorMessage(error),
@@ -215,11 +247,26 @@ export function useBettingTransactions({
     },
   })
 
+  function getBetDebugState(receipt?: unknown) {
+    return {
+      isApproveRequired,
+      approveIsPending: approveTx.isPending,
+      approveIsProcessing: approveTx.isProcessing,
+      approveTxHash: getTxHash(approveTx),
+      approveErrorDetails: getTxErrorDetails(approveTx),
+      betIsPending: betTx.isPending,
+      betIsProcessing: betTx.isProcessing,
+      betTxHash: getTxHash(betTx, getStringRecordValue(receipt, 'transactionHash')),
+      betReceiptStatus: getTxReceiptStatus(betTx, receipt),
+    }
+  }
+
   const submit = async () => {
     let isSettled = false
 
     void trackBetDebugEvent({
       ...betDebugBase,
+      ...getBetDebugState(),
       event: 'submit_start',
     })
 
@@ -227,6 +274,7 @@ export function useBettingTransactions({
       if (isSettled) return
       void trackBetDebugEvent({
         ...betDebugBase,
+        ...getBetDebugState(),
         event: 'submit_timeout',
       })
     }, BET_DEBUG_TIMEOUT_MS)
