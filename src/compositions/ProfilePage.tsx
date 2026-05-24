@@ -108,7 +108,7 @@ function ProfileStats({
           <AccountDetail label={t('account.freebets')} value={freebetLabel} />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="card-surface-soft card-shell-lg ui-border grid grid-cols-3 gap-2 border px-3 py-3 md:gap-4 md:px-5 md:py-4">
           <HeroStat label={t('ranking.hitRate')} value={formatPercentRatio(viewer.winRate)} />
           <HeroStat label={t('ranking.pnl')} value={formatSignedUsdt(viewer.netPnl)} />
           <HeroStat label={t('ranking.events')} value={String(viewer.eventCount)} />
@@ -155,9 +155,9 @@ function AccountDetail({ label, value }: { label: string; value: string }) {
 
 function HeroStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 text-left md:text-center">
-      <p className="ui-text-muted m-0 text-sm font-semibold">{label}</p>
-      <p className="ui-text-strong mt-2 mb-0 truncate text-3xl font-semibold md:text-4xl">{value}</p>
+    <div className="min-w-0 text-center">
+      <p className="ui-text-muted m-0 truncate text-xs font-semibold md:text-sm">{label}</p>
+      <p className="ui-text-strong mt-1 mb-0 truncate text-lg font-semibold md:mt-2 md:text-4xl">{value}</p>
     </div>
   )
 }
