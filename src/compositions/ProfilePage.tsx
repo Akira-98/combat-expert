@@ -99,7 +99,7 @@ function ProfileStats({
           </div>
           <div className="shrink-0 text-left md:text-right">
             <p className="ui-text-muted m-0 text-[10px] font-medium uppercase tracking-[0.18em]">Rank</p>
-            <p className="ui-text-strong mt-1 mb-0 text-2xl font-semibold">{viewer.rank > 0 ? `#${viewer.rank}` : '-'}</p>
+            <p className="ui-text-strong mt-1 mb-0 text-2xl font-semibold">{getRankDisplay(viewer.rank)}</p>
           </div>
         </div>
 
@@ -108,7 +108,7 @@ function ProfileStats({
           <AccountDetail label={t('account.freebets')} value={freebetLabel} />
         </div>
 
-        <div className="card-surface-soft card-shell-lg ui-border grid grid-cols-3 gap-2 border px-3 py-3 md:gap-4 md:px-5 md:py-4">
+        <div className="grid grid-cols-3 gap-2 md:gap-4">
           <HeroStat label={t('ranking.hitRate')} value={formatPercentRatio(viewer.winRate)} />
           <HeroStat label={t('ranking.pnl')} value={formatSignedUsdt(viewer.netPnl)} />
           <HeroStat label={t('ranking.events')} value={String(viewer.eventCount)} />
@@ -117,7 +117,7 @@ function ProfileStats({
 
       <div className="ui-divider-faint border-t" />
 
-      <section className="grid gap-3 md:grid-cols-3">
+      <section className="grid grid-cols-3 gap-2 md:gap-3">
         <StatCard label={t('ranking.record')} value={t('ranking.winsLosses', { wins: viewer.winCount, losses: viewer.loseCount })} />
         <StatCard label={t('ranking.totalPayout')} value={`${viewer.totalPayout.toFixed(2)} USDT`} />
         <StatCard label={t('ranking.totalWagered')} value={`${viewer.totalWagered.toFixed(2)} USDT`} />
@@ -137,9 +137,9 @@ function ProfileEmptyState({ title, description }: { title: string; description:
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="card-surface-soft card-shell-lg ui-border border px-5 py-4 text-center">
-      <p className="ui-text-muted m-0 text-sm font-semibold">{label}</p>
-      <p className="ui-text-strong mt-2 mb-0 text-2xl font-semibold">{value}</p>
+    <div className="card-surface-soft card-shell-lg ui-border min-w-0 border px-2 py-3 text-center md:px-5 md:py-4">
+      <p className="ui-text-muted m-0 truncate text-xs font-semibold md:text-sm">{label}</p>
+      <p className="ui-text-strong mt-1 mb-0 truncate text-base font-semibold md:mt-2 md:text-2xl">{value}</p>
     </div>
   )
 }
@@ -155,7 +155,7 @@ function AccountDetail({ label, value }: { label: string; value: string }) {
 
 function HeroStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 text-center">
+    <div className="card-surface-soft card-shell-lg ui-border min-w-0 border px-2 py-3 text-center md:px-5 md:py-4">
       <p className="ui-text-muted m-0 truncate text-xs font-semibold md:text-sm">{label}</p>
       <p className="ui-text-strong mt-1 mb-0 truncate text-lg font-semibold md:mt-2 md:text-4xl">{value}</p>
     </div>
@@ -165,4 +165,12 @@ function HeroStat({ label, value }: { label: string; value: string }) {
 function getFreebetLabel(summary: { count: number; totalAmount: string }) {
   if (summary.count <= 0) return '0 available'
   return `${summary.count} available - ${summary.totalAmount} USDT`
+}
+
+function getRankDisplay(rank: number) {
+  if (rank === 1) return '🥇'
+  if (rank === 2) return '🥈'
+  if (rank === 3) return '🥉'
+  if (rank > 0) return `#${rank}`
+  return '-'
 }

@@ -25,9 +25,7 @@ export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderbo
           </div>
         </div>
 
-        <div className="ui-rank-badge-viewer flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-base font-black md:h-14 md:w-14 md:rounded-xl md:text-lg">
-          {rank}
-        </div>
+        <RankBadge rank={rank} />
       </div>
 
       <div className="grid gap-3 md:grid-cols-[minmax(0,1.4fr)_minmax(11rem,0.8fr)] md:gap-5">
@@ -65,4 +63,23 @@ function EntryMetric({ label, value }: { label: string; value: string }) {
       <p className="ui-text-strong mt-0.5 mb-0 truncate text-base font-semibold md:mt-1 md:text-xl">{value}</p>
     </div>
   )
+}
+
+function RankBadge({ rank }: { rank: number }) {
+  return (
+    <div
+      aria-label={`Rank ${rank}`}
+      className="ui-rank-badge-viewer flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-base font-black md:h-14 md:w-14 md:rounded-xl md:text-lg"
+      title={`Rank ${rank}`}
+    >
+      {getRankDisplay(rank)}
+    </div>
+  )
+}
+
+function getRankDisplay(rank: number) {
+  if (rank === 1) return '🥇'
+  if (rank === 2) return '🥈'
+  if (rank === 3) return '🥉'
+  return rank
 }
