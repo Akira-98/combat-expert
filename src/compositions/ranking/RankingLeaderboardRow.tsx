@@ -1,6 +1,7 @@
 import { getWalletAvatarUrl, shortenAddress } from '../../helpers/walletUi'
 import { formatPercentRatio, formatSignedUsdt } from '../../helpers/formatters'
 import type { RankingEntry } from '../../hooks/useRankings'
+import { useI18n } from '../../i18n'
 
 type RankingLeaderboardRowProps = {
   entry: RankingEntry
@@ -9,6 +10,7 @@ type RankingLeaderboardRowProps = {
 }
 
 export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderboardRowProps) {
+  const { t } = useI18n()
   const rowClassName = isViewer ? 'ui-rank-row-viewer' : 'ui-rank-row'
   const displayName = entry.nickname || shortenAddress(entry.address, 6, 4)
 
