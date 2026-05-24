@@ -82,7 +82,7 @@ function RankBadge({ rank }: { rank: number }) {
       className="ui-rank-badge-viewer flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-base font-black md:h-14 md:w-14 md:rounded-xl md:text-lg"
       title={`Rank ${rank}`}
     >
-      {getRankDisplay(rank)}
+      {rank}
     </div>
   )
 }
