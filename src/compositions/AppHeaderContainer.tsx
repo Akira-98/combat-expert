@@ -10,12 +10,11 @@ type AppHeaderContainerProps = {
   usdtBalance: number
   isUsdtBalanceLoading: boolean
   isUsdtSupportedChain: boolean
-  totalPoints: number
-  isPointsLoading: boolean
   onTitleClick: () => void
   gameSearchQuery: string
   onGameSearchQueryChange: (value: string) => void
   onRankingClick: () => void
+  onProfileClick: () => void
   onGuideClick: () => void
 }
 
@@ -26,12 +25,11 @@ export function AppHeaderContainer({
   usdtBalance,
   isUsdtBalanceLoading,
   isUsdtSupportedChain,
-  totalPoints,
-  isPointsLoading,
   onTitleClick,
   gameSearchQuery,
   onGameSearchQueryChange,
   onRankingClick,
+  onProfileClick,
   onGuideClick,
 }: AppHeaderContainerProps) {
   return (
@@ -53,14 +51,13 @@ export function AppHeaderContainer({
       usdtBalance={usdtBalance}
       isUsdtBalanceLoading={isUsdtBalanceLoading}
       isUsdtSupportedChain={isUsdtSupportedChain}
-      totalPoints={totalPoints}
-      isPointsLoading={isPointsLoading}
       canOpenAuthModal={wallet.canOpenAuthModal}
       connectErrorMessage={wallet.connectErrorMessage}
       onTitleClick={onTitleClick}
       gameSearchQuery={gameSearchQuery}
       onGameSearchQueryChange={onGameSearchQueryChange}
       onRankingClick={onRankingClick}
+      onProfileClick={onProfileClick}
       onGuideClick={onGuideClick}
       onOpenAuthModal={wallet.openAuthModal}
       onDisconnect={wallet.disconnectWallet}

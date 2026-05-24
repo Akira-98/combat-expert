@@ -27,6 +27,7 @@ export const enCommonMessages: LocaleMessages = {
   'header.login': 'SIGN IN',
   'header.logout': 'Log out',
   'account.balance': 'Balance',
+  'account.profile': 'Profile',
   'account.points': 'Points',
   'account.myRanking': 'My Ranking',
   'account.freebets': 'Freebets',

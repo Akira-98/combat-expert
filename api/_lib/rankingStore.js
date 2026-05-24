@@ -23,12 +23,21 @@ export function normalizeRankingLimit(value) {
 
 export function mapRankingTotalRow(row, nicknameMap = new Map()) {
   const address = normalizeAddress(row?.wallet_address)
+  const winCount = toNonNegativeInteger(row?.win_count)
+  const loseCount = toNonNegativeInteger(row?.lose_count)
+  const decisiveCount = winCount + loseCount
+
   return {
     address,
     nickname: address ? nicknameMap.get(address) ?? null : null,
     totalScore: toFiniteNumber(row?.total_score),
-    winCount: toNonNegativeInteger(row?.win_count),
-    loseCount: toNonNegativeInteger(row?.lose_count),
+    netPnl: toFiniteNumber(row?.net_pnl ?? row?.total_score),
+    roi: toFiniteNumber(row?.roi),
+    totalWagered: toFiniteNumber(row?.total_wagered),
+    totalPayout: toFiniteNumber(row?.total_payout),
+    winRate: decisiveCount > 0 ? winCount / decisiveCount : 0,
+    winCount,
+    loseCount,
     voidCount: toNonNegativeInteger(row?.void_count),
     underdogHitCount: toNonNegativeInteger(row?.underdog_hit_count),
     eventCount: toNonNegativeInteger(row?.event_count),
@@ -52,8 +61,8 @@ export async function fetchRankingTotals({ supabaseUrl, serviceRoleKey, limit })
     serviceRoleKey,
     path:
       'ranking_totals?' +
-      `select=wallet_address,total_score,win_count,lose_count,void_count,underdog_hit_count,event_count,updated_at` +
-      `&order=total_score.desc,underdog_hit_count.desc,win_count.desc,updated_at.asc` +
+      `select=wallet_address,total_score,net_pnl,roi,total_wagered,total_payout,win_count,lose_count,void_count,underdog_hit_count,event_count,updated_at` +
+      `&order=net_pnl.desc,event_count.desc,win_count.desc,updated_at.asc` +
       `&limit=${normalizedLimit}`,
     errorMessage: 'Failed to fetch rankings',
   })
@@ -89,6 +98,12 @@ export async function applyRankingEvent({
   result,
   odds,
   resolvedAt,
+  amount,
+  payout,
+  profit,
+  status,
+  isFreebet,
+  raw,
 }) {
   const rows = await supabaseRpc({
     supabaseUrl,
@@ -105,6 +120,12 @@ export async function applyRankingEvent({
       p_result: result,
       p_odds: odds,
       p_resolved_at: resolvedAt,
+      p_amount: amount,
+      p_payout: payout,
+      p_profit: profit,
+      p_status: status,
+      p_is_freebet: Boolean(isFreebet),
+      p_raw: raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {},
     },
   })
 

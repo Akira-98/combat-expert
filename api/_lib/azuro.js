@@ -7,8 +7,46 @@ const GAME_BETS_QUERY = gql`
     v3Bets(first: $first, skip: $skip, where: $where, subgraphError: allow) {
       betId
       actor
+      amount
+      payout
       result
       status
+      isFreebet
+      odds
+      settledOdds
+      resolvedBlockTimestamp
+      selections {
+        odds
+        outcome {
+          outcomeId
+          condition {
+            conditionId
+            gameId
+            wonOutcomeIds
+          }
+        }
+      }
+    }
+  }
+`
+
+const SETTLED_APP_BETS_QUERY = gql`
+  query RankingSyncSettledAppBets($first: Int, $skip: Int, $where: V3_Bet_filter!) {
+    v3Bets(
+      first: $first
+      skip: $skip
+      where: $where
+      orderBy: resolvedBlockTimestamp
+      orderDirection: desc
+      subgraphError: allow
+    ) {
+      betId
+      actor
+      amount
+      payout
+      result
+      status
+      isFreebet
       odds
       settledOdds
       resolvedBlockTimestamp
@@ -141,6 +179,39 @@ export async function fetchSettledV3BetsByGameId(gameId) {
         where: {
           _gamesIds_contains: [gameId],
           status_in: ['Resolved', 'Canceled'],
+        },
+      },
+    })
+
+    const page = Array.isArray(data?.v3Bets) ? data.v3Bets : []
+    allBets.push(...page)
+
+    if (page.length < V3_BETS_PAGE_SIZE) {
+      break
+    }
+
+    skip += V3_BETS_PAGE_SIZE
+  }
+
+  return allBets
+}
+
+export async function fetchSettledV3BetsByAffiliate({ affiliateAddress, resolvedTimestampGte }) {
+  const chainData = getPolygonChainData()
+  const allBets = []
+  let skip = 0
+
+  while (true) {
+    const data = await gqlRequest({
+      url: chainData.graphql.bets,
+      document: SETTLED_APP_BETS_QUERY,
+      variables: {
+        first: V3_BETS_PAGE_SIZE,
+        skip,
+        where: {
+          affiliate: affiliateAddress,
+          status_in: ['Resolved', 'Canceled'],
+          ...(resolvedTimestampGte ? { resolvedBlockTimestamp_gte: resolvedTimestampGte } : {}),
         },
       },
     })

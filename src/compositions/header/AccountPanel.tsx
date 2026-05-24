@@ -3,6 +3,7 @@ import { useBonuses } from '@azuro-org/sdk'
 import { BonusStatus } from '@azuro-org/toolkit'
 import type { Address } from 'viem'
 import { useAppConfig } from '../../config/useAppConfig'
+import { getFreebetSummary } from '../../helpers/freebets'
 import { normalizeProfileNickname } from '../../helpers/profile'
 import { shortenAddress } from '../../helpers/walletUi'
 import { useI18n } from '../../i18n'
@@ -17,13 +18,12 @@ type AccountPanelProps = {
   isProfileSaving: boolean
   profileErrorMessage?: string
   onSaveNickname: (nickname: string) => Promise<unknown>
-  totalPoints: number
-  isPointsLoading: boolean
   usdtBalanceLabel: string
   iconButtonClass: string
   primaryButtonClass: string
   copyLabel: 'idle' | 'copied' | 'failed'
   onCopyAddress: () => void
+  onProfileClick: () => void
   onDisconnect: () => void
   onClose: () => void
 }
@@ -36,13 +36,12 @@ export function AccountPanel({
   isProfileSaving,
   profileErrorMessage,
   onSaveNickname,
-  totalPoints,
-  isPointsLoading,
   usdtBalanceLabel,
   iconButtonClass,
   primaryButtonClass,
   copyLabel,
   onCopyAddress,
+  onProfileClick,
   onDisconnect,
   onClose,
 }: AccountPanelProps) {
@@ -125,13 +124,6 @@ export function AccountPanel({
           <p className="ui-text-strong m-0 text-sm font-semibold">{usdtBalanceLabel}</p>
         </section>
 
-        <section className={`${rowClass} items-center`}>
-          <div>
-            <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('account.points')}</p>
-          </div>
-          <p className="ui-text-strong m-0 text-sm font-semibold">{isPointsLoading ? t('common.loading') : t('points.total', { count: totalPoints })}</p>
-        </section>
-
         <section className={rowClass}>
           <div className="min-w-0">
             <p className="ui-text-muted m-0 text-[11px] font-medium uppercase tracking-[0.18em]">{t('account.freebets')}</p>
@@ -154,43 +146,12 @@ export function AccountPanel({
           </div>
         </section>
       </div>
+
+      <button className={`${primaryButtonClass} w-full`} onClick={onProfileClick} type="button">
+        {t('account.profile')}
+      </button>
     </section>
   )
-}
-
-function getFreebetSummary(freebets: { amount: string; expiresAt: number }[]) {
-  const count = freebets.length
-  const total = freebets.reduce((sum, freebet) => {
-    const amount = Number(freebet.amount)
-    return Number.isFinite(amount) ? sum + amount : sum
-  }, 0)
-  const earliestExpiresAt = freebets.reduce<number | undefined>((earliest, freebet) => {
-    if (!Number.isFinite(freebet.expiresAt)) return earliest
-    if (earliest === undefined) return freebet.expiresAt
-    return Math.min(earliest, freebet.expiresAt)
-  }, undefined)
-
-  return {
-    count,
-    totalAmount: formatFreebetAmount(total),
-    earliestExpiry: earliestExpiresAt ? formatFreebetExpiry(earliestExpiresAt) : undefined,
-  }
-}
-
-function formatFreebetAmount(amount: number) {
-  return new Intl.NumberFormat(undefined, {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 0,
-  }).format(amount)
-}
-
-function formatFreebetExpiry(expiresAt: number) {
-  return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(expiresAt))
 }
 
 type InlineNicknameEditorProps = {

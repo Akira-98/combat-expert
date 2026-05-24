@@ -9,6 +9,7 @@ type UseHeaderControllerParams = {
   isConnected: boolean
   onGuideClick: () => void
   onRankingClick: () => void
+  onProfileClick: () => void
   onOpenAuthModal: () => void
   onDisconnect: () => void
   usdtTransfer: ReturnType<typeof useUsdtTransfer>
@@ -22,6 +23,7 @@ export function useHeaderController({
   isConnected,
   onGuideClick,
   onRankingClick,
+  onProfileClick,
   onOpenAuthModal,
   onDisconnect,
   usdtTransfer,
@@ -98,6 +100,11 @@ export function useHeaderController({
     onRankingClick()
   }
 
+  const handleProfileNavigation = () => {
+    closeOverlays()
+    onProfileClick()
+  }
+
   const handleWalletAction = () => {
     setIsAccountModalOpen(false)
 
@@ -121,6 +128,7 @@ export function useHeaderController({
     handleDisconnect,
     handleGuideNavigation,
     handleRankingNavigation,
+    handleProfileNavigation,
     handleWalletAction,
     handleToggleAccountModal: () => setIsAccountModalOpen((current) => !current),
   }

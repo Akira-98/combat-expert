@@ -24,14 +24,13 @@ type HeaderProps = {
   usdtBalance?: number
   isUsdtBalanceLoading?: boolean
   isUsdtSupportedChain?: boolean
-  totalPoints: number
-  isPointsLoading: boolean
   canOpenAuthModal: boolean
   connectErrorMessage?: string
   onTitleClick?: () => void
   gameSearchQuery: string
   onGameSearchQueryChange: (value: string) => void
   onRankingClick: () => void
+  onProfileClick: () => void
   onGuideClick: () => void
   onOpenAuthModal: () => void
   onDisconnect: () => void
@@ -55,14 +54,13 @@ export function Header({
   usdtBalance,
   isUsdtBalanceLoading,
   isUsdtSupportedChain,
-  totalPoints,
-  isPointsLoading,
   canOpenAuthModal,
   connectErrorMessage,
   onTitleClick,
   gameSearchQuery,
   onGameSearchQueryChange,
   onRankingClick,
+  onProfileClick,
   onGuideClick,
   onOpenAuthModal,
   onDisconnect,
@@ -89,6 +87,7 @@ export function Header({
     isConnected,
     onGuideClick,
     onRankingClick,
+    onProfileClick,
     onOpenAuthModal,
     onDisconnect,
     usdtTransfer,
@@ -106,13 +105,12 @@ export function Header({
       isProfileSaving={isProfileSaving}
       profileErrorMessage={profileErrorMessage}
       onSaveNickname={onSaveNickname}
-      totalPoints={totalPoints}
-      isPointsLoading={isPointsLoading}
       usdtBalanceLabel={controller.usdtBalanceLabel}
       iconButtonClass={iconButtonClass}
       primaryButtonClass={primaryButtonClass}
       copyLabel={controller.copyLabel}
       onCopyAddress={controller.handleCopyAddress}
+      onProfileClick={controller.handleProfileNavigation}
       onDisconnect={controller.handleDisconnect}
       onClose={controller.closeAccountModal}
     />

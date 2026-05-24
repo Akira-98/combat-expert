@@ -5,6 +5,11 @@ export type RankingEntry = {
   address: string
   nickname: string | null
   totalScore: number
+  netPnl: number
+  roi: number
+  totalWagered: number
+  totalPayout: number
+  winRate: number
   winCount: number
   loseCount: number
   voidCount: number

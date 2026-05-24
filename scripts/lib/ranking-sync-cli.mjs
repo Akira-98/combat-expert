@@ -34,6 +34,7 @@ export function printUsage() {
   npm run ranking:sync -- --source combat-feed [--limit 30] [--apply]
   npm run ranking:sync -- --source settled-mma [--limit 30] [--apply]
   npm run ranking:sync -- --source settled-bets-mma [--days 3] [--limit 30] [--apply]
+  npm run ranking:sync -- --source app-bets [--days 3] [--apply]
 
 Options:
   --event-id <value>        Ranking batch identifier. Defaults to sync-YYYY-MM-DD.
@@ -42,7 +43,8 @@ Options:
   --source combat-feed      Resolve gameIds from the current combat feed selection.
   --source settled-mma      Resolve gameIds from recently finished UFC/MMA games.
   --source settled-bets-mma Resolve gameIds from recently settled UFC/MMA bets.
-  --days <value>            Lookback days for --source settled-bets-mma. Defaults to 3.
+  --source app-bets         Sync all settled bets placed through this app affiliate.
+  --days <value>            Lookback days for settled bet sources. Defaults to 3.
   --limit <value>           Game limit for --source combat-feed. Defaults to 30.
   --apply                   Execute sync. Default is dry-run preview.
   --include-multiples       Include parlays/multi-selection bets.
@@ -73,8 +75,12 @@ export function shouldResolveGamesFromSource({ source, gameIds }) {
   return gameIds.length === 0 && (source === 'combat-feed' || source === 'settled-mma' || source === 'settled-bets-mma')
 }
 
-export function ensureRequiredInput({ eventId, gameIds, secret }) {
-  if (!eventId || gameIds.length === 0) {
+export function shouldSyncAppBetsFromSource({ source, gameIds }) {
+  return gameIds.length === 0 && source === 'app-bets'
+}
+
+export function ensureRequiredInput({ eventId, gameIds, secret, source }) {
+  if (!eventId || (gameIds.length === 0 && source !== 'app-bets')) {
     printUsage()
     process.exit(1)
   }

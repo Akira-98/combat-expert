@@ -4,6 +4,7 @@ import { AppBottomNav } from './compositions/AppBottomNav'
 import { AppHeaderContainer } from './compositions/AppHeaderContainer'
 import { ComingSoonPage } from './compositions/ComingSoonPage'
 import { GuidePage } from './compositions/GuidePage'
+import { ProfilePage } from './compositions/ProfilePage'
 import { RankingPage } from './compositions/RankingPage'
 import { MobileBetslipSheet } from './compositions/MobileBetslipSheet'
 import { DesktopMenuRail } from './compositions/app/DesktopMenuRail'
@@ -128,12 +129,11 @@ function App() {
             usdtBalance={usdtTransfer.balance}
             isUsdtBalanceLoading={usdtTransfer.isBalanceLoading}
             isUsdtSupportedChain={usdtTransfer.isSupportedChain}
-            totalPoints={points.totalPoints}
-            isPointsLoading={points.isLoading}
             onTitleClick={shell.handleNavigateToExplore}
             gameSearchQuery={filters.gameSearchQuery}
             onGameSearchQueryChange={filters.setGameSearchQuery}
             onRankingClick={shell.handleNavigateToRanking}
+            onProfileClick={shell.handleNavigateToProfile}
             onGuideClick={shell.handleNavigateToGuide}
           />
         </div>
@@ -161,7 +161,18 @@ function App() {
           {shell.shouldShowGuideContent ? (
             <GuidePage />
           ) : shell.shouldShowRankingContent ? (
-            <RankingPage />
+            <RankingPage address={wallet.address} />
+          ) : shell.shouldShowProfileContent ? (
+            <ProfilePage
+              address={wallet.address}
+              isConnected={wallet.isConnected}
+              displayName={profile.displayName}
+              usdtBalanceLabel={getUsdtBalanceLabel({
+                balance: usdtTransfer.balance,
+                isLoading: usdtTransfer.isBalanceLoading,
+                isSupportedChain: usdtTransfer.isSupportedChain,
+              })}
+            />
           ) : shell.shouldShowPreviewContent ? (
             <ComingSoonPage />
           ) : (
@@ -246,6 +257,20 @@ function App() {
       />
     </div>
   )
+}
+
+function getUsdtBalanceLabel({
+  balance,
+  isLoading,
+  isSupportedChain,
+}: {
+  balance: number
+  isLoading: boolean
+  isSupportedChain: boolean
+}) {
+  if (!isSupportedChain) return 'Unsupported network'
+  if (isLoading) return 'Loading...'
+  return `${balance.toFixed(4)} USDT`
 }
 
 export default App

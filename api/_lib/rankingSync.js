@@ -1,5 +1,5 @@
 import { normalizeAddress } from './env.js'
-import { fetchGamesByIds, fetchSettledV3BetsByGameId } from './azuro.js'
+import { fetchGamesByIds, fetchSettledV3BetsByAffiliate, fetchSettledV3BetsByGameId } from './azuro.js'
 import { applyRankingEvent } from './rankingStore.js'
 
 function normalizeEntityId(value, maxLength = 160) {
@@ -20,6 +20,12 @@ function normalizeOdds(value) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : NaN
 }
 
+function normalizeNullableNumeric(value) {
+  if (value === null || value === undefined || value === '') return null
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
 function normalizeResolvedAt(value) {
   const isoString = typeof value === 'string' ? value.trim() : ''
   if (!isoString) return ''
@@ -29,6 +35,17 @@ function normalizeResolvedAt(value) {
 
 export function normalizeBoolean(value) {
   return value === true || value === 'true' || value === '1' || value === 1
+}
+
+export function normalizeLookbackDays(value, fallback = 3) {
+  const parsed = Number.parseInt(String(value ?? ''), 10)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
+}
+
+export function normalizeRankingSyncSource(value) {
+  if (typeof value !== 'string') return ''
+  const normalized = value.trim().toLowerCase()
+  return normalized === 'app-bets' ? normalized : ''
 }
 
 export function normalizeGameIds(value) {
@@ -46,6 +63,10 @@ function normalizeSyncEntry(input, index) {
   const result = normalizeResult(input?.result)
   const odds = normalizeOdds(input?.odds)
   const resolvedAt = normalizeResolvedAt(input?.resolvedAt)
+  const amount = normalizeNullableNumeric(input?.amount)
+  const payout = normalizeNullableNumeric(input?.payout)
+  const profit = normalizeNullableNumeric(input?.profit)
+  const status = normalizeEntityId(input?.status, 80) || null
 
   if (!walletAddress) return { error: `entries[${index}].walletAddress is invalid` }
   if (!eventId) return { error: `entries[${index}].eventId is required` }
@@ -64,6 +85,12 @@ function normalizeSyncEntry(input, index) {
     result,
     odds,
     resolvedAt,
+    amount,
+    payout,
+    profit,
+    status,
+    isFreebet: normalizeBoolean(input?.isFreebet),
+    raw: input?.raw && typeof input.raw === 'object' && !Array.isArray(input.raw) ? input.raw : {},
   }
 }
 
@@ -114,6 +141,18 @@ function normalizeRawBetResolvedAt(rawBet) {
   return new Date(timestampMs).toISOString()
 }
 
+function normalizeRawBetFinancials(rawBet) {
+  const amount = normalizeNullableNumeric(rawBet?.amount)
+  const payout = normalizeNullableNumeric(rawBet?.payout)
+  const profit = amount === null || payout === null ? null : payout - amount
+
+  return {
+    amount,
+    payout,
+    profit,
+  }
+}
+
 function buildSyncEntriesFromRawBets({ eventId, rawBets, includeMultiples = false }) {
   const entriesByBetTokenId = new Map()
   const skipped = {
@@ -145,6 +184,7 @@ function buildSyncEntriesFromRawBets({ eventId, rawBets, includeMultiples = fals
     const result = mapRawBetResult(rawBet)
     const odds = normalizeRawBetOdds(rawBet)
     const resolvedAt = normalizeRawBetResolvedAt(rawBet)
+    const financials = normalizeRawBetFinancials(rawBet)
     const gameId = normalizeEntityId(primarySelection?.outcome?.condition?.gameId, 120)
     const marketId = normalizeEntityId(primarySelection?.outcome?.condition?.conditionId, 120)
     const selectionId = normalizeEntityId(primarySelection?.outcome?.outcomeId, 120)
@@ -164,6 +204,12 @@ function buildSyncEntriesFromRawBets({ eventId, rawBets, includeMultiples = fals
       result,
       odds,
       resolvedAt,
+      amount: financials.amount,
+      payout: financials.payout,
+      profit: financials.profit,
+      status: normalizeEntityId(rawBet?.status, 80) || null,
+      isFreebet: Boolean(rawBet?.isFreebet),
+      raw: rawBet && typeof rawBet === 'object' && !Array.isArray(rawBet) ? rawBet : {},
     })
   }
 
@@ -200,6 +246,33 @@ export async function buildEntriesFromSelectedGames({ eventId, gameIds, includeM
   }
 }
 
+export async function buildEntriesFromAppBets({ eventId, affiliateAddress, days, includeMultiples }) {
+  const normalizedAffiliateAddress = normalizeAddress(affiliateAddress)
+  if (!normalizedAffiliateAddress) {
+    throw new Error('Affiliate address is not configured')
+  }
+
+  const resolvedTimestampGte = Math.max(0, Math.floor(Date.now() / 1000) - normalizeLookbackDays(days) * 24 * 60 * 60)
+  const rawBets = await fetchSettledV3BetsByAffiliate({
+    affiliateAddress: normalizedAffiliateAddress,
+    resolvedTimestampGte,
+  })
+  const { entries, skipped } = buildSyncEntriesFromRawBets({
+    eventId,
+    rawBets,
+    includeMultiples,
+  })
+
+  return {
+    entries,
+    skipped,
+    source: 'app-bets',
+    affiliateAddress: normalizedAffiliateAddress,
+    days: normalizeLookbackDays(days),
+    rawBetCount: rawBets.length,
+  }
+}
+
 export async function applyRankingSyncEntries({ supabaseUrl, serviceRoleKey, entries }) {
   const results = []
 
@@ -216,6 +289,12 @@ export async function applyRankingSyncEntries({ supabaseUrl, serviceRoleKey, ent
       result: entry.result,
       odds: entry.odds,
       resolvedAt: entry.resolvedAt,
+      amount: entry.amount,
+      payout: entry.payout,
+      profit: entry.profit,
+      status: entry.status,
+      isFreebet: entry.isFreebet,
+      raw: entry.raw,
     })
 
     results.push({

@@ -1,4 +1,10 @@
-import { ensureRequiredInput, parseCliArgs, shouldResolveGamesFromSource } from './lib/ranking-sync-cli.mjs'
+import 'dotenv/config'
+import {
+  ensureRequiredInput,
+  parseCliArgs,
+  shouldResolveGamesFromSource,
+  shouldSyncAppBetsFromSource,
+} from './lib/ranking-sync-cli.mjs'
 import { buildSourcePreview } from './lib/ranking-sync-preview.mjs'
 import { resolveSourceMeta } from './lib/ranking-sync-sources.mjs'
 
@@ -50,17 +56,26 @@ async function main() {
     console.log(JSON.stringify(buildSourcePreview({ ...cli, gameIds, games, sourceMeta }), null, 2))
   }
 
-  ensureRequiredInput({ eventId: cli.eventId, gameIds, secret: cli.secret })
+  const shouldSyncAppBets = shouldSyncAppBetsFromSource(cli)
+
+  ensureRequiredInput({ eventId: cli.eventId, gameIds, secret: cli.secret, source: cli.source })
 
   await postRankingSync({
     baseUrl: cli.baseUrl,
     secret: cli.secret,
     shouldApply: cli.shouldApply,
-    payload: {
-      eventId: cli.eventId,
-      gameIds,
-      includeMultiples: cli.includeMultiples,
-    },
+    payload: shouldSyncAppBets
+      ? {
+          source: 'app-bets',
+          eventId: cli.eventId,
+          days: cli.days,
+          includeMultiples: cli.includeMultiples,
+        }
+      : {
+          eventId: cli.eventId,
+          gameIds,
+          includeMultiples: cli.includeMultiples,
+        },
   })
 }
 

@@ -112,11 +112,6 @@
     );
   }
 
-  .ui-podium-badge {
-    border-color: color-mix(in oklab, var(--app-text-strong) 14%, transparent);
-    background-color: color-mix(in oklab, #000 24%, transparent);
-  }
-
   .ui-divider-faint {
     border-color: color-mix(in oklab, var(--app-text-strong) 6%, transparent);
   }
@@ -237,57 +232,6 @@
 
   .ui-rank-score {
     color: color-mix(in oklab, var(--app-text-strong) 92%, var(--app-accent));
-  }
-
-  .ui-podium-tone-gold,
-  .ui-podium-tone-silver,
-  .ui-podium-tone-bronze {
-    border-color: color-mix(in oklab, var(--podium-tone) var(--podium-border-strength), transparent);
-    background: linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--podium-tone) var(--podium-top-strength), var(--app-surface)) 0%,
-      color-mix(in oklab, var(--podium-tone) var(--podium-mid-strength), var(--app-surface)) 58%,
-      color-mix(in oklab, var(--podium-tone) var(--podium-bottom-strength), #0a0c10) 100%
-    );
-    box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--podium-tone) var(--podium-ring-strength), transparent),
-      0 18px 40px -28px color-mix(in oklab, var(--podium-tone) var(--podium-shadow-strength), transparent);
-  }
-
-  .ui-podium-tone-gold {
-    --podium-tone: #d35aab;
-    --podium-border-strength: 42%;
-    --podium-top-strength: 28%;
-    --podium-mid-strength: 15%;
-    --podium-bottom-strength: 4%;
-    --podium-ring-strength: 18%;
-    --podium-shadow-strength: 46%;
-  }
-
-  .ui-podium-tone-silver {
-    --podium-tone: #b86aa2;
-    --podium-border-strength: 32%;
-    --podium-top-strength: 21%;
-    --podium-mid-strength: 11%;
-    --podium-bottom-strength: 3%;
-    --podium-ring-strength: 14%;
-    --podium-shadow-strength: 34%;
-  }
-
-  .ui-podium-tone-bronze {
-    --podium-tone: #7f5cff;
-    --podium-border-strength: 24%;
-    --podium-top-strength: 15%;
-    --podium-mid-strength: 8%;
-    --podium-bottom-strength: 2%;
-    --podium-ring-strength: 10%;
-    --podium-shadow-strength: 24%;
-  }
-
-  .ui-podium-tone-default {
-    border-color: var(--app-border);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.015) 100%);
-    box-shadow: 0 0 0 1px color-mix(in oklab, var(--app-border) 24%, transparent);
   }
 
   .ui-state-success {

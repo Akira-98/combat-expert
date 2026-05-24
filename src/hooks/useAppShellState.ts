@@ -37,7 +37,7 @@ export function useAppShellState({
 
   const isMyBetsViewActive =
     navigation.mobileView === 'bets' || navigation.desktopSidePanelTab === 'myBets'
-  const isStaticPageRoute = navigation.isGuideRoute || navigation.isRankingRoute || Boolean(navigation.previewPage)
+  const isStaticPageRoute = navigation.isGuideRoute || navigation.isRankingRoute || navigation.isProfileRoute || Boolean(navigation.previewPage)
 
   return {
     ...navigation,
@@ -47,6 +47,7 @@ export function useAppShellState({
     shouldShowFilters: !isStaticPageRoute,
     shouldShowGuideContent: navigation.isGuideRoute,
     shouldShowRankingContent: navigation.isRankingRoute,
+    shouldShowProfileContent: navigation.isProfileRoute,
     shouldShowPreviewContent: Boolean(navigation.previewPage),
     shouldShowExploreContent:
       !isStaticPageRoute && navigation.mobileView === 'explore',

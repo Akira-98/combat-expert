@@ -3,10 +3,13 @@ import { allowMethods, sendJson, sendServerError } from './_lib/http.js'
 import { isAuthorizedRankingSyncRequest } from './_lib/rankingAuth.js'
 import {
   applyRankingSyncEntries,
+  buildEntriesFromAppBets,
   buildEntriesFromSelectedGames,
   normalizeBoolean,
   normalizeGameIds,
+  normalizeLookbackDays,
   normalizeRankingSyncEventId,
+  normalizeRankingSyncSource,
   normalizeSyncEntries,
   summarizeSkippedEntries,
 } from './_lib/rankingSync.js'
@@ -14,7 +17,7 @@ import {
 export default async function handler(req, res) {
   if (!allowMethods(req, res, ['POST'])) return
 
-  const { supabaseUrl, serviceRoleKey, rankingSyncSecret } = loadServerEnv()
+  const { supabaseUrl, serviceRoleKey, affiliateAddress, rankingSyncSecret } = loadServerEnv()
 
   if (!supabaseUrl || !serviceRoleKey) {
     return sendJson(res, 500, { error: 'Supabase server env is missing' })
@@ -29,13 +32,15 @@ export default async function handler(req, res) {
   }
 
   const eventId = normalizeRankingSyncEventId(req.body?.eventId)
+  const source = normalizeRankingSyncSource(req.body?.source)
   const dryRun = normalizeBoolean(req.query?.dryRun) || normalizeBoolean(req.body?.dryRun)
   const includeMultiples = normalizeBoolean(req.body?.includeMultiples)
+  const days = normalizeLookbackDays(req.body?.days)
   const rawEntries = Array.isArray(req.body?.entries) ? req.body.entries : []
   const gameIds = normalizeGameIds(req.body?.gameIds)
 
-  if (!rawEntries.length && (!eventId || gameIds.length === 0)) {
-    return sendJson(res, 400, { error: 'entries or eventId with gameIds is required' })
+  if (!rawEntries.length && (!eventId || (source !== 'app-bets' && gameIds.length === 0))) {
+    return sendJson(res, 400, { error: 'entries, app-bets source, or eventId with gameIds is required' })
   }
 
   let normalizedEntries = []
@@ -48,6 +53,18 @@ export default async function handler(req, res) {
     }
 
     normalizedEntries = normalizedResult.entries
+  } else if (source === 'app-bets') {
+    try {
+      orchestrationMeta = await buildEntriesFromAppBets({
+        eventId,
+        affiliateAddress,
+        days,
+        includeMultiples,
+      })
+      normalizedEntries = orchestrationMeta.entries
+    } catch (error) {
+      return sendServerError(res, error, 'Failed to build app bet ranking sync entries')
+    }
   } else {
     try {
       orchestrationMeta = await buildEntriesFromSelectedGames({

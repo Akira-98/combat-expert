@@ -4,7 +4,7 @@ import type { GameItem } from '../types/ui'
 export type MobileView = 'explore' | 'bets'
 export type DesktopSidePanelTab = 'myBets' | 'betslip'
 export type MarketPageMode = 'games' | 'markets'
-export type RoutedPage = 'guide' | 'ranking' | 'player-rankings'
+export type RoutedPage = 'guide' | 'ranking' | 'profile' | 'player-rankings'
 
 const GAME_ROUTE_QUERY_KEY = 'game'
 const PAGE_ROUTE_QUERY_KEY = 'page'
@@ -12,11 +12,12 @@ const MARKET_ROUTE_PREFIX = '/markets/'
 const PAGE_ROUTES: Record<RoutedPage, string> = {
   guide: '/guide',
   ranking: '/ranking',
+  profile: '/profile',
   'player-rankings': '/player-rankings',
 }
 
 function parseRoutedPage(value: string | null) {
-  return value === 'guide' || value === 'ranking' || value === 'player-rankings' ? value : undefined
+  return value === 'guide' || value === 'ranking' || value === 'profile' || value === 'player-rankings' ? value : undefined
 }
 
 function readRoutedGameId() {
@@ -123,6 +124,7 @@ export function useAppNavigation({
     : undefined
   const isGuideRoute = routedPage === 'guide'
   const isRankingRoute = routedPage === 'ranking'
+  const isProfileRoute = routedPage === 'profile'
   const previewPage = routedPage === 'player-rankings' ? routedPage : undefined
   const marketPageMode: MarketPageMode = routedGameId ? 'markets' : 'games'
   const activeGameId = marketPageMode === 'markets' ? routedGameId : visibleSelectedGameId
@@ -173,7 +175,15 @@ export function useAppNavigation({
     setRoutedPage('ranking')
   }
 
-  const handleNavigateToPreviewPage = (page: Exclude<RoutedPage, 'guide' | 'ranking'>) => {
+  const handleNavigateToProfile = () => {
+    onCloseMobileBetslip()
+    setMobileView('explore')
+    writeRouteState({ page: 'profile' })
+    setRoutedGameId(undefined)
+    setRoutedPage('profile')
+  }
+
+  const handleNavigateToPreviewPage = (page: Exclude<RoutedPage, 'guide' | 'ranking' | 'profile'>) => {
     onCloseMobileBetslip()
     setMobileView('explore')
     writeRouteState({ page })
@@ -188,6 +198,7 @@ export function useAppNavigation({
     setDesktopSidePanelTab,
     isGuideRoute,
     isRankingRoute,
+    isProfileRoute,
     previewPage,
     marketPageMode,
     activeGameId,
@@ -197,6 +208,7 @@ export function useAppNavigation({
     handleNavigateToMobileView,
     handleNavigateToGuide,
     handleNavigateToRanking,
+    handleNavigateToProfile,
     handleNavigateToPreviewPage,
   }
 }

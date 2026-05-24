@@ -40,7 +40,7 @@ export function TopEventsShowcase({
         <span className="ui-text-muted shrink-0 text-xs font-semibold">{topGames.length}</span>
       </div>
 
-      <div className="panel ui-section-sheen section-shell grid gap-1.5 p-2 md:rounded-2xl md:border md:px-4 md:py-4">
+      <div className="panel ui-section-sheen section-shell grid gap-1.5 rounded-lg p-2 md:rounded-2xl md:border md:px-4 md:py-4">
         <div className="divide-y divide-[color:var(--app-border)]">
           {visibleGames.map((game) => (
             <GameCard
