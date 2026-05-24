@@ -229,9 +229,6 @@ type BetDetailsDialogProps = {
 
 function BetDetailsDialog({ bet, onClose }: BetDetailsDialogProps) {
   const { t } = useI18n()
-  const primaryOutcome = bet.outcomes[0]
-  const game = primaryOutcome?.game
-  const participants = game?.participants ?? []
   const betTypeLabel = bet.outcomes.length <= 1 ? t('myBets.single') : t('myBets.combo', { count: bet.outcomes.length })
   const statusLabel = bet.status ?? bet.orderState ?? '-'
   const possibleWin = getPossibleWin(bet)
@@ -275,31 +272,40 @@ function BetDetailsDialog({ bet, onClose }: BetDetailsDialogProps) {
           </div>
         </div>
 
-        <div className="card-surface-soft mt-5 rounded-xl border border-white/8 p-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex shrink-0 -space-x-2">
-              {participants.slice(0, 2).map((participant) => (
-                <ParticipantAvatar key={participant.name} participant={participant} className="h-12 w-12 border-2 border-[#202027] text-sm" />
-              ))}
-            </div>
-            <div className="min-w-0">
-              <p className="ui-text-muted m-0 text-sm font-semibold">{formatGameStart(game?.startsAt)}</p>
-              <p className="ui-text-strong m-0 mt-1 truncate text-base font-semibold">{game?.title ?? t('myBets.noGameInfo')}</p>
-            </div>
-          </div>
+        <div className="mt-5 grid max-h-[58vh] gap-3 overflow-y-auto pr-1">
+          {bet.outcomes.map((outcome, index) => {
+            const game = outcome.game
+            const participants = game?.participants ?? []
 
-          <div className="mt-4 border-t border-white/10 pt-4">
-            {bet.outcomes.map((outcome, index) => (
-              <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 py-1.5 text-sm" key={`${outcome.conditionId}-${outcome.outcomeId}-${index}`}>
-                <span className="ui-text-muted font-semibold">{t('myBets.market')}</span>
-                <span className="ui-text-strong max-w-[230px] truncate text-right font-semibold">{outcome.marketName || '-'}</span>
-                <span className="ui-text-muted font-semibold">{t('myBets.outcome')}</span>
-                <span className="ui-text-strong text-right font-semibold">{outcome.selectionName || '-'}</span>
-                <span className="ui-text-muted font-semibold">{t('myBets.odds')}</span>
-                <span className="ui-text-strong text-right font-semibold">{Number.isFinite(outcome.odds) ? outcome.odds.toFixed(2) : '-'}</span>
+            return (
+              <div className="card-surface-soft rounded-xl border border-white/8 p-4" key={`${outcome.conditionId}-${outcome.outcomeId}-${index}`}>
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex min-w-10 shrink-0 -space-x-2">
+                    {participants.length > 0 ? (
+                      participants.slice(0, 2).map((participant) => (
+                        <ParticipantAvatar key={participant.name} participant={participant} className="h-12 w-12 border-2 border-[#202027] text-sm" />
+                      ))
+                    ) : (
+                      <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-[#202027] bg-white/8 text-sm font-semibold">?</div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="ui-text-muted m-0 text-sm font-semibold">{formatGameStart(game?.startsAt)}</p>
+                    <p className="ui-text-strong m-0 mt-1 truncate text-base font-semibold">{game?.title ?? t('myBets.noGameInfo')}</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 border-t border-white/10 pt-4 text-sm">
+                  <span className="ui-text-muted font-semibold">{t('myBets.market')}</span>
+                  <span className="ui-text-strong max-w-[230px] truncate text-right font-semibold">{outcome.marketName || '-'}</span>
+                  <span className="ui-text-muted font-semibold">{t('myBets.outcome')}</span>
+                  <span className="ui-text-strong text-right font-semibold">{outcome.selectionName || '-'}</span>
+                  <span className="ui-text-muted font-semibold">{t('myBets.odds')}</span>
+                  <span className="ui-text-strong text-right font-semibold">{Number.isFinite(outcome.odds) ? outcome.odds.toFixed(2) : '-'}</span>
+                </div>
               </div>
-            ))}
-          </div>
+            )
+          })}
         </div>
 
         <div className="mt-5 grid gap-3 text-sm">
