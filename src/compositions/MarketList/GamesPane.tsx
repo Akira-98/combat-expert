@@ -58,17 +58,17 @@ export function GamesPane({
   return (
     <div className="grid content-start gap-3 pr-0 md:gap-4">
       {isGamesLoading && (
-        <section className="panel ui-section-sheen section-shell p-2 md:rounded-2xl md:border md:px-4 md:py-4">
+        <section className="panel ui-section-sheen section-shell rounded-lg p-2 md:rounded-2xl md:border md:px-4 md:py-4">
           <GamesSkeletonList />
         </section>
       )}
       {!isGamesLoading && gamesErrorMessage && (
-        <section className="panel ui-section-sheen section-shell p-2 md:rounded-2xl md:border md:px-4 md:py-4">
+        <section className="panel ui-section-sheen section-shell rounded-lg p-2 md:rounded-2xl md:border md:px-4 md:py-4">
           <ErrorState title={t('games.listError')} message={gamesErrorMessage} onRetry={onRetryGames} />
         </section>
       )}
       {!isGamesLoading && !gamesErrorMessage && games.length === 0 && (
-        <section className="panel ui-section-sheen section-shell p-2 md:rounded-2xl md:border md:px-4 md:py-4">
+        <section className="panel ui-section-sheen section-shell rounded-lg p-2 md:rounded-2xl md:border md:px-4 md:py-4">
           <EmptyState title={t('games.emptyTitle')} description={t('games.emptyDesc')} />
         </section>
       )}
@@ -127,8 +127,8 @@ function SportGamesSection({
         <span className="ui-text-muted shrink-0 text-xs font-semibold">{group.games.length}</span>
       </div>
 
-      <div className="panel ui-section-sheen section-shell grid gap-1.5 p-2 md:rounded-2xl md:border md:px-4 md:py-4">
-        <div>
+      <div className="panel ui-section-sheen section-shell grid gap-1.5 rounded-lg p-2 md:rounded-2xl md:border md:px-4 md:py-4">
+        <div className="divide-y divide-[color:var(--app-border)]">
           {visibleGames.map((game) => (
             <GameCard
               key={game.gameId}
