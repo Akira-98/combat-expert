@@ -166,35 +166,96 @@
     color: var(--app-text-strong);
   }
 
-  .ui-profile-stat-group {
-    border: 1px solid var(--app-border);
-    border-radius: 0.75rem;
-    background-color: var(--app-surface-soft);
-    box-shadow: 0 0 0 1px color-mix(in oklab, var(--app-border) 24%, transparent);
-    padding: 0.75rem 0.5rem;
+  .ui-profile-hero {
+    position: relative;
+    border-color: color-mix(in oklab, var(--app-magenta) 42%, var(--app-cyan));
+    background:
+      linear-gradient(112deg, color-mix(in oklab, var(--app-magenta) 18%, transparent) 0%, transparent 28%, color-mix(in oklab, var(--app-cyan) 14%, transparent) 100%),
+      linear-gradient(180deg, color-mix(in oklab, white 4%, transparent), transparent 42%),
+      linear-gradient(135deg, rgba(10, 7, 15, 0.98) 0%, rgba(17, 10, 24, 0.96) 50%, rgba(5, 16, 25, 0.92) 100%),
+      var(--app-surface);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--app-cyan) 16%, transparent),
+      0 24px 60px -46px color-mix(in oklab, var(--app-magenta) 60%, black);
   }
 
-  .ui-profile-stat-card {
-    border: 0;
-    background-color: transparent;
-    box-shadow: none;
+  .ui-profile-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, transparent 0%, color-mix(in oklab, var(--app-text-strong) 5%, transparent) 48%, transparent 100%),
+      linear-gradient(135deg, color-mix(in oklab, var(--app-magenta) 18%, transparent), transparent 30%, color-mix(in oklab, var(--app-cyan) 16%, transparent) 100%);
+    opacity: 0.55;
   }
 
-  @media (min-width: 768px) {
-    .ui-profile-stat-group {
-      border: 0;
-      border-radius: 0;
-      background-color: transparent;
-      box-shadow: none;
-      padding: 0;
-    }
+  .ui-profile-avatar-ring {
+    background:
+      linear-gradient(135deg, color-mix(in oklab, var(--app-magenta) 95%, white) 0%, color-mix(in oklab, var(--app-cyan) 92%, white) 100%);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, white 16%, transparent),
+      0 0 24px color-mix(in oklab, var(--app-magenta) 34%, transparent),
+      0 0 34px color-mix(in oklab, var(--app-cyan) 22%, transparent);
+  }
 
-    .ui-profile-stat-card {
-      border: 1px solid var(--app-border);
-      border-radius: 0.75rem;
-      background-color: var(--app-surface-soft);
-      box-shadow: 0 0 0 1px color-mix(in oklab, var(--app-border) 24%, transparent);
-    }
+  .ui-profile-rank-chip {
+    color: var(--app-text-strong);
+    background:
+      linear-gradient(135deg, color-mix(in oklab, var(--app-magenta) 72%, black), color-mix(in oklab, var(--app-cyan) 64%, black));
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, white 18%, transparent),
+      0 10px 24px -16px color-mix(in oklab, var(--app-cyan) 72%, black);
+  }
+
+  .ui-profile-value-positive {
+    color: color-mix(in oklab, var(--app-cyan) 84%, white);
+    text-shadow: 0 0 24px color-mix(in oklab, var(--app-cyan) 38%, transparent);
+  }
+
+  .ui-profile-value-negative {
+    color: color-mix(in oklab, var(--state-danger) 82%, white);
+    text-shadow: 0 0 24px color-mix(in oklab, var(--state-danger) 34%, transparent);
+  }
+
+  .ui-profile-list {
+    border-top: 1px solid color-mix(in oklab, var(--app-text-strong) 8%, transparent);
+  }
+
+  .ui-profile-row {
+    border-bottom: 1px solid color-mix(in oklab, var(--app-text-strong) 7%, transparent);
+  }
+
+  .ui-profile-row:last-child {
+    border-bottom: 0;
+  }
+
+  .ui-profile-icon {
+    display: inline-flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: color-mix(in oklab, var(--app-cyan) 84%, white);
+    background:
+      linear-gradient(135deg, color-mix(in oklab, var(--app-magenta) 22%, transparent), color-mix(in oklab, var(--app-cyan) 16%, transparent)),
+      color-mix(in oklab, var(--app-text-strong) 6%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, white 7%, transparent),
+      0 0 0 1px color-mix(in oklab, var(--app-cyan) 10%, transparent);
+  }
+
+  .ui-profile-icon-strong {
+    width: 2.75rem;
+    height: 2.75rem;
+    color: #fff;
+    background:
+      linear-gradient(135deg, color-mix(in oklab, var(--app-magenta) 78%, black), color-mix(in oklab, var(--app-cyan) 68%, black));
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, white 18%, transparent),
+      0 14px 30px -20px color-mix(in oklab, var(--app-cyan) 80%, black);
   }
 
   .ui-bottom-nav-shell {

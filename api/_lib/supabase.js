@@ -36,7 +36,8 @@ export async function supabaseInsert({ supabaseUrl, serviceRoleKey, table, body,
     throw new Error(errorMessage || 'Supabase insert failed', { cause: text })
   }
 
-  return response.json()
+  const text = await response.text()
+  return text ? JSON.parse(text) : null
 }
 
 export async function supabaseUpdate({ supabaseUrl, serviceRoleKey, path, body, prefer, errorMessage }) {

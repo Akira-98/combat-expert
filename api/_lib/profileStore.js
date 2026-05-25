@@ -17,14 +17,47 @@ export async function fetchProfileByAddress({ supabaseUrl, serviceRoleKey, addre
   })
 
   const profile = Array.isArray(rows) ? rows[0] : undefined
+  if (!profile) {
+    const insertedRows = await supabaseInsert({
+      supabaseUrl,
+      serviceRoleKey,
+      table: 'profiles',
+      prefer: 'resolution=merge-duplicates,return=representation',
+      errorMessage: 'Failed to create profile',
+      body: {
+        wallet_address: address,
+      },
+    })
+    return mapProfileRow(Array.isArray(insertedRows) ? insertedRows[0] : undefined, address)
+  }
+
   return mapProfileRow(profile, address)
+}
+
+export async function ensureProfilesByAddresses({ supabaseUrl, serviceRoleKey, addresses }) {
+  const uniqueAddresses = [...new Set(addresses.map(normalizeAddress).filter(Boolean))]
+  if (uniqueAddresses.length === 0) return
+
+  await supabaseInsert({
+    supabaseUrl,
+    serviceRoleKey,
+    table: 'profiles',
+    prefer: 'resolution=ignore-duplicates,return=minimal',
+    errorMessage: 'Failed to create profiles',
+    body: uniqueAddresses.map((address) => ({
+      wallet_address: address,
+    })),
+  })
 }
 
 export async function fetchNicknameMapByAddresses({ supabaseUrl, serviceRoleKey, addresses }) {
   const byAddress = new Map()
-  if (addresses.length === 0) return byAddress
+  const uniqueAddresses = [...new Set(addresses.map(normalizeAddress).filter(Boolean))]
+  if (uniqueAddresses.length === 0) return byAddress
 
-  const addressList = addresses.map((address) => `"${address}"`).join(',')
+  await ensureProfilesByAddresses({ supabaseUrl, serviceRoleKey, addresses: uniqueAddresses })
+
+  const addressList = uniqueAddresses.map((address) => `"${address}"`).join(',')
   const rows = await supabaseSelect({
     supabaseUrl,
     serviceRoleKey,

@@ -21,7 +21,6 @@ export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderbo
           <img alt="" className="h-9 w-9 shrink-0 rounded-lg border object-cover md:h-12 md:w-12 md:rounded-xl" src={getWalletAvatarUrl(entry.address)} />
           <div className="min-w-0">
             <p className="ui-text-strong m-0 truncate text-base font-semibold md:text-xl">{displayName}</p>
-            <p className="ui-text-muted mt-1 mb-0 truncate text-xs">{shortenAddress(entry.address, 6, 4)}</p>
           </div>
         </div>
 
