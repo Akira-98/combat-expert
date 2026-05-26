@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { getWalletAvatarUrl, shortenAddress } from '../../helpers/walletUi'
 import { formatPercentRatio, formatSignedUsdt } from '../../helpers/formatters'
 import type { RankingEntry } from '../../hooks/useRankings'
@@ -27,40 +28,49 @@ export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderbo
         <RankBadge rank={rank} />
       </div>
 
-      <div className="grid gap-3 md:grid-cols-[minmax(0,1.4fr)_minmax(11rem,0.8fr)] md:gap-5">
-        <div className="grid gap-1.5 md:gap-2">
-          <p className="ui-text-muted m-0 text-xs font-semibold md:text-sm">{t('ranking.pnl')}</p>
-          <div className="flex min-w-0 flex-wrap items-end gap-x-2.5 gap-y-1.5 md:gap-x-4 md:gap-y-2">
-            <p className="ui-rank-score m-0 text-2xl font-semibold leading-none md:text-4xl">
-              {formatSignedUsdt(entry.netPnl)}
-            </p>
-            <span className="ui-state-success rounded-md border px-2 py-0.5 text-sm font-semibold md:px-3 md:py-1 md:text-base">
-              {formatPercentRatio(entry.roi)}
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 md:gap-4 md:text-right">
-          <EntryMetric label="Won" value={String(entry.winCount)} />
-          <EntryMetric label="Lose" value={String(entry.loseCount)} />
+      <div className="grid gap-1.5 md:gap-2">
+        <p className="ui-text-muted m-0 text-xs font-semibold md:text-sm">{t('ranking.pnl')}</p>
+        <div className="flex min-w-0 flex-wrap items-end gap-x-2.5 gap-y-1.5 md:gap-x-4 md:gap-y-2">
+          <p className="ui-rank-score m-0 text-2xl font-semibold leading-none md:text-4xl">
+            <UsdtAmount amount={formatSignedUsdt(entry.netPnl, { suffix: false })} ariaLabel={formatSignedUsdt(entry.netPnl)} size="lg" />
+          </p>
+          <span className="ui-state-success rounded-md border px-2 py-0.5 text-sm font-semibold md:px-3 md:py-1 md:text-base">
+            {formatPercentRatio(entry.roi)}
+          </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 md:gap-3">
+      <div className="grid grid-cols-3 gap-x-2 gap-y-3 md:gap-x-3 md:gap-y-4">
         <EntryMetric label={t('ranking.hitRate')} value={formatPercentRatio(entry.winRate)} />
+        <EntryMetric label="Won" value={String(entry.winCount)} />
+        <EntryMetric
+          label={t('ranking.totalWagered')}
+          value={<UsdtAmount amount={entry.totalWagered.toFixed(2)} ariaLabel={`${entry.totalWagered.toFixed(2)} USDT`} />}
+        />
         <EntryMetric label={t('ranking.events')} value={String(entry.eventCount)} />
-        <EntryMetric label={t('ranking.totalWagered')} value={`${entry.totalWagered.toFixed(2)} USDT`} />
+        <EntryMetric label="Lose" value={String(entry.loseCount)} />
       </div>
     </article>
   )
 }
 
-function EntryMetric({ label, value }: { label: string; value: string }) {
+function EntryMetric({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="min-w-0">
       <p className="ui-text-muted m-0 truncate text-xs font-semibold md:text-sm">{label}</p>
       <p className="ui-text-strong mt-0.5 mb-0 truncate text-base font-semibold md:mt-1 md:text-xl">{value}</p>
     </div>
+  )
+}
+
+function UsdtAmount({ amount, ariaLabel, size = 'sm' }: { amount: string; ariaLabel: string; size?: 'sm' | 'lg' }) {
+  const iconClassName = size === 'lg' ? 'h-5 w-5 md:h-7 md:w-7' : 'h-4 w-4 md:h-5 md:w-5'
+
+  return (
+    <span aria-label={ariaLabel} className="inline-flex min-w-0 items-center gap-1.5 align-baseline">
+      <img alt="" aria-hidden="true" className={`${iconClassName} shrink-0 rounded-full`} src="/tether-logo.svg" title="USDT" />
+      <span className="truncate">{amount}</span>
+    </span>
   )
 }
 
