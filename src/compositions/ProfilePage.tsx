@@ -93,7 +93,7 @@ function ProfileStats({
         <div className="relative z-10 mx-auto grid max-w-3xl gap-6">
           <div className="grid justify-items-center gap-3 text-center">
             <div className="ui-profile-avatar-ring relative h-24 w-24 rounded-full p-[3px] md:h-28 md:w-28">
-              <img alt="" className="h-full w-full rounded-full border border-black/30 object-cover" src={getWalletAvatarUrl(address)} />
+              <img alt="" className="h-full w-full rounded-full object-cover" src={getWalletAvatarUrl(address)} />
               <span className="ui-profile-rank-chip absolute -right-2 -bottom-1 inline-flex min-w-10 items-center justify-center rounded-full px-2 py-1 text-xs font-black">
                 {getRankDisplay(viewer.rank)}
               </span>

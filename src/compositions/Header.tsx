@@ -178,7 +178,7 @@ export function Header({
                 onClick={controller.handleToggleAccountModal}
                 type="button"
               >
-                <img alt="" className="h-10 w-10 rounded-full border object-cover" src={controller.avatarUrl} />
+                <img alt="" className="h-10 w-10 rounded-full object-cover" src={controller.avatarUrl} />
                 <span className="ui-text-strong hidden text-sm font-semibold md:inline">{profileDisplayName}</span>
               </button>
 

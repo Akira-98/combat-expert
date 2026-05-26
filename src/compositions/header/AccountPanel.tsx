@@ -67,7 +67,7 @@ export function AccountPanel({
     <section className="grid gap-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <img alt="" className="h-14 w-14 rounded-full border object-cover" src={avatarUrl} />
+          <img alt="" className="h-14 w-14 rounded-full object-cover" src={avatarUrl} />
           <div className="min-w-0">
             <div className="flex min-w-0 flex-wrap items-center gap-1.5">
               <p className="ui-text-strong m-0 truncate text-sm font-semibold">{profileDisplayName}</p>
