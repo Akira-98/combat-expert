@@ -33,7 +33,7 @@ export function GameCard({
         : 'ui-pill'
 
   return (
-    <div className="py-1 first:pt-0 last:pb-0">
+    <div>
       <div
         aria-pressed={isActive}
         className={`${gameCardBaseClass} ${gameCardIdleClass}`}

@@ -38,8 +38,8 @@ export function GamesPane({
   onRetryGames,
 }: GamesPaneProps) {
   const { t } = useI18n()
-  const gameCardBaseClass = 'group grid gap-1.5 rounded-md border border-transparent px-2 py-2 text-left transition md:px-2.5 md:py-2.5 md:rounded-lg'
-  const gameCardIdleClass = 'bg-transparent shadow-none hover:text-inherit'
+  const gameCardBaseClass = 'group grid gap-1.5 rounded-md border border-white/8 bg-black/25 px-2 py-2 text-left shadow-none transition md:px-2.5 md:py-2.5 md:rounded-lg'
+  const gameCardIdleClass = 'hover:border-white/15 hover:bg-black/35 hover:text-inherit'
   const sportGroups = useMemo(() => groupGamesBySport(games), [games])
   const [expandedSports, setExpandedSports] = useState<Set<string>>(() => new Set())
 
@@ -128,7 +128,7 @@ function SportGamesSection({
       </div>
 
       <div className="panel ui-section-sheen section-shell grid gap-1.5 rounded-lg p-2 md:rounded-2xl md:border md:px-4 md:py-4">
-        <div className="divide-y divide-[color:var(--app-border)]">
+        <div className="grid gap-2">
           {visibleGames.map((game) => (
             <GameCard
               key={game.gameId}
