@@ -19,7 +19,7 @@ export function RankingLeaderboardRow({ entry, rank, isViewer }: RankingLeaderbo
     <article className={`card-surface-soft card-shell-xl ui-border grid gap-3 border p-3 md:gap-5 md:p-5 ${rowClassName}`}>
       <div className="flex min-w-0 items-center justify-between gap-3 md:gap-4">
         <div className="flex min-w-0 items-center gap-2.5 md:gap-3">
-          <img alt="" className="h-9 w-9 shrink-0 rounded-lg border object-cover md:h-12 md:w-12 md:rounded-xl" src={getWalletAvatarUrl(entry.address)} />
+          <img alt="" className="h-11 w-11 shrink-0 rounded-lg object-cover md:h-14 md:w-14 md:rounded-xl" src={getWalletAvatarUrl(entry.address)} />
           <div className="min-w-0">
             <p className="ui-text-strong m-0 truncate text-base font-semibold md:text-xl">{displayName}</p>
           </div>
