@@ -20,9 +20,8 @@ export const getChainName = (chainId: number | undefined) => {
   return CHAIN_NAME_BY_ID[chainId] ?? `Chain ${chainId}`
 }
 
-export const getWalletAvatarUrl = (address?: string) => {
-  const seed = address?.toLowerCase() ?? 'betaker-guest'
-  return `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(seed)}&backgroundType=gradientLinear`
+export const getWalletAvatarUrl = (_address?: string) => {
+  return '/images/avatars/profile.png'
 }
 
 export const shortenAddress = (address?: string, head = 6, tail = 4) => {
