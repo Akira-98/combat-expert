@@ -1,5 +1,6 @@
 import type { GameItem, MarketSection, SelectionItem, SelectionKey } from '../../types/ui'
 import { translate } from '../../i18n'
+import { normalizeOutcomeLabel } from '../outcomes'
 import { selectionKey } from './selection'
 
 type BetslipItemLike = {
@@ -13,8 +14,8 @@ export const buildSelectedOutcomes = (items: BetslipItemLike[]): Set<SelectionKe
 
 export const buildOutcomeMeta = (
   sections: MarketSection[],
-): Map<SelectionKey, { label: string; odds: number; conditionState: string; gameId: string; marketTitle: string; gameTitle?: string }> => {
-  const map = new Map<SelectionKey, { label: string; odds: number; conditionState: string; gameId: string; marketTitle: string; gameTitle?: string }>()
+): Map<SelectionKey, { label: string; odds: number; conditionState: string; gameId: string; marketTitle: string; selectionName: string; gameTitle?: string }> => {
+  const map = new Map<SelectionKey, { label: string; odds: number; conditionState: string; gameId: string; marketTitle: string; selectionName: string; gameTitle?: string }>()
 
   sections.forEach((section) => {
     section.outcomes.forEach((outcome) => {
@@ -24,6 +25,7 @@ export const buildOutcomeMeta = (
         conditionState: outcome.conditionState,
         gameId: outcome.gameId,
         marketTitle: section.title,
+        selectionName: outcome.selectionName,
       })
     })
   })
@@ -33,20 +35,28 @@ export const buildOutcomeMeta = (
 
 export const mapBetslipToSelectionItems = (
   items: BetslipItemLike[],
-  outcomeMeta: Map<SelectionKey, { label: string; odds: number; gameId: string; gameTitle?: string }>,
+  outcomeMeta: Map<SelectionKey, { label: string; odds: number; gameId: string; gameTitle?: string; marketTitle?: string; selectionName?: string }>,
   games: GameItem[],
 ): SelectionItem[] =>
   items.map((item) => {
     const key = selectionKey(item.conditionId, item.outcomeId)
     const meta = outcomeMeta.get(key)
     const gameId = meta?.gameId ?? item.gameId
-    const gameTitle = games.find((game) => game.gameId === gameId)?.title ?? meta?.gameTitle
+    const game = games.find((game) => game.gameId === gameId)
+    const gameTitle = game?.title ?? meta?.gameTitle
+    const participantNames = game?.participants.map((participant) => participant.name) ?? []
+    const outcomeLabel = meta?.selectionName
+      ? normalizeOutcomeLabel(meta.selectionName, participantNames)
+      : undefined
+    const label = outcomeLabel && meta?.marketTitle
+      ? `${meta.marketTitle} · ${outcomeLabel}`
+      : outcomeLabel ?? meta?.label ?? translate('betslip.selectionItem')
 
     return {
       conditionId: item.conditionId,
       outcomeId: item.outcomeId,
       gameTitle: gameTitle ?? translate('games.game'),
-      label: meta?.label ?? translate('betslip.selectionItem'),
+      label,
       odds: meta?.odds ?? 0,
     }
   })

@@ -9,6 +9,7 @@ type SelectionMeta = {
   conditionState: string
   gameId: string
   marketTitle: string
+  selectionName?: string
   gameTitle?: string
 }
 
@@ -66,6 +67,7 @@ export function useBetslipSelectionMeta(params: { marketSections: MarketSection[
           conditionState: outcome.conditionState,
           gameId: outcome.gameId,
           marketTitle: translate('betslip.selectionItem'),
+          selectionName: outcome.selectionName,
         },
       )
       return next
@@ -98,6 +100,7 @@ export function useBetslipSelectionMeta(params: { marketSections: MarketSection[
           conditionState: 'Created',
           gameId: item.gameId,
           marketTitle: item.marketTitle || translate('betslip.selectionItem'),
+          selectionName: item.selectionName,
           gameTitle: item.gameTitle,
         })
       })

@@ -3,6 +3,7 @@ import type { Bet } from '@azuro-org/sdk'
 import type { BetSettlementSyncState } from '../hooks/useBetSettlementSync'
 import { useHiddenBets } from '../hooks/useHiddenBets'
 import { useI18n } from '../i18n'
+import { normalizeOutcomeLabel } from '../helpers/outcomes'
 import { ParticipantAvatar } from './ParticipantAvatar'
 
 type MyBetsProps = {
@@ -36,11 +37,21 @@ function getBetActionLabel({
 
 function getBetSummary(bet: Bet, t: ReturnType<typeof useI18n>['t']) {
   const primaryOutcome = bet.outcomes[0]
+  const selectionLabel = getOutcomeLabel(primaryOutcome)
   if (bet.outcomes.length > 1) {
-    return `${primaryOutcome?.selectionName || '-'} ${t('myBets.andMore', { count: bet.outcomes.length - 1 })}`
+    return `${selectionLabel} ${t('myBets.andMore', { count: bet.outcomes.length - 1 })}`
   }
 
-  return `${primaryOutcome?.marketName || '-'} · ${primaryOutcome?.selectionName || '-'}`
+  return `${primaryOutcome?.marketName || '-'} · ${selectionLabel}`
+}
+
+function getOutcomeLabel(outcome?: Bet['outcomes'][number]) {
+  const selectionName = outcome?.selectionName || '-'
+  const participants = outcome?.game?.participants ?? []
+  return normalizeOutcomeLabel(
+    selectionName,
+    participants.map((participant) => participant.name),
+  )
 }
 
 function getNormalizedDate(value?: number | string | null) {
@@ -276,6 +287,7 @@ function BetDetailsDialog({ bet, onClose }: BetDetailsDialogProps) {
           {bet.outcomes.map((outcome, index) => {
             const game = outcome.game
             const participants = game?.participants ?? []
+            const outcomeLabel = getOutcomeLabel(outcome)
 
             return (
               <div className="card-surface-soft rounded-xl border border-white/8 p-4" key={`${outcome.conditionId}-${outcome.outcomeId}-${index}`}>
@@ -299,7 +311,7 @@ function BetDetailsDialog({ bet, onClose }: BetDetailsDialogProps) {
                   <span className="ui-text-muted font-semibold">{t('myBets.market')}</span>
                   <span className="ui-text-strong max-w-[230px] truncate text-right font-semibold">{outcome.marketName || '-'}</span>
                   <span className="ui-text-muted font-semibold">{t('myBets.outcome')}</span>
-                  <span className="ui-text-strong text-right font-semibold">{outcome.selectionName || '-'}</span>
+                  <span className="ui-text-strong text-right font-semibold">{outcomeLabel}</span>
                   <span className="ui-text-muted font-semibold">{t('myBets.odds')}</span>
                   <span className="ui-text-strong text-right font-semibold">{Number.isFinite(outcome.odds) ? outcome.odds.toFixed(2) : '-'}</span>
                 </div>
