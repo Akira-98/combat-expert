@@ -1,9 +1,11 @@
 import { createPortal } from 'react-dom'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { getSportIcon } from '../../helpers/sports'
+import { useGroupedSports } from '../../hooks/useGroupedSports'
 import { useI18n } from '../../i18n'
 import type { SportFilterItem } from '../../types/ui'
 import { SocialLinks } from '../SocialLinks'
+import { Chevron } from './SportsMenuShared'
 
 type MobileMenuSheetProps = {
   isOpen: boolean
@@ -15,14 +17,6 @@ type MobileMenuSheetProps = {
   onSelectGameStatus: (value: 'all' | 'live' | 'upcoming') => void
   onSelectSport: (value: string) => void
   onSelectLiveSport: (value: string) => void
-}
-
-function Chevron({ isOpen }: { isOpen: boolean }) {
-  return (
-    <svg aria-hidden="true" className={`h-4 w-4 transition ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24">
-      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-    </svg>
-  )
 }
 
 export function MobileMenuSheet({
@@ -40,13 +34,7 @@ export function MobileMenuSheet({
   const [isLiveOpen, setIsLiveOpen] = useState(true)
   const [isSportsOpen, setIsSportsOpen] = useState(true)
   const [isEsportsOpen, setIsEsportsOpen] = useState(true)
-  const groupedSports = useMemo(
-    () => ({
-      sports: sports.filter((sport) => sport.hub !== 'esports'),
-      esports: sports.filter((sport) => sport.hub === 'esports'),
-    }),
-    [sports],
-  )
+  const groupedSports = useGroupedSports(sports)
   if (!isOpen || typeof document === 'undefined') return null
 
   const menuButtonClass =

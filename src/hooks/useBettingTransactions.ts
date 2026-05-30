@@ -4,9 +4,8 @@ import type { Address } from 'viem'
 import { getFriendlyTransactionErrorMessage } from '../helpers/betslipUi'
 import { getErrorCode, getErrorDetails, getErrorMessage, getErrorName, getErrorStack } from '../helpers/debugError'
 import { trackBetDebugEvent } from '../api/betDebugEvents'
-import { claimBetParticipationPoints } from '../api/points'
-import { awardPickSharePoints } from '../api/pickShares'
 import { useAppConfig } from '../config/useAppConfig'
+import { useBetSuccessEffects } from './useBetSuccessEffects'
 import { useBetHistory } from './useBetHistory'
 import { useBetRedeem } from './useBetRedeem'
 import { useBetSettlementSync } from './useBetSettlementSync'
@@ -14,17 +13,8 @@ import { useTransactionNotice } from './useTransactionNotice'
 import { translate } from '../i18n'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-const POINT_CLAIM_RETRY_DELAYS_MS = [0, 3_000, 10_000]
-const PICK_SHARE_POINTS_RETRY_DELAYS_MS = [0, 3_000, 10_000]
-const BET_HISTORY_REFETCH_RETRY_DELAYS_MS = [0, 3_000, 10_000]
 const SDK_FALLBACK_BET_AMOUNT = '1'
 const BET_DEBUG_TIMEOUT_MS = 60_000
-
-function wait(ms: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
 
 function getSdkBetAmount(betAmount: string) {
   const parsedAmount = Number(betAmount)
@@ -63,53 +53,6 @@ function getTxReceiptStatus(tx: unknown, fallbackReceipt?: unknown) {
 function getTxErrorDetails(tx: unknown) {
   const error = getRecordValue(tx, 'error') ?? getRecordValue(tx, 'failureReason')
   return error === undefined ? undefined : getErrorDetails(error)
-}
-
-async function claimBetParticipationPointsWithRetry({ txHash, walletAddress }: { txHash: string; walletAddress: string }) {
-  let lastResult
-
-  for (const [index, delay] of POINT_CLAIM_RETRY_DELAYS_MS.entries()) {
-    if (delay > 0) await wait(delay)
-
-    lastResult = await claimBetParticipationPoints({ txHash, walletAddress })
-    if (lastResult.status !== 'pending_indexing') return lastResult
-    if (index === POINT_CLAIM_RETRY_DELAYS_MS.length - 1) return lastResult
-  }
-
-  return lastResult
-}
-
-async function awardPickSharePointsWithRetry({
-  shareId,
-  txHash,
-  bettorWallet,
-}: {
-  shareId: string
-  txHash: string
-  bettorWallet: string
-}) {
-  let lastResult
-
-  for (const [index, delay] of PICK_SHARE_POINTS_RETRY_DELAYS_MS.entries()) {
-    if (delay > 0) await wait(delay)
-
-    lastResult = await awardPickSharePoints({ shareId, txHash, bettorWallet })
-    if (lastResult.status !== 'pending_indexing') return lastResult
-    if (index === PICK_SHARE_POINTS_RETRY_DELAYS_MS.length - 1) return lastResult
-  }
-
-  return lastResult
-}
-
-async function refetchBetHistoryWithRetry(refetchBetHistory: () => Promise<unknown>) {
-  for (const delay of BET_HISTORY_REFETCH_RETRY_DELAYS_MS) {
-    if (delay > 0) await wait(delay)
-    try {
-      await refetchBetHistory()
-    } catch (error) {
-      console.warn('Failed to refetch bet history', error)
-    }
-  }
 }
 
 type UseBettingTransactionsParams = {
@@ -162,6 +105,14 @@ export function useBettingTransactions({
   })
 
   const { bets, refetch: refetchBetHistory } = useBetHistory({ address, isPollingEnabled: isBetHistoryPollingEnabled })
+  const { runBetSuccessEffects } = useBetSuccessEffects({
+    address,
+    activePickShareId,
+    refetchBetHistory,
+    refetchBetTokenBalance,
+    onBetPointsClaimed,
+    onPickSharePointsAwarded,
+  })
 
   const betDebugBase = {
     walletAddress: address,
@@ -198,34 +149,7 @@ export function useBettingTransactions({
         event: 'bet_success',
       })
       onBetSuccess(receipt?.transactionHash)
-      void refetchBetHistoryWithRetry(refetchBetHistory)
-      if (address && receipt?.transactionHash) {
-        void claimBetParticipationPointsWithRetry({
-          txHash: receipt.transactionHash,
-          walletAddress: address,
-        })
-          .then((result) => {
-            if (result?.points) onBetPointsClaimed?.()
-          })
-          .catch((error) => {
-            console.warn('Failed to claim bet participation points', error)
-          })
-
-        if (activePickShareId) {
-          void awardPickSharePointsWithRetry({
-            shareId: activePickShareId,
-            bettorWallet: address,
-            txHash: receipt.transactionHash,
-          })
-            .then((result) => {
-              if (result?.ok) onPickSharePointsAwarded?.()
-            })
-            .catch((error) => {
-              console.warn('Failed to award pick share points', error)
-            })
-        }
-      }
-      void refetchBetTokenBalance()
+      runBetSuccessEffects(receipt?.transactionHash)
       setSuccessNotice({
         title: translate('betting.betSuccessTitle'),
         message: translate('betting.betSuccessMessage'),

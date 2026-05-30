@@ -6,7 +6,7 @@ import {
   calculateReferralSettlement,
   fetchPendingReferralRewards,
   updateReferralRewardSettlement,
-} from '../../_lib/referralStore.js'
+} from '../../_lib/referralRewards.js'
 
 const SETTLED_BET_STATUSES = new Set(['Resolved', 'Canceled'])
 const CRON_SYNC_LIMIT = 50

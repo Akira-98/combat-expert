@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { formatGameStartTime } from '../../helpers/formatters'
 import { getGameParticipantNames } from '../../helpers/participants'
+import { shareOrCopyUrl } from '../../helpers/share'
 import { useI18n } from '../../i18n'
 import { selectionKey } from '../../helpers/mappers'
 import { EmptyState, ErrorState, MarketsSkeleton } from './PaneStates'
@@ -81,59 +82,18 @@ export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<Market
     : `${window.location.origin}/share/market/${encodeURIComponent(selectedGame.gameId)}`
   const shareStatus = shareFeedback?.gameId === selectedGame.gameId ? shareFeedback.status : 'idle'
 
-  const copyShareUrl = async () => {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(shareUrl)
-      return
-    }
-
-    const input = document.createElement('textarea')
-    input.value = shareUrl
-    input.setAttribute('readonly', '')
-    input.style.position = 'fixed'
-    input.style.top = '-9999px'
-    document.body.appendChild(input)
-    input.select()
-
-    try {
-      if (!document.execCommand('copy')) {
-        throw new Error('Copy command failed')
-      }
-    } finally {
-      document.body.removeChild(input)
-    }
-  }
-
   const handleShareMarket = async () => {
     if (!shareUrl) return
 
-    const shareData: ShareData = {
-      title: selectedGame.title || matchupLabel || 'Sports pick',
-      text: `${selectedGame.leagueName} market`,
-      url: shareUrl,
-    }
-    const urlOnlyShareData: ShareData = { url: shareUrl }
-
     try {
-      const nativeShareData = !navigator.share
-        ? undefined
-        : !navigator.canShare || navigator.canShare(shareData)
-          ? shareData
-          : navigator.canShare(urlOnlyShareData)
-            ? urlOnlyShareData
-            : undefined
-
-      if (nativeShareData) {
-        await navigator.share(nativeShareData)
-        return
+      const result = await shareOrCopyUrl({
+        title: selectedGame.title || matchupLabel || 'Sports pick',
+        text: `${selectedGame.leagueName} market`,
+        url: shareUrl,
+      })
+      if (result === 'copied') {
+        setShareFeedback({ gameId: selectedGame.gameId, status: 'copied' })
       }
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') return
-    }
-
-    try {
-      await copyShareUrl()
-      setShareFeedback({ gameId: selectedGame.gameId, status: 'copied' })
     } catch {
       setShareFeedback({ gameId: selectedGame.gameId, status: 'failed' })
     }

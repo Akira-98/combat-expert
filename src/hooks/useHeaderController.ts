@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { copyTextToClipboard } from '../helpers/share'
 import { getWalletAvatarUrl } from '../helpers/walletUi'
 import { useBodyScrollLock } from './useBodyScrollLock'
 import { useI18n } from '../i18n'
@@ -77,7 +78,7 @@ export function useHeaderController({
   const handleCopyAddress = async () => {
     if (!address) return
     try {
-      await navigator.clipboard.writeText(address)
+      await copyTextToClipboard(address)
       setCopyLabel('copied')
     } catch {
       setCopyLabel('failed')

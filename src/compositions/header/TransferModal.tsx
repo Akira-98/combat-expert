@@ -2,6 +2,7 @@ import { createPortal } from 'react-dom'
 import { useState } from 'react'
 import type { useUsdtTransfer } from '../../hooks/useUsdtTransfer'
 import { useI18n } from '../../i18n'
+import { copyTextToClipboard } from '../../helpers/share'
 import { shortenAddress } from '../../helpers/walletUi'
 import { buildPolygonUsdtDepositBridgeUrl, type BridgeChain } from '../../helpers/bridgeLinks'
 import { WalletTransferPanel } from '../WalletTransferPanel'
@@ -43,7 +44,7 @@ function TransferModalContent({ isConnected, chainId, address, usdtTransfer, onC
   const handleCopyDepositAddress = async () => {
     if (!address) return
     try {
-      await navigator.clipboard.writeText(address)
+      await copyTextToClipboard(address)
       setCopyState('copied')
     } catch {
       setCopyState('failed')

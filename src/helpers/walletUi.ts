@@ -20,7 +20,8 @@ export const getChainName = (chainId: number | undefined) => {
   return CHAIN_NAME_BY_ID[chainId] ?? `Chain ${chainId}`
 }
 
-export const getWalletAvatarUrl = (_address?: string) => {
+export const getWalletAvatarUrl = (address?: string) => {
+  void address
   return '/images/avatars/profile.png'
 }
 

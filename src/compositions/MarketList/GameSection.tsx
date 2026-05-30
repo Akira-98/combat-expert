@@ -1,0 +1,80 @@
+import { useState } from 'react'
+import type { GameItem, OutcomeItem, SelectionKey } from '../../types/ui'
+import { GameCard } from './GameCard'
+
+const DEFAULT_VISIBLE_GAMES = 5
+
+type GameSectionProps = {
+  title: string
+  icon: string
+  games: GameItem[]
+  selectedGameId?: string
+  selectedOutcomes: Set<SelectionKey>
+  defaultVisibleCount?: number
+  onSelectGame: (gameId: string) => void
+  onSelectOutcome: (outcome: OutcomeItem) => void
+}
+
+const gameCardBaseClass = 'group grid gap-1.5 rounded-md border border-white/8 bg-black/25 px-2 py-2 text-left shadow-none transition md:px-2.5 md:py-2.5 md:rounded-lg'
+const gameCardIdleClass = 'hover:border-white/15 hover:bg-black/35 hover:text-inherit'
+
+export function GameSection({
+  title,
+  icon,
+  games,
+  selectedGameId,
+  selectedOutcomes,
+  defaultVisibleCount = DEFAULT_VISIBLE_GAMES,
+  onSelectGame,
+  onSelectOutcome,
+}: GameSectionProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const visibleGames = isExpanded ? games : games.slice(0, defaultVisibleCount)
+  const hiddenGameCount = Math.max(games.length - defaultVisibleCount, 0)
+  const canToggle = games.length > defaultVisibleCount
+
+  if (games.length === 0) return null
+
+  return (
+    <section className="grid gap-2">
+      <div className="flex items-center justify-between gap-3 px-1">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="inline-flex w-7 shrink-0 items-center justify-center text-xl leading-none" aria-hidden="true">
+            {icon}
+          </span>
+          <h3 className="ui-text-strong m-0 truncate text-lg font-bold">{title}</h3>
+        </div>
+        <span className="ui-text-muted shrink-0 text-xs font-semibold">{games.length}</span>
+      </div>
+
+      <div className="panel ui-section-sheen section-shell grid gap-1.5 rounded-lg p-2 md:rounded-2xl md:border md:px-4 md:py-4">
+        <div className="grid gap-2">
+          {visibleGames.map((game) => (
+            <GameCard
+              key={game.gameId}
+              game={game}
+              isActive={game.gameId === selectedGameId}
+              selectedOutcomes={selectedOutcomes}
+              onSelectGame={onSelectGame}
+              onSelectOutcome={onSelectOutcome}
+              gameCardBaseClass={gameCardBaseClass}
+              gameCardIdleClass={gameCardIdleClass}
+            />
+          ))}
+        </div>
+
+        {canToggle ? (
+          <div className="border-t border-white/5 px-2 pt-2">
+            <button
+              className="chip-shell ui-text-muted inline-flex min-h-9 w-full items-center justify-center rounded-md px-3 text-sm font-semibold transition hover:border-white/25 hover:text-white"
+              onClick={() => setIsExpanded((current) => !current)}
+              type="button"
+            >
+              {isExpanded ? 'Show less' : `Show ${hiddenGameCount} more`}
+            </button>
+          </div>
+        ) : null}
+      </div>
+    </section>
+  )
+}

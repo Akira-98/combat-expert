@@ -1,4 +1,4 @@
-import { normalizeAddress, normalizeTxHash } from './env.js'
+import { normalizeAddress } from './env.js'
 import { supabaseInsert, supabaseSelect } from './supabase.js'
 
 const MAX_SHARE_SELECTIONS = 20
@@ -44,7 +44,7 @@ function normalizeSelection(selection) {
   return normalized
 }
 
-function normalizePickShareSelections(value) {
+function normalizeReferralSelections(value) {
   if (!Array.isArray(value)) return []
   if (value.length === 0 || value.length > MAX_SHARE_SELECTIONS) return []
 
@@ -54,51 +54,49 @@ function normalizePickShareSelections(value) {
   return selections
 }
 
-function mapPickShare(row) {
+function mapReferralShare(row) {
   if (!row) return undefined
 
-  const sharerWallet = normalizeAddress(row.sharer_wallet)
   return {
     id: typeof row.id === 'string' ? row.id : '',
-    sharerWallet,
-    referrerWallet: sharerWallet,
-    selections: normalizePickShareSelections(row.selections),
+    referrerWallet: normalizeAddress(row.referrer_wallet),
+    selections: normalizeReferralSelections(row.selections),
     status: typeof row.status === 'string' ? row.status : '',
     createdAt: typeof row.created_at === 'string' ? row.created_at : '',
     expiresAt: typeof row.expires_at === 'string' ? row.expires_at : null,
   }
 }
 
-export async function createPickShare({ supabaseUrl, serviceRoleKey, sharerWallet, referrerWallet, selections }) {
-  const normalizedSharerWallet = normalizeAddress(sharerWallet || referrerWallet)
-  const normalizedSelections = normalizePickShareSelections(selections)
+export async function createReferralShare({ supabaseUrl, serviceRoleKey, referrerWallet, selections }) {
+  const normalizedReferrerWallet = normalizeAddress(referrerWallet)
+  const normalizedSelections = Array.isArray(selections) ? normalizeReferralSelections(selections) : []
 
-  if (!normalizedSharerWallet) {
-    return { ok: false, status: 'invalid_sharer_wallet', error: 'Invalid sharer wallet' }
+  if (!normalizedReferrerWallet) {
+    return { ok: false, status: 'invalid_referrer_wallet', error: 'Invalid referrer wallet' }
   }
 
-  if (normalizedSelections.length === 0) {
+  if (Array.isArray(selections) && selections.length > 0 && normalizedSelections.length === 0) {
     return { ok: false, status: 'invalid_selections', error: 'Invalid selections' }
   }
 
   const rows = await supabaseInsert({
     supabaseUrl,
     serviceRoleKey,
-    table: 'pick_shares',
-    errorMessage: 'Failed to create pick share',
+    table: 'referral_shares',
+    errorMessage: 'Failed to create referral share',
     body: {
-      sharer_wallet: normalizedSharerWallet,
+      referrer_wallet: normalizedReferrerWallet,
       selections: normalizedSelections,
     },
   })
 
   return {
     ok: true,
-    share: mapPickShare(firstRow(rows)),
+    share: mapReferralShare(firstRow(rows)),
   }
 }
 
-export async function fetchPickShareById({ supabaseUrl, serviceRoleKey, shareId }) {
+export async function fetchReferralShareById({ supabaseUrl, serviceRoleKey, shareId }) {
   const normalizedShareId = normalizeShareId(shareId)
   if (!normalizedShareId) {
     return { ok: false, status: 'invalid_share_id', error: 'Invalid share id' }
@@ -107,56 +105,22 @@ export async function fetchPickShareById({ supabaseUrl, serviceRoleKey, shareId 
   const rows = await supabaseSelect({
     supabaseUrl,
     serviceRoleKey,
-    path: `pick_shares?id=eq.${encodeURIComponent(normalizedShareId)}&select=id,sharer_wallet,selections,status,created_at,expires_at`,
-    errorMessage: 'Failed to fetch pick share',
+    path: `referral_shares?id=eq.${encodeURIComponent(normalizedShareId)}&select=id,referrer_wallet,selections,status,created_at,expires_at`,
+    errorMessage: 'Failed to fetch referral share',
   })
 
-  const share = mapPickShare(firstRow(rows))
+  const share = mapReferralShare(firstRow(rows))
   if (!share?.id) {
-    return { ok: false, status: 'not_found', error: 'Pick share was not found' }
+    return { ok: false, status: 'not_found', error: 'Referral share was not found' }
   }
 
   if (share.status !== 'active') {
-    return { ok: false, status: 'inactive', error: 'Pick share is not active', share }
+    return { ok: false, status: 'inactive', error: 'Referral share is not active', share }
   }
 
   if (share.expiresAt && Date.parse(share.expiresAt) <= Date.now()) {
-    return { ok: false, status: 'expired', error: 'Pick share has expired', share }
+    return { ok: false, status: 'expired', error: 'Referral share has expired', share }
   }
 
   return { ok: true, share }
-}
-
-export function validatePickShareBet({
-  share,
-  bettorWallet,
-  txHash,
-}) {
-  const normalizedBettorWallet = normalizeAddress(bettorWallet)
-  const normalizedTxHash = normalizeTxHash(txHash)
-  const sharerWallet = normalizeAddress(share?.sharerWallet || share?.referrerWallet)
-
-  if (!share?.id || !sharerWallet) {
-    return { ok: false, status: 'invalid_share', error: 'Invalid pick share' }
-  }
-
-  if (!normalizedBettorWallet) {
-    return { ok: false, status: 'invalid_bettor_wallet', error: 'Invalid bettor wallet' }
-  }
-
-  if (!normalizedTxHash) {
-    return { ok: false, status: 'invalid_tx_hash', error: 'Invalid transaction hash' }
-  }
-
-  if (sharerWallet === normalizedBettorWallet) {
-    return { ok: false, status: 'self_share', error: 'Self share points are not allowed' }
-  }
-
-  return {
-    ok: true,
-    sharerWallet,
-    referrerWallet: sharerWallet,
-    bettorWallet: normalizedBettorWallet,
-    txHash: normalizedTxHash,
-  }
 }
