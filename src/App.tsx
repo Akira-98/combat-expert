@@ -20,6 +20,23 @@ import { useBetting } from './hooks/useBetting'
 import { useProfile } from './hooks/useProfile'
 import { usePoints } from './hooks/usePoints'
 import { useUsdtTransfer } from './hooks/useUsdtTransfer'
+import type { GameItem, SportFilterItem } from './types/ui'
+
+function buildSportNavigationItems(games: GameItem[]): SportFilterItem[] {
+  return Array.from(
+    games.reduce((counts, game) => {
+      const current = counts.get(game.sportName)
+      counts.set(game.sportName, {
+        name: game.sportName,
+        count: (current?.count ?? 0) + 1,
+        hub: game.sportHub,
+      })
+      return counts
+    }, new Map<string, SportFilterItem>()),
+  )
+    .map(([, item]) => item)
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'en'))
+}
 
 function App() {
   const wallet = useWalletConnection()
@@ -39,38 +56,16 @@ function App() {
   const filters = useGameFilters(games)
   const sportsNavigationItems = useMemo(
     () =>
-      Array.from(
-        games.reduce((counts, game) => {
-          const current = counts.get(game.sportName)
-          counts.set(game.sportName, {
-            name: game.sportName,
-            count: (current?.count ?? 0) + 1,
-            hub: game.sportHub,
-          })
-          return counts
-        }, new Map<string, { name: string; count: number; hub: 'sports' | 'esports' }>()),
-      )
-        .map(([, item]) => item)
-        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'en')),
+      buildSportNavigationItems(
+        games.filter((game) => getGamePhase(game.startsAt, game.state) === 'upcoming'),
+      ),
     [games],
   )
   const liveSportsNavigationItems = useMemo(
     () =>
-      Array.from(
-        games
-          .filter((game) => getGamePhase(game.startsAt, game.state) === 'live')
-          .reduce((counts, game) => {
-            const current = counts.get(game.sportName)
-            counts.set(game.sportName, {
-              name: game.sportName,
-              count: (current?.count ?? 0) + 1,
-              hub: game.sportHub,
-            })
-            return counts
-          }, new Map<string, { name: string; count: number; hub: 'sports' | 'esports' }>()),
-      )
-        .map(([, item]) => item)
-        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'en')),
+      buildSportNavigationItems(
+        games.filter((game) => getGamePhase(game.startsAt, game.state) === 'live'),
+      ),
     [games],
   )
   const shell = useAppShellState({
