@@ -25,10 +25,6 @@
       "destination": "/index.html"
     },
     {
-      "source": "/player-rankings",
-      "destination": "/index.html"
-    },
-    {
       "source": "/markets/:gameId",
       "destination": "/index.html"
     }

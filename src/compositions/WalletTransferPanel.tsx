@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { buildPolygonUsdtWithdrawBridgeUrl, type BridgeChain } from '../helpers/bridgeLinks'
+import { buildPolygonUsdtWithdrawBridgeUrl } from '../helpers/bridgeLinks'
 import { getTxExplorerUrl } from '../helpers/walletUi'
 import type { TransactionNotice } from '../helpers/betslipUi'
 import { useI18n } from '../i18n'
-
-type TransferChain = 'polygon' | BridgeChain
+import { TransferNetworkPicker, type TransferChain } from './TransferNetworkPicker'
 
 type WalletTransferPanelProps = {
   isConnected: boolean
@@ -58,14 +57,15 @@ export function WalletTransferPanel({
         </p>
       </div>
 
-      <TokenNetworkPicker
+      <TransferNetworkPicker
+        className="mt-5"
         chain={withdrawChain}
-        isChainPickerOpen={isWithdrawChainPickerOpen}
-        onChainChange={(nextChain) => {
+        isOpen={isWithdrawChainPickerOpen}
+        onChange={(nextChain) => {
           setWithdrawChain(nextChain)
           setIsWithdrawChainPickerOpen(false)
         }}
-        onChainPickerToggle={() => setIsWithdrawChainPickerOpen((isOpen) => !isOpen)}
+        onToggle={() => setIsWithdrawChainPickerOpen((isOpen) => !isOpen)}
       />
 
       <div className="mt-4 space-y-3">
@@ -158,78 +158,5 @@ export function WalletTransferPanel({
         {isPolygonWithdraw ? t('walletTransfer.withdrawNotice') : t('walletTransfer.bridgeWithdrawNotice')}
       </p>
     </section>
-  )
-}
-
-function TokenNetworkPicker({
-  chain,
-  isChainPickerOpen,
-  onChainChange,
-  onChainPickerToggle,
-}: {
-  chain: TransferChain
-  isChainPickerOpen: boolean
-  onChainChange: (chain: TransferChain) => void
-  onChainPickerToggle: () => void
-}) {
-  const { t } = useI18n()
-
-  return (
-    <div className="mt-5 grid grid-cols-2 gap-3">
-      <AssetSelect label={t('walletTransfer.coin')} logoSrc="/tether-logo.svg" value="USDT" />
-      <div className="grid gap-1.5">
-        <span className="ui-text-muted text-sm font-semibold">{t('walletTransfer.chain')}</span>
-        <div className="relative">
-          <button
-            aria-expanded={isChainPickerOpen}
-            className="ui-surface ui-text-strong flex h-14 w-full items-center justify-between gap-2 rounded-md border px-3 text-left text-lg font-semibold"
-            onClick={onChainPickerToggle}
-            type="button"
-          >
-            <span className="truncate">{getTransferChainLabel(chain)}</span>
-            <span aria-hidden="true" className="ui-text-muted text-sm">
-              {isChainPickerOpen ? '^' : 'v'}
-            </span>
-          </button>
-          {isChainPickerOpen && (
-            <div className="ui-surface absolute left-0 right-0 top-[calc(100%+6px)] z-20 grid gap-1 rounded-md border p-1 shadow-xl">
-              {(['polygon', 'bnb', 'solana'] as const).map((nextChain) => (
-                <button
-                  aria-pressed={chain === nextChain}
-                  className={`${chain === nextChain ? 'ui-btn-primary' : 'ui-btn-secondary'} rounded px-3 py-2 text-left text-sm font-semibold transition`}
-                  key={nextChain}
-                  onClick={() => onChainChange(nextChain)}
-                  type="button"
-                >
-                  {getTransferChainLabel(nextChain)}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function getTransferChainLabel(chain: TransferChain) {
-  if (chain === 'bnb') return 'BNB'
-  if (chain === 'solana') return 'Solana'
-  return 'Polygon'
-}
-
-function AssetSelect({ label, logoSrc, value }: { label: string; logoSrc: string; value: string }) {
-  return (
-    <div className="grid gap-1.5">
-      <span className="ui-text-muted text-sm font-semibold">{label}</span>
-      <div className="ui-surface flex h-14 items-center gap-3 rounded-md border px-3">
-        <span className="flex min-w-0 items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/5">
-            <img alt="" className="h-6 w-6" src={logoSrc} />
-          </span>
-          <span className="ui-text-strong truncate text-lg font-semibold">{value}</span>
-        </span>
-      </div>
-    </div>
   )
 }

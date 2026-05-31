@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { BetsAndTransferPanel } from './compositions/BetsAndTransferPanel'
 import { AppBottomNav } from './compositions/AppBottomNav'
 import { AppHeaderContainer } from './compositions/AppHeaderContainer'
-import { ComingSoonPage } from './compositions/ComingSoonPage'
 import { GuidePage } from './compositions/GuidePage'
 import { ProfilePage } from './compositions/ProfilePage'
 import { RankingPage } from './compositions/RankingPage'
@@ -173,8 +172,6 @@ function App() {
                 isSupportedChain: usdtTransfer.isSupportedChain,
               })}
             />
-          ) : shell.shouldShowPreviewContent ? (
-            <ComingSoonPage />
           ) : (
             <ExploreContent
               shouldShowExploreContent={shell.shouldShowExploreContent}

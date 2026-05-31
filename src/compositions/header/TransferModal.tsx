@@ -5,6 +5,7 @@ import { useI18n } from '../../i18n'
 import { copyTextToClipboard } from '../../helpers/share'
 import { shortenAddress } from '../../helpers/walletUi'
 import { buildPolygonUsdtDepositBridgeUrl, type BridgeChain } from '../../helpers/bridgeLinks'
+import { TransferNetworkPicker, type TransferChain } from '../TransferNetworkPicker'
 import { WalletTransferPanel } from '../WalletTransferPanel'
 
 type TransferModalProps = {
@@ -17,7 +18,6 @@ type TransferModalProps = {
 }
 
 type TransferMode = 'deposit' | 'withdraw'
-type DepositChain = 'polygon' | BridgeChain
 
 export function TransferModal({ isOpen, isConnected, chainId, address, usdtTransfer, onClose }: TransferModalProps) {
   if (!isOpen || typeof document === 'undefined') return null
@@ -37,7 +37,7 @@ export function TransferModal({ isOpen, isConnected, chainId, address, usdtTrans
 function TransferModalContent({ isConnected, chainId, address, usdtTransfer, onClose }: Omit<TransferModalProps, 'isOpen'>) {
   const { t } = useI18n()
   const [activeMode, setActiveMode] = useState<TransferMode>('deposit')
-  const [depositChain, setDepositChain] = useState<DepositChain>('polygon')
+  const [depositChain, setDepositChain] = useState<TransferChain>('polygon')
   const [isDepositChainPickerOpen, setIsDepositChainPickerOpen] = useState(false)
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle')
 
@@ -133,10 +133,10 @@ function DepositPanel({
   address?: `0x${string}`
   balance: number
   copyState: 'idle' | 'copied' | 'failed'
-  depositChain: DepositChain
+  depositChain: TransferChain
   isDepositChainPickerOpen: boolean
   isConnected: boolean
-  onDepositChainChange: (chain: DepositChain) => void
+  onDepositChainChange: (chain: TransferChain) => void
   onDepositChainPickerToggle: () => void
   onCopyAddress: () => void
 }) {
@@ -153,11 +153,11 @@ function DepositPanel({
         </p>
       </div>
 
-      <TokenNetworkPicker
-        depositChain={depositChain}
-        isDepositChainPickerOpen={isDepositChainPickerOpen}
-        onDepositChainChange={onDepositChainChange}
-        onDepositChainPickerToggle={onDepositChainPickerToggle}
+      <TransferNetworkPicker
+        chain={depositChain}
+        isOpen={isDepositChainPickerOpen}
+        onChange={onDepositChainChange}
+        onToggle={onDepositChainPickerToggle}
       />
 
       {depositChain === 'polygon' ? (
@@ -227,83 +227,6 @@ function BridgeDepositAction({
           {label}
         </button>
       )}
-    </div>
-  )
-}
-
-function TokenNetworkPicker({
-  depositChain,
-  isDepositChainPickerOpen = false,
-  onDepositChainChange,
-  onDepositChainPickerToggle,
-}: {
-  depositChain?: DepositChain
-  isDepositChainPickerOpen?: boolean
-  onDepositChainChange?: (chain: DepositChain) => void
-  onDepositChainPickerToggle?: () => void
-}) {
-  const { t } = useI18n()
-
-  return (
-    <div className="grid grid-cols-2 gap-3">
-      <AssetSelect label={t('walletTransfer.coin')} logoSrc="/tether-logo.svg" value="USDT" />
-      {depositChain && onDepositChainChange && onDepositChainPickerToggle ? (
-        <div className="grid gap-1.5">
-          <span className="ui-text-muted text-sm font-semibold">{t('walletTransfer.chain')}</span>
-          <div className="relative">
-            <button
-              aria-expanded={isDepositChainPickerOpen}
-              className="ui-surface ui-text-strong flex h-14 w-full items-center justify-between gap-2 rounded-md border px-3 text-left text-lg font-semibold"
-              onClick={onDepositChainPickerToggle}
-              type="button"
-            >
-              <span className="truncate">{getDepositChainLabel(depositChain)}</span>
-              <span aria-hidden="true" className="ui-text-muted text-sm">
-                {isDepositChainPickerOpen ? '^' : 'v'}
-              </span>
-            </button>
-            {isDepositChainPickerOpen && (
-              <div className="ui-surface absolute left-0 right-0 top-[calc(100%+6px)] z-20 grid gap-1 rounded-md border p-1 shadow-xl">
-                {(['polygon', 'bnb', 'solana'] as const).map((chain) => (
-                  <button
-                    aria-pressed={depositChain === chain}
-                    className={`${depositChain === chain ? 'ui-btn-primary' : 'ui-btn-secondary'} rounded px-3 py-2 text-left text-sm font-semibold transition`}
-                    key={chain}
-                    onClick={() => onDepositChainChange(chain)}
-                    type="button"
-                  >
-                    {getDepositChainLabel(chain)}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      ) : (
-        <AssetSelect label={t('walletTransfer.chain')} logoSrc="/polygon-logo.svg" value="Polygon" />
-      )}
-    </div>
-  )
-}
-
-function getDepositChainLabel(chain: DepositChain) {
-  if (chain === 'bnb') return 'BNB'
-  if (chain === 'solana') return 'Solana'
-  return 'Polygon'
-}
-
-function AssetSelect({ label, logoSrc, value }: { label: string; logoSrc: string; value: string }) {
-  return (
-    <div className="grid gap-1.5">
-      <span className="ui-text-muted text-sm font-semibold">{label}</span>
-      <div className="ui-surface flex h-14 items-center gap-3 rounded-md border px-3">
-        <span className="flex min-w-0 items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/5">
-            <img alt="" className="h-6 w-6" src={logoSrc} />
-          </span>
-          <span className="ui-text-strong truncate text-lg font-semibold">{value}</span>
-        </span>
-      </div>
     </div>
   )
 }

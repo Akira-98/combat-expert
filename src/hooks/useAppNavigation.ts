@@ -4,7 +4,7 @@ import type { GameItem } from '../types/ui'
 export type MobileView = 'explore' | 'bets'
 export type DesktopSidePanelTab = 'myBets' | 'betslip'
 export type MarketPageMode = 'games' | 'markets'
-export type RoutedPage = 'guide' | 'ranking' | 'profile' | 'player-rankings'
+export type RoutedPage = 'guide' | 'ranking' | 'profile'
 
 const GAME_ROUTE_QUERY_KEY = 'game'
 const PAGE_ROUTE_QUERY_KEY = 'page'
@@ -13,11 +13,10 @@ const PAGE_ROUTES: Record<RoutedPage, string> = {
   guide: '/guide',
   ranking: '/ranking',
   profile: '/profile',
-  'player-rankings': '/player-rankings',
 }
 
 function parseRoutedPage(value: string | null) {
-  return value === 'guide' || value === 'ranking' || value === 'profile' || value === 'player-rankings' ? value : undefined
+  return value === 'guide' || value === 'ranking' || value === 'profile' ? value : undefined
 }
 
 function readRoutedGameId() {
@@ -125,7 +124,6 @@ export function useAppNavigation({
   const isGuideRoute = routedPage === 'guide'
   const isRankingRoute = routedPage === 'ranking'
   const isProfileRoute = routedPage === 'profile'
-  const previewPage = routedPage === 'player-rankings' ? routedPage : undefined
   const marketPageMode: MarketPageMode = routedGameId ? 'markets' : 'games'
   const activeGameId = marketPageMode === 'markets' ? routedGameId : visibleSelectedGameId
 
@@ -183,14 +181,6 @@ export function useAppNavigation({
     setRoutedPage('profile')
   }
 
-  const handleNavigateToPreviewPage = (page: Exclude<RoutedPage, 'guide' | 'ranking' | 'profile'>) => {
-    onCloseMobileBetslip()
-    setMobileView('explore')
-    writeRouteState({ page })
-    setRoutedGameId(undefined)
-    setRoutedPage(page)
-  }
-
   return {
     mobileView,
     setMobileView,
@@ -199,7 +189,6 @@ export function useAppNavigation({
     isGuideRoute,
     isRankingRoute,
     isProfileRoute,
-    previewPage,
     marketPageMode,
     activeGameId,
     handleOpenGameMarkets,
@@ -209,6 +198,5 @@ export function useAppNavigation({
     handleNavigateToGuide,
     handleNavigateToRanking,
     handleNavigateToProfile,
-    handleNavigateToPreviewPage,
   }
 }

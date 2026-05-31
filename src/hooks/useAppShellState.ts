@@ -37,7 +37,7 @@ export function useAppShellState({
 
   const isMyBetsViewActive =
     navigation.mobileView === 'bets' || navigation.desktopSidePanelTab === 'myBets'
-  const isStaticPageRoute = navigation.isGuideRoute || navigation.isRankingRoute || navigation.isProfileRoute || Boolean(navigation.previewPage)
+  const isStaticPageRoute = navigation.isGuideRoute || navigation.isRankingRoute || navigation.isProfileRoute
 
   return {
     ...navigation,
@@ -48,7 +48,6 @@ export function useAppShellState({
     shouldShowGuideContent: navigation.isGuideRoute,
     shouldShowRankingContent: navigation.isRankingRoute,
     shouldShowProfileContent: navigation.isProfileRoute,
-    shouldShowPreviewContent: Boolean(navigation.previewPage),
     shouldShowExploreContent:
       !isStaticPageRoute && navigation.mobileView === 'explore',
     shouldShowMobileBetsPanel:
@@ -63,10 +62,6 @@ export function useAppShellState({
     openGuideFromMobileMenu: () => {
       closeMobileMenu()
       navigation.handleNavigateToGuide()
-    },
-    openPlayerRankingsFromMobileMenu: () => {
-      closeMobileMenu()
-      navigation.handleNavigateToPreviewPage('player-rankings')
     },
   }
 }
