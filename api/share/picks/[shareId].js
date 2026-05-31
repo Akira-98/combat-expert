@@ -18,8 +18,8 @@ function buildDescription(share) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET')
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.setHeader('Allow', 'GET, HEAD')
     res.status(405).send('Method not allowed')
     return
   }
@@ -50,6 +50,8 @@ export default async function handler(req, res) {
     shareUrl,
     appUrl,
     imageUrl,
+    userAgent: req.headers['user-agent'],
+    method: req.method,
     cacheControl: 's-maxage=120, stale-while-revalidate=600',
   })
 }

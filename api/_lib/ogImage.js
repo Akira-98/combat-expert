@@ -44,3 +44,10 @@ export async function sendPngImage(res, element, options = {}) {
   res.setHeader('Cache-Control', options.cacheControl ?? 's-maxage=300, stale-while-revalidate=600')
   res.end(Buffer.from(arrayBuffer))
 }
+
+export function sendPngImageHead(res, options = {}) {
+  res.statusCode = 200
+  res.setHeader('Content-Type', 'image/png')
+  res.setHeader('Cache-Control', options.cacheControl ?? 's-maxage=300, stale-while-revalidate=600')
+  res.end()
+}

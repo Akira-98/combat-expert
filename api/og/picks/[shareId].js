@@ -1,7 +1,7 @@
 import { fetchGamesByIds } from '../../_lib/azuro.js'
 import { loadServerEnv } from '../../_lib/env.js'
 import { getParticipantImageUrls, getParticipantNames } from '../../_lib/marketOgImage.js'
-import { firstQueryValue, h, sendPngImage } from '../../_lib/ogImage.js'
+import { firstQueryValue, h, sendPngImage, sendPngImageHead } from '../../_lib/ogImage.js'
 import { PicksOgImage } from '../../_lib/picksOgImage.js'
 import { fetchPickShareById } from '../../_lib/pickShareStore.js'
 
@@ -30,9 +30,14 @@ async function sendPicksImage(res, { share = FALLBACK_SHARE, games = [], partici
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET')
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.setHeader('Allow', 'GET, HEAD')
     res.status(405).send('Method not allowed')
+    return
+  }
+
+  if (req.method === 'HEAD') {
+    sendPngImageHead(res)
     return
   }
 

@@ -13,6 +13,10 @@ export function firstQueryValue(value) {
   return Array.isArray(value) ? value[0] : value
 }
 
+function isSocialCrawler(userAgent) {
+  return /TelegramBot|Twitterbot|facebookexternalhit|Facebot|Discordbot|Slackbot|LinkedInBot|WhatsApp|KakaoTalk|Line/i.test(String(userAgent || ''))
+}
+
 export function sendShareHtml(
   res,
   {
@@ -21,11 +25,24 @@ export function sendShareHtml(
     shareUrl,
     appUrl,
     imageUrl,
+    userAgent,
+    method = 'GET',
     cacheControl = 's-maxage=300, stale-while-revalidate=600',
   },
 ) {
   res.setHeader('Content-Type', 'text/html; charset=utf-8')
   res.setHeader('Cache-Control', cacheControl)
+
+  if (method === 'HEAD') {
+    res.status(200).end()
+    return
+  }
+
+  const redirectTags = isSocialCrawler(userAgent)
+    ? ''
+    : `    <meta http-equiv="refresh" content="0;url=${escapeHtml(appUrl)}" />
+    <script>location.replace(${JSON.stringify(appUrl)})</script>
+`
 
   res.status(200).send(`<!doctype html>
 <html lang="en">
@@ -46,8 +63,7 @@ export function sendShareHtml(
     <meta name="twitter:title" content="${escapeHtml(title)}" />
     <meta name="twitter:description" content="${escapeHtml(description)}" />
     <meta name="twitter:image" content="${escapeHtml(imageUrl)}" />
-    <meta http-equiv="refresh" content="0;url=${escapeHtml(appUrl)}" />
-    <script>location.replace(${JSON.stringify(appUrl)})</script>
+${redirectTags}
   </head>
   <body>
     <a href="${escapeHtml(appUrl)}">Open BETAKER</a>
