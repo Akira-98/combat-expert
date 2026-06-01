@@ -8,7 +8,7 @@ type SocialLinksProps = {
 const socialLinks = [
   {
     key: 'telegram',
-    href: 'https://t.me/LegendaryChoi',
+    href: 'https://t.me/betakerr',
     imageSrc: '/Desktop/Logo.png',
     labelKey: 'guide.telegram',
   },
