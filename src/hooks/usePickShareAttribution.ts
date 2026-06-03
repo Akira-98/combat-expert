@@ -3,7 +3,6 @@ import { fetchPickShare } from '../api/pickShares'
 
 const PICK_SHARE_ROUTE_PREFIX = '/share/picks/'
 const ACTIVE_PICK_SHARE_STORAGE_KEY = 'betaker.activePickShareId'
-const LEGACY_ACTIVE_REFERRAL_SHARE_STORAGE_KEY = 'betaker.activeReferralShareId'
 
 type BetslipSelection = {
   conditionId: string
@@ -44,9 +43,7 @@ function getPickShareIdFromLocation(location: Location) {
 
 function getStoredPickShareId() {
   if (typeof window === 'undefined') return undefined
-  return window.localStorage.getItem(ACTIVE_PICK_SHARE_STORAGE_KEY)
-    || window.localStorage.getItem(LEGACY_ACTIVE_REFERRAL_SHARE_STORAGE_KEY)
-    || undefined
+  return window.localStorage.getItem(ACTIVE_PICK_SHARE_STORAGE_KEY) || undefined
 }
 
 export function usePickShareAttribution({
@@ -62,7 +59,6 @@ export function usePickShareAttribution({
     setActivePickShareId(undefined)
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(ACTIVE_PICK_SHARE_STORAGE_KEY)
-      window.localStorage.removeItem(LEGACY_ACTIVE_REFERRAL_SHARE_STORAGE_KEY)
     }
   }
 
@@ -96,7 +92,6 @@ export function usePickShareAttribution({
 
         setActivePickShareId(share.id)
         window.localStorage.setItem(ACTIVE_PICK_SHARE_STORAGE_KEY, share.id)
-        window.localStorage.removeItem(LEGACY_ACTIVE_REFERRAL_SHARE_STORAGE_KEY)
         window.history.replaceState({}, '', '/')
       })
       .catch((error) => {

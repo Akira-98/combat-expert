@@ -41,7 +41,10 @@ const SETTLED_APP_BETS_QUERY = gql`
       subgraphError: allow
     ) {
       betId
+      bettor
       actor
+      owner
+      affiliate
       amount
       payout
       result
@@ -50,6 +53,7 @@ const SETTLED_APP_BETS_QUERY = gql`
       odds
       settledOdds
       resolvedBlockTimestamp
+      createdTxHash
       selections {
         odds
         outcome {
@@ -196,7 +200,12 @@ export async function fetchSettledV3BetsByGameId(gameId) {
   return allBets
 }
 
-export async function fetchSettledV3BetsByAffiliate({ affiliateAddress, resolvedTimestampGte }) {
+export async function fetchSettledV3BetsByAffiliate({
+  affiliateAddress,
+  resolvedTimestampGte,
+  resolvedTimestampLt,
+  statuses = ['Resolved', 'Canceled'],
+}) {
   const chainData = getPolygonChainData()
   const allBets = []
   let skip = 0
@@ -210,8 +219,9 @@ export async function fetchSettledV3BetsByAffiliate({ affiliateAddress, resolved
         skip,
         where: {
           affiliate: affiliateAddress,
-          status_in: ['Resolved', 'Canceled'],
+          status_in: statuses,
           ...(resolvedTimestampGte ? { resolvedBlockTimestamp_gte: resolvedTimestampGte } : {}),
+          ...(resolvedTimestampLt ? { resolvedBlockTimestamp_lt: resolvedTimestampLt } : {}),
         },
       },
     })

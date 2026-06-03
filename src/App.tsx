@@ -19,6 +19,7 @@ import { useMarketData } from './hooks/useMarketData'
 import { useBetting } from './hooks/useBetting'
 import { useProfile } from './hooks/useProfile'
 import { usePoints } from './hooks/usePoints'
+import { useReferralAttribution } from './hooks/useReferralAttribution'
 import { useUsdtTransfer } from './hooks/useUsdtTransfer'
 import type { GameItem, SportFilterItem } from './types/ui'
 
@@ -40,6 +41,10 @@ function buildSportNavigationItems(games: GameItem[]): SportFilterItem[] {
 
 function App() {
   const wallet = useWalletConnection()
+  useReferralAttribution({
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+  })
   const profile = useProfile({
     address: wallet.address,
     isConnected: wallet.isConnected,
