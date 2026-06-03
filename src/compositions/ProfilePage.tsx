@@ -1,12 +1,15 @@
 import { useBonuses } from '@azuro-org/sdk'
 import { BonusStatus } from '@azuro-org/toolkit'
 import type { Address } from 'viem'
+import type { MyReferral } from '../api/referrals'
 import { useAppConfig } from '../config/useAppConfig'
 import { getFreebetSummary } from '../helpers/freebets'
 import { formatPercentRatio, formatSignedUsdt } from '../helpers/formatters'
 import { getWalletAvatarUrl, shortenAddress } from '../helpers/walletUi'
 import { useRankings, type RankingViewer } from '../hooks/useRankings'
+import { useMyReferral } from '../hooks/useMyReferral'
 import { useI18n } from '../i18n'
+import { ReferralPanel } from './profile/ReferralPanel'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -21,6 +24,7 @@ export function ProfilePage({ address, isConnected, displayName, usdtBalanceLabe
   const { t } = useI18n()
   const { affiliateAddress } = useAppConfig()
   const { viewer, isLoading, errorMessage } = useRankings(address)
+  const referral = useMyReferral({ address, isConnected })
   const { data: freebets = [], isLoading: isFreebetsLoading } = useBonuses({
     account: (address || ZERO_ADDRESS) as Address,
     affiliate: affiliateAddress as Address,
@@ -51,6 +55,7 @@ export function ProfilePage({ address, isConnected, displayName, usdtBalanceLabe
           address={address}
           displayName={displayName}
           freebetLabel={isFreebetsLoading ? t('account.freebetsChecking') : getFreebetLabel(freebetSummary)}
+          referral={referral.referral}
           usdtBalanceLabel={usdtBalanceLabel}
           viewer={viewer ?? EMPTY_PROFILE_STATS}
         />
@@ -75,12 +80,14 @@ function ProfileStats({
   address,
   displayName,
   freebetLabel,
+  referral,
   usdtBalanceLabel,
   viewer,
 }: {
   address: `0x${string}`
   displayName: string
   freebetLabel: string
+  referral?: MyReferral
   usdtBalanceLabel: string
   viewer: Pick<RankingViewer, 'rank' | 'netPnl' | 'roi' | 'totalWagered' | 'totalPayout' | 'winRate' | 'winCount' | 'loseCount' | 'eventCount'>
 }) {
@@ -122,6 +129,8 @@ function ProfileStats({
             <ProfileMetric icon="payout" label={t('ranking.totalPayout')} value={`${viewer.totalPayout.toFixed(2)} USDT`} />
             <ProfileMetric icon="coins" label={t('ranking.totalWagered')} value={`${viewer.totalWagered.toFixed(2)} USDT`} />
           </div>
+
+          {referral && <ReferralPanel referral={referral} />}
         </div>
       </section>
     </div>

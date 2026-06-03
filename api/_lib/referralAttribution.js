@@ -52,6 +52,20 @@ export async function fetchActiveReferrerByCode({ supabaseUrl, serviceRoleKey, c
   return mapReferrer(firstRow(rows))
 }
 
+export async function fetchActiveReferrerByWallet({ supabaseUrl, serviceRoleKey, walletAddress }) {
+  const normalizedWallet = normalizeAddress(walletAddress)
+  if (!normalizedWallet) return undefined
+
+  const rows = await supabaseSelect({
+    supabaseUrl,
+    serviceRoleKey,
+    path: `referrers?wallet_address=eq.${encodeURIComponent(normalizedWallet)}&status=eq.active&select=id,wallet_address,code,status,display_name,created_at`,
+    errorMessage: 'Failed to fetch referral referrer',
+  })
+
+  return mapReferrer(firstRow(rows))
+}
+
 export async function fetchReferralAttributionByWallet({ supabaseUrl, serviceRoleKey, walletAddress }) {
   const normalizedWallet = normalizeAddress(walletAddress)
   if (!normalizedWallet) return undefined

@@ -28,4 +28,9 @@ export const enRankingMessages: LocaleMessages = {
   'profile.noDataTitle': 'No settled bets yet.',
   'profile.noDataDescription': 'PnL, ROI, and win rate update after your app bets settle.',
   'profile.performance': 'Performance',
+  'profile.referralTitle': 'Referral',
+  'profile.referralCode': 'Code {code}',
+  'profile.referralCopy': 'Copy link',
+  'profile.referralCopied': 'Copied',
+  'profile.referralCopyFailed': 'Failed',
 }
