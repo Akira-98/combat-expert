@@ -28,10 +28,16 @@ function parseDateBoundary(value, label) {
   }
 }
 
-function parseIntegerAmount(value) {
+function parseUsdtAmountToRaw(value, decimals = USDT_DECIMALS) {
   const stringValue = String(value ?? '').trim()
-  if (!/^\d+$/.test(stringValue)) return undefined
-  return BigInt(stringValue)
+  const match = stringValue.match(/^(\d+)(?:\.(\d+))?$/)
+  if (!match) return undefined
+
+  const [, wholePart, fractionPart = ''] = match
+  if (fractionPart.length > decimals) return undefined
+
+  return BigInt(wholePart) * 10n ** BigInt(decimals)
+    + BigInt(fractionPart.padEnd(decimals, '0'))
 }
 
 function formatTokenAmount(rawAmount, decimals = USDT_DECIMALS) {
@@ -106,7 +112,7 @@ function summarizeReferralVolume({ bets, attributions, includeBets }) {
       .find(Boolean)
     if (!attribution) continue
 
-    const amount = parseIntegerAmount(bet.amount)
+    const amount = parseUsdtAmountToRaw(bet.amount)
     if (amount === undefined || amount <= 0n) {
       skippedInvalidAmountCount += 1
       continue
