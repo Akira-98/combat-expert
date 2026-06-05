@@ -7,6 +7,7 @@ import { mapMarketManagerConditionsToMarkets } from '../helpers/mappers/markets'
 type UseMarketManagerConditionsParams = {
   gameIds: string[]
   enabled?: boolean
+  extended?: boolean
   staleTime?: number
   gcTime?: number
   refetchOnMount?: boolean
@@ -18,6 +19,7 @@ type UseMarketManagerConditionsParams = {
 export function useMarketManagerConditions({
   gameIds,
   enabled = true,
+  extended = true,
   staleTime = 5_000,
   gcTime = 5 * 60_000,
   refetchOnMount = true,
@@ -32,12 +34,13 @@ export function useMarketManagerConditions({
   )
 
   const query = useQuery({
-    queryKey: ['market-manager-conditions', api, environment, normalizedGameIds],
+    queryKey: ['market-manager-conditions', api, environment, normalizedGameIds, extended],
     queryFn: async () => {
       return fetchMarketManagerConditionsByGameIds({
         apiBaseUrl: api,
         environment,
         gameIds: normalizedGameIds,
+        extended,
       })
     },
     enabled: enabled && normalizedGameIds.length > 0,

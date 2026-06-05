@@ -19,6 +19,7 @@ type FetchConditionsByGameIdsParams = {
   apiBaseUrl: string
   environment: string
   gameIds: string[]
+  extended?: boolean
 }
 
 const JSON_HEADERS = {
@@ -60,6 +61,7 @@ export async function fetchMarketManagerConditionsByGameIds({
   apiBaseUrl,
   environment,
   gameIds,
+  extended = false,
 }: FetchConditionsByGameIdsParams) {
   const response = await fetch(`${apiBaseUrl}/market-manager/conditions-by-game-ids`, {
     method: 'POST',
@@ -67,6 +69,7 @@ export async function fetchMarketManagerConditionsByGameIds({
     body: JSON.stringify({
       environment,
       gameIds,
+      extended,
     }),
   })
 

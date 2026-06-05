@@ -73,6 +73,40 @@ const safeDictionaryLookup = <T>(lookup: () => T, fallback: T) => {
   }
 }
 
+const getApiTitle = (title?: string | null) => {
+  const value = title?.trim()
+  return value || undefined
+}
+
+const isExtendedCondition = (conditionId: string) => conditionId[0] === '5'
+
+const getMarketIdentity = (condition: MarketManagerCondition, representativeOutcomeId: string) => {
+  const apiMarketName = getApiTitle(condition.title)
+  const shouldPreferApiTitle = isExtendedCondition(condition.conditionId)
+  const dictionaryMarketKey = safeDictionaryLookup(() => getMarketKey(representativeOutcomeId), undefined)
+  const marketKey = shouldPreferApiTitle && apiMarketName
+    ? `extended-${apiMarketName.toLowerCase()}`
+    : dictionaryMarketKey ?? `condition-${condition.conditionId}`
+  const dictionaryMarketName = dictionaryMarketKey
+    ? safeDictionaryLookup(() => getMarketName({ outcomeId: representativeOutcomeId }) || undefined, undefined)
+    : undefined
+  const marketName = shouldPreferApiTitle
+    ? apiMarketName ?? dictionaryMarketName ?? `Market ${marketKey}`
+    : dictionaryMarketName ?? apiMarketName ?? `Market ${marketKey}`
+
+  return { marketKey, marketName }
+}
+
+const getSelectionTitle = (conditionId: string, outcome: MarketManagerCondition['outcomes'][number]) => {
+  const apiOutcomeTitle = getApiTitle(outcome.title)
+  if (isExtendedCondition(conditionId) && apiOutcomeTitle) return apiOutcomeTitle
+
+  return safeDictionaryLookup(
+    () => getSelectionName({ outcomeId: outcome.outcomeId, withPoint: true }),
+    apiOutcomeTitle || `Outcome ${outcome.outcomeId}`,
+  )
+}
+
 export const mapMarketManagerConditionsToMarkets = (conditions: MarketManagerCondition[]): MarketLike[] => {
   const groupedMarkets = new Map<string, MarketLike>()
 
@@ -80,11 +114,7 @@ export const mapMarketManagerConditionsToMarkets = (conditions: MarketManagerCon
     const representativeOutcomeId = condition.outcomes[0]?.outcomeId
     if (!representativeOutcomeId) return
 
-    const marketKey = safeDictionaryLookup(() => getMarketKey(representativeOutcomeId), `condition-${condition.conditionId}`)
-    const marketName = safeDictionaryLookup(
-      () => getMarketName({ outcomeId: representativeOutcomeId }) || `Market ${marketKey}`,
-      `Market ${marketKey}`,
-    )
+    const { marketKey, marketName } = getMarketIdentity(condition, representativeOutcomeId)
 
     const market = groupedMarkets.get(marketKey) ?? {
       marketKey,
@@ -99,10 +129,7 @@ export const mapMarketManagerConditionsToMarkets = (conditions: MarketManagerCon
         outcomeId: outcome.outcomeId,
         gameId: condition.game.gameId,
         isExpressForbidden: condition.isExpressForbidden,
-        selectionName: safeDictionaryLookup(
-          () => getSelectionName({ outcomeId: outcome.outcomeId, withPoint: true }),
-          outcome.title || `Outcome ${outcome.outcomeId}`,
-        ),
+        selectionName: getSelectionTitle(condition.conditionId, outcome),
         odds: typeof outcome.odds === 'number' ? outcome.odds : Number(outcome.odds),
       })),
     })

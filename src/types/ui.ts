@@ -50,3 +50,14 @@ export type SportFilterItem = {
   count: number
   hub: 'sports' | 'esports'
 }
+
+export type LeagueFilterItem = {
+  name: string
+  count: number
+  countryName?: string
+  countrySlug?: string
+}
+
+export type SportNavigationItem = SportFilterItem & {
+  leagues: LeagueFilterItem[]
+}

@@ -21,21 +21,40 @@ import { useProfile } from './hooks/useProfile'
 import { usePoints } from './hooks/usePoints'
 import { useReferralAttribution } from './hooks/useReferralAttribution'
 import { useUsdtTransfer } from './hooks/useUsdtTransfer'
-import type { GameItem, SportFilterItem } from './types/ui'
+import type { GameItem, SportNavigationItem } from './types/ui'
 
-function buildSportNavigationItems(games: GameItem[]): SportFilterItem[] {
+function buildSportNavigationItems(games: GameItem[]): SportNavigationItem[] {
   return Array.from(
     games.reduce((counts, game) => {
       const current = counts.get(game.sportName)
+      const leagues = current?.leagues ?? []
+      const league = leagues.find((item) => item.name === game.leagueName)
+      const nextLeagues = league
+        ? leagues.map((item) => item.name === game.leagueName ? {
+          ...item,
+          count: item.count + 1,
+          countryName: item.countryName ?? game.countryName,
+          countrySlug: item.countrySlug ?? game.countrySlug,
+        } : item)
+        : [{
+          name: game.leagueName,
+          count: 1,
+          countryName: game.countryName,
+          countrySlug: game.countrySlug,
+        }, ...leagues]
       counts.set(game.sportName, {
         name: game.sportName,
         count: (current?.count ?? 0) + 1,
         hub: game.sportHub,
+        leagues: nextLeagues,
       })
       return counts
-    }, new Map<string, SportFilterItem>()),
+    }, new Map<string, SportNavigationItem>()),
   )
-    .map(([, item]) => item)
+    .map(([, item]) => ({
+      ...item,
+      leagues: item.leagues.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'en')),
+    }))
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'en'))
 }
 
@@ -104,6 +123,12 @@ function App() {
     shell.handleNavigateToExplore()
     filters.setSportFilter(sportName)
   }
+  const handleLeagueNavigation = (sportName: string, leagueName: string) => {
+    shell.handleNavigateToExplore()
+    filters.setGameStatusFilter('upcoming')
+    filters.setSportFilter(sportName)
+    filters.setLeagueFilter(leagueName)
+  }
   const handleGameStatusNavigation = (status: 'all' | 'live' | 'upcoming') => {
     shell.handleNavigateToExplore()
     filters.setGameStatusFilter(status)
@@ -112,6 +137,12 @@ function App() {
     shell.handleNavigateToExplore()
     filters.setGameStatusFilter('live')
     filters.setSportFilter(sportName)
+  }
+  const handleLiveLeagueNavigation = (sportName: string, leagueName: string) => {
+    shell.handleNavigateToExplore()
+    filters.setGameStatusFilter('live')
+    filters.setSportFilter(sportName)
+    filters.setLeagueFilter(leagueName)
   }
 
   return (
@@ -147,12 +178,15 @@ function App() {
         <DesktopMenuRail
           gameStatusFilter={filters.gameStatusFilter}
           sportFilter={filters.sportFilter}
+          leagueFilter={filters.leagueFilter}
           sports={sportsNavigationItems}
           liveSports={liveSportsNavigationItems}
           isRankingActive={shell.shouldShowRankingContent}
           onSelectGameStatus={handleGameStatusNavigation}
           onSelectSport={handleSportNavigation}
           onSelectLiveSport={handleLiveSportNavigation}
+          onSelectLeague={handleLeagueNavigation}
+          onSelectLiveLeague={handleLiveLeagueNavigation}
           onOpenLeaderboard={shell.handleNavigateToRanking}
         />
 
@@ -245,12 +279,15 @@ function App() {
         isOpen={shell.isMobileMenuOpen}
         gameStatusFilter={filters.gameStatusFilter}
         sportFilter={filters.sportFilter}
+        leagueFilter={filters.leagueFilter}
         sports={sportsNavigationItems}
         liveSports={liveSportsNavigationItems}
         onClose={shell.closeMobileMenu}
         onSelectGameStatus={handleGameStatusNavigation}
         onSelectSport={handleSportNavigation}
         onSelectLiveSport={handleLiveSportNavigation}
+        onSelectLeague={handleLeagueNavigation}
+        onSelectLiveLeague={handleLiveLeagueNavigation}
       />
     </div>
   )

@@ -23,6 +23,42 @@ function safeDictionaryLookup(lookup, fallback) {
   }
 }
 
+function getApiTitle(title) {
+  const value = String(title || '').trim()
+  return value || undefined
+}
+
+function isExtendedCondition(conditionId) {
+  return String(conditionId || '')[0] === '5'
+}
+
+function getMarketIdentity(condition, representativeOutcomeId) {
+  const apiMarketName = getApiTitle(condition?.title)
+  const shouldPreferApiTitle = isExtendedCondition(condition?.conditionId)
+  const dictionaryMarketKey = safeDictionaryLookup(() => getMarketKey(representativeOutcomeId), undefined)
+  const marketKey = shouldPreferApiTitle && apiMarketName
+    ? `extended-${apiMarketName.toLowerCase()}`
+    : dictionaryMarketKey ?? `condition-${condition.conditionId}`
+  const dictionaryMarketName = dictionaryMarketKey
+    ? safeDictionaryLookup(() => getMarketName({ outcomeId: representativeOutcomeId }) || undefined, undefined)
+    : undefined
+  const marketName = shouldPreferApiTitle
+    ? apiMarketName ?? dictionaryMarketName ?? `Market ${marketKey}`
+    : dictionaryMarketName ?? apiMarketName ?? `Market ${marketKey}`
+
+  return { marketKey, marketName }
+}
+
+function getSelectionTitle(conditionId, outcome) {
+  const apiOutcomeTitle = getApiTitle(outcome?.title)
+  if (isExtendedCondition(conditionId) && apiOutcomeTitle) return apiOutcomeTitle
+
+  return safeDictionaryLookup(
+    () => getSelectionName({ outcomeId: outcome.outcomeId, withPoint: true }),
+    apiOutcomeTitle || `Outcome ${outcome.outcomeId}`,
+  )
+}
+
 function outcomeOrderPriority(selectionName) {
   const raw = selectionName.trim().toLowerCase()
   if (raw === '1') return 0
@@ -52,7 +88,7 @@ function normalizeOutcomeLabel(selectionName, participants) {
   return raw || 'Outcome'
 }
 
-export async function fetchMarketManagerConditionsByGameIds(gameIds) {
+export async function fetchMarketManagerConditionsByGameIds(gameIds, { extended = true } = {}) {
   if (gameIds.length === 0) return []
 
   const { apiBaseUrl, environment } = getMarketManagerConfig()
@@ -62,6 +98,7 @@ export async function fetchMarketManagerConditionsByGameIds(gameIds) {
     body: JSON.stringify({
       environment,
       gameIds,
+      extended,
     }),
   })
 
@@ -80,11 +117,7 @@ export function mapConditionsToMarketSections(conditions, participants = []) {
     const representativeOutcomeId = condition?.outcomes?.[0]?.outcomeId
     if (!representativeOutcomeId) return
 
-    const marketKey = safeDictionaryLookup(() => getMarketKey(representativeOutcomeId), `condition-${condition.conditionId}`)
-    const marketName = safeDictionaryLookup(
-      () => getMarketName({ outcomeId: representativeOutcomeId }) || `Market ${marketKey}`,
-      `Market ${marketKey}`,
-    )
+    const { marketKey, marketName } = getMarketIdentity(condition, representativeOutcomeId)
     const market = groupedMarkets.get(marketKey) ?? {
       marketKey,
       name: marketName,
@@ -94,10 +127,7 @@ export function mapConditionsToMarketSections(conditions, participants = []) {
     market.conditions.push({
       state: condition.state,
       outcomes: condition.outcomes.map((outcome) => {
-        const selectionName = safeDictionaryLookup(
-          () => getSelectionName({ outcomeId: outcome.outcomeId, withPoint: true }),
-          outcome.title || `Outcome ${outcome.outcomeId}`,
-        )
+        const selectionName = getSelectionTitle(condition.conditionId, outcome)
 
         return {
           conditionId: condition.conditionId,

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import type { SportFilterItem } from '../types/ui'
+import type { SportNavigationItem } from '../types/ui'
 
-export function useGroupedSports(sports: SportFilterItem[]) {
+export function useGroupedSports(sports: SportNavigationItem[]) {
   return useMemo(
     () => ({
       sports: sports.filter((sport) => sport.hub !== 'esports'),
