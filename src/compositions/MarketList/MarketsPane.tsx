@@ -39,7 +39,7 @@ export function MarketsPane({
                   {section.outcomes.length}
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 {section.outcomes.map((outcome) => {
                   const key = selectionKey(outcome.conditionId, outcome.outcomeId)
                   return (

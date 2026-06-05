@@ -27,7 +27,7 @@ export function OutcomeButton({
   return (
     <button
       aria-disabled={isDisabled}
-      className={`select-card grid h-full w-full gap-1.5 px-2.5 py-2 text-left text-xs transition md:px-3 md:py-2.5 md:text-sm ${
+      className={`select-card grid h-full min-h-[58px] w-full min-w-0 content-between gap-1 overflow-hidden px-2.5 py-2 text-left text-xs transition md:min-h-[66px] md:px-3 md:py-2.5 md:text-sm ${
         isDisabled
           ? 'select-card-disabled ui-text-muted cursor-not-allowed'
           : isSelected
@@ -41,9 +41,9 @@ export function OutcomeButton({
       title={outcomeLabel}
       type="button"
     >
-      <div className="flex items-start justify-between gap-2">
-        <span className={`min-w-0 truncate pr-2 font-medium ${isSelected ? 'ui-text-inverse' : 'ui-text-strong'}`}>{outcomeLabel}</span>
-        <strong className={`shrink-0 text-xs md:text-sm ${isDisabled ? 'ui-text-muted' : isSelected ? 'ui-text-inverse' : 'ui-text-strong'}`}>
+      <div className="grid min-w-0 gap-0.5">
+        <span className={`block min-w-0 truncate text-[12px] font-medium leading-tight md:text-sm ${isSelected ? 'ui-text-inverse' : 'ui-text-muted'}`}>{outcomeLabel}</span>
+        <strong className={`block min-w-0 text-base leading-tight md:text-lg ${isDisabled ? 'ui-text-muted' : isSelected ? 'ui-text-inverse' : 'ui-text-strong'}`}>
           {Number.isFinite(outcome.odds) ? outcome.odds.toFixed(2) : '-'}
         </strong>
       </div>
