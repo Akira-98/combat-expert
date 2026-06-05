@@ -26,13 +26,17 @@ const outcomeOrderPriority = (selectionName: string) => {
 }
 
 const marketGroupPriority = (market: Pick<MarketLike, 'marketKey' | 'name'>) => {
+  const name = market.name.trim().toLowerCase()
   const key = `${market.marketKey} ${market.name}`.toLowerCase()
+  const isPeriodSpecific = /\b(1st|2nd|first|second)\s+half\b|\bhalf\s*time\b/.test(name)
 
-  if (/1x2|winner|match result|full time result/.test(key)) return 0
-  if (/double chance/.test(key)) return 1
-  if (/total|over\/under|totals/.test(key)) return 2
-  if (/both teams to score|btts/.test(key)) return 3
-  if (/handicap|spread/.test(key)) return 4
+  if (!isPeriodSpecific && /^(full[\s-]*time result|full[\s-]*time 1x2)$/.test(name)) return 0
+  if (!isPeriodSpecific && /^(1x2|match result|3[\s-]*way result)$/.test(name)) return 1
+  if (!isPeriodSpecific && /^(winner|match winner)$/.test(name)) return 2
+  if (/double chance/.test(key)) return 3
+  if (/total|over\/under|totals/.test(key)) return 4
+  if (/both teams to score|btts/.test(key)) return 5
+  if (/handicap|spread/.test(key)) return 6
   return 10
 }
 
@@ -43,10 +47,8 @@ export const mapMarketsToSections = (markets: MarketLike[]): MarketSection[] =>
       if (priorityDiff !== 0) return priorityDiff
       return (a.name || a.marketKey).localeCompare(b.name || b.marketKey, 'en')
     })
-    .map((market, index) => ({
-      id: `${market.marketKey}-${index}`,
-      title: market.name || `Market #${index + 1}`,
-      outcomes: market.conditions
+    .map((market, index) => {
+      const outcomes = market.conditions
         .flatMap((condition) =>
           condition.outcomes.map<OutcomeItem>((outcome) => ({
             conditionId: outcome.conditionId,
@@ -62,8 +64,15 @@ export const mapMarketsToSections = (markets: MarketLike[]): MarketSection[] =>
           const priorityDiff = outcomeOrderPriority(a.selectionName) - outcomeOrderPriority(b.selectionName)
           if (priorityDiff !== 0) return priorityDiff
           return a.selectionName.localeCompare(b.selectionName, 'en')
-        }),
-    }))
+        })
+
+      return {
+        id: `${market.marketKey}-${index}`,
+        title: market.name || `Market #${index + 1}`,
+        outcomes,
+      }
+    })
+    .filter((section) => section.outcomes.length > 0)
 
 const safeDictionaryLookup = <T>(lookup: () => T, fallback: T) => {
   try {
@@ -79,6 +88,7 @@ const getApiTitle = (title?: string | null) => {
 }
 
 const isExtendedCondition = (conditionId: string) => conditionId[0] === '5'
+const isActiveCondition = (condition: MarketManagerCondition) => condition.state === 'Active'
 
 const getMarketIdentity = (condition: MarketManagerCondition, representativeOutcomeId: string) => {
   const apiMarketName = getApiTitle(condition.title)
@@ -111,6 +121,8 @@ export const mapMarketManagerConditionsToMarkets = (conditions: MarketManagerCon
   const groupedMarkets = new Map<string, MarketLike>()
 
   conditions.forEach((condition) => {
+    if (!isActiveCondition(condition)) return
+
     const representativeOutcomeId = condition.outcomes[0]?.outcomeId
     if (!representativeOutcomeId) return
 

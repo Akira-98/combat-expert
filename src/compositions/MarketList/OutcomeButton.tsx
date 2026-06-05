@@ -38,6 +38,7 @@ export function OutcomeButton({
         if (isDisabled) return
         onSelectOutcome(outcome)
       }}
+      title={outcomeLabel}
       type="button"
     >
       <div className="flex items-start justify-between gap-2">

@@ -33,9 +33,9 @@ export function MarketsPane({
               key={section.id}
               className="card-shell-lg ui-elevated-card border border-[color:var(--app-border)] p-3 md:p-3.5"
             >
-              <div className="mb-2.5 flex items-center justify-between gap-2 md:mb-3">
-                <h3 className="ui-text-strong m-0 text-sm font-semibold tracking-tight">{section.title}</h3>
-                <span className="ui-pill rounded-full border px-2 py-0.5 text-[11px] font-semibold">
+              <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 md:mb-3">
+                <h3 className="ui-text-strong m-0 min-w-0 truncate text-sm font-semibold tracking-tight" title={section.title}>{section.title}</h3>
+                <span className="ui-pill shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold">
                   {section.outcomes.length}
                 </span>
               </div>
