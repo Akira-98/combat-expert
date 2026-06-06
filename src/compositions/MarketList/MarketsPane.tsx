@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { formatGameStartTime } from '../../helpers/formatters'
 import { getGameParticipantNames } from '../../helpers/participants'
+import { normalizeParticipantTokenLabel } from '../../helpers/outcomes'
 import { shareOrCopyUrl } from '../../helpers/share'
 import { useI18n } from '../../i18n'
 import { selectionKey } from '../../helpers/mappers'
@@ -28,34 +29,40 @@ export function MarketsPane({
 
       {marketSections.length > 0 ? (
         <div className="grid gap-2 md:gap-3">
-          {marketSections.map((section) => (
-            <article
-              key={section.id}
-              className="card-shell-lg ui-elevated-card border border-[color:var(--app-border)] p-3 md:p-3.5"
-            >
-              <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 md:mb-3">
-                <h3 className="ui-text-strong m-0 min-w-0 truncate text-sm font-semibold tracking-tight" title={section.title}>{section.title}</h3>
-                <span className="ui-pill shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold">
-                  {section.outcomes.length}
-                </span>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {section.outcomes.map((outcome) => {
-                  const key = selectionKey(outcome.conditionId, outcome.outcomeId)
-                  return (
-                    <OutcomeButton
-                      key={key}
-                      outcome={outcome}
-                      selectedGameParticipants={selectedGame ? getGameParticipantNames(selectedGame) : []}
-                      isSelected={selectedOutcomes.has(key)}
-                      priceChange={selectedOutcomePriceChanges.get(key)}
-                      onSelectOutcome={onSelectOutcome}
-                    />
-                  )
-                })}
-              </div>
-            </article>
-          ))}
+          {marketSections.map((section) => {
+            const selectedGameParticipants = selectedGame ? getGameParticipantNames(selectedGame) : []
+            const sectionTitle = normalizeParticipantTokenLabel(section.title, selectedGameParticipants)
+            const gridClass = getOutcomeGridClass(sectionTitle, section.outcomes.length)
+
+            return (
+              <article
+                key={section.id}
+                className="card-shell-lg ui-elevated-card border border-[color:var(--app-border)] p-3 md:p-3.5"
+              >
+                <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 md:mb-3">
+                  <h3 className="ui-text-strong m-0 min-w-0 truncate text-sm font-semibold tracking-tight" title={sectionTitle}>{sectionTitle}</h3>
+                  <span className="ui-pill shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold">
+                    {section.outcomes.length}
+                  </span>
+                </div>
+                <div className={`grid ${gridClass} gap-2`}>
+                  {section.outcomes.map((outcome) => {
+                    const key = selectionKey(outcome.conditionId, outcome.outcomeId)
+                    return (
+                      <OutcomeButton
+                        key={key}
+                        outcome={outcome}
+                        selectedGameParticipants={selectedGameParticipants}
+                        isSelected={selectedOutcomes.has(key)}
+                        priceChange={selectedOutcomePriceChanges.get(key)}
+                        onSelectOutcome={onSelectOutcome}
+                      />
+                    )
+                  })}
+                </div>
+              </article>
+            )
+          })}
         </div>
       ) : null}
 
@@ -68,6 +75,15 @@ export function MarketsPane({
       )}
     </div>
   )
+}
+
+function getOutcomeGridClass(sectionTitle: string, outcomeCount: number) {
+  const title = sectionTitle.toLowerCase()
+
+  if (/total|over\/under|handicap|spread/.test(title)) return 'grid-cols-2'
+  if (outcomeCount > 0 && outcomeCount % 2 === 0 && outcomeCount !== 6) return 'grid-cols-2'
+
+  return 'grid-cols-3'
 }
 
 export function MatchupHero({ selectedGame }: { selectedGame: NonNullable<MarketsPaneProps['selectedGame']> }) {

@@ -1,7 +1,19 @@
 import { translate } from '../i18n'
 
+export const normalizeParticipantTokenLabel = (label: string, participants: string[]) => {
+  const [home, away] = participants
+
+  if (!home && !away) return label
+
+  return label.replace(/\bteam\s*([12])\b/gi, (match, teamNumber: string) => {
+    if (teamNumber === '1') return home || match
+    if (teamNumber === '2') return away || match
+    return match
+  })
+}
+
 export const normalizeOutcomeLabel = (selectionName: string, participants: string[]) => {
-  const value = selectionName.trim()
+  const value = normalizeParticipantTokenLabel(selectionName.trim(), participants)
   if (participants.length >= 2) {
     const home = participants[0] ?? 'Home'
     const away = participants[1] ?? 'Away'

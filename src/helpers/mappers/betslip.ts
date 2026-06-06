@@ -1,6 +1,6 @@
 import type { GameItem, MarketSection, SelectionItem, SelectionKey } from '../../types/ui'
 import { translate } from '../../i18n'
-import { normalizeOutcomeLabel } from '../outcomes'
+import { normalizeOutcomeLabel, normalizeParticipantTokenLabel } from '../outcomes'
 import { selectionKey } from './selection'
 
 type BetslipItemLike = {
@@ -48,8 +48,11 @@ export const mapBetslipToSelectionItems = (
     const outcomeLabel = meta?.selectionName
       ? normalizeOutcomeLabel(meta.selectionName, participantNames)
       : undefined
+    const marketTitle = meta?.marketTitle
+      ? normalizeParticipantTokenLabel(meta.marketTitle, participantNames)
+      : undefined
     const label = outcomeLabel && meta?.marketTitle
-      ? `${meta.marketTitle} · ${outcomeLabel}`
+      ? `${marketTitle} · ${outcomeLabel}`
       : outcomeLabel ?? meta?.label ?? translate('betslip.selectionItem')
 
     return {
