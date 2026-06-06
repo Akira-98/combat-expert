@@ -33,4 +33,10 @@ export const enRankingMessages: LocaleMessages = {
   'profile.referralCopy': 'Copy link',
   'profile.referralCopied': 'Copied',
   'profile.referralCopyFailed': 'Failed',
+  'profile.affiliateTitle': 'Affiliate Stats',
+  'profile.affiliateRate': 'Commission {rate}',
+  'profile.affiliateReferred': 'Users',
+  'profile.affiliateBets': 'Bets',
+  'profile.affiliateVolume': 'Volume',
+  'profile.affiliateCommission': 'Rewards',
 }

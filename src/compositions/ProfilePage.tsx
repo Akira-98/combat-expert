@@ -1,14 +1,16 @@
 import { useBonuses } from '@azuro-org/sdk'
 import { BonusStatus } from '@azuro-org/toolkit'
 import type { Address } from 'viem'
-import type { MyReferral } from '../api/referrals'
+import type { AffiliateDashboard, MyReferral } from '../api/referrals'
 import { useAppConfig } from '../config/useAppConfig'
 import { getFreebetSummary } from '../helpers/freebets'
 import { formatPercentRatio, formatSignedUsdt } from '../helpers/formatters'
 import { getWalletAvatarUrl, shortenAddress } from '../helpers/walletUi'
 import { useRankings, type RankingViewer } from '../hooks/useRankings'
+import { useAffiliateDashboard } from '../hooks/useAffiliateDashboard'
 import { useMyReferral } from '../hooks/useMyReferral'
 import { useI18n } from '../i18n'
+import { AffiliateStatsPanel } from './profile/AffiliateStatsPanel'
 import { ReferralPanel } from './profile/ReferralPanel'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -25,6 +27,10 @@ export function ProfilePage({ address, isConnected, displayName, usdtBalanceLabe
   const { affiliateAddress } = useAppConfig()
   const { viewer, isLoading, errorMessage } = useRankings(address)
   const referral = useMyReferral({ address, isConnected })
+  const affiliate = useAffiliateDashboard({
+    address,
+    enabled: Boolean(referral.referral),
+  })
   const { data: freebets = [], isLoading: isFreebetsLoading } = useBonuses({
     account: (address || ZERO_ADDRESS) as Address,
     affiliate: affiliateAddress as Address,
@@ -54,6 +60,8 @@ export function ProfilePage({ address, isConnected, displayName, usdtBalanceLabe
         <ProfileStats
           address={address}
           displayName={displayName}
+          affiliate={affiliate.affiliate}
+          isAffiliateLoading={affiliate.isLoading}
           freebetLabel={isFreebetsLoading ? t('account.freebetsChecking') : getFreebetLabel(freebetSummary)}
           referral={referral.referral}
           usdtBalanceLabel={usdtBalanceLabel}
@@ -78,15 +86,19 @@ const EMPTY_PROFILE_STATS = {
 
 function ProfileStats({
   address,
+  affiliate,
   displayName,
   freebetLabel,
+  isAffiliateLoading,
   referral,
   usdtBalanceLabel,
   viewer,
 }: {
   address: `0x${string}`
+  affiliate?: AffiliateDashboard
   displayName: string
   freebetLabel: string
+  isAffiliateLoading: boolean
   referral?: MyReferral
   usdtBalanceLabel: string
   viewer: Pick<RankingViewer, 'rank' | 'netPnl' | 'roi' | 'totalWagered' | 'totalPayout' | 'winRate' | 'winCount' | 'loseCount' | 'eventCount'>
@@ -131,6 +143,7 @@ function ProfileStats({
           </div>
 
           {referral && <ReferralPanel referral={referral} />}
+          {referral && <AffiliateStatsPanel affiliate={affiliate} isLoading={isAffiliateLoading} />}
         </div>
       </section>
     </div>
